@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:habitit/domain/auth/models/auth_user_req.dart';
-import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
+import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/authenticate_user_email_password_usecase.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -20,7 +20,7 @@ void main() {
   });
 
   final tAuthUserReq =
-      AuthUserReq(email: 'test@test.com', password: 'testPass');
+      AuthUserReqEntity(email: 'test@test.com', password: 'testPass');
 
   final tSuccessMessage = 'Authentication passed';
 

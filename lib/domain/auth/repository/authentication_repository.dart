@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
-
-import '../models/auth_user_req.dart';
+import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 
 abstract class AuthenticationRepository {
-  Future<Either> authUserEmailPassword({required AuthUserReq authData});
+  Future<Either> authUserEmailPassword({required AuthUserReqEntity authData});
 }
