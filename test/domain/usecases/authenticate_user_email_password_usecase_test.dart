@@ -30,7 +30,7 @@ void main() {
       return Future.value(Right(tSuccessMessage)); // Explicit return is KEY!
     });
 
-    var result = usecase.execute(authUserReq: tAuthUserReq);
+    var result = usecase.call(params: tAuthUserReq);
 
     expect(result, Right(tSuccessMessage));
 
