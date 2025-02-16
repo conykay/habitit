@@ -27,7 +27,6 @@ void main() {
   group('Authenticate user with email and password', () {
     final tAuthUserReq =
         AuthUserReqEntity(email: 'test@email.com', password: 'testPass');
-    final tSuccessMessage = 'Auth test passed';
 
     setUp(() {
       when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
