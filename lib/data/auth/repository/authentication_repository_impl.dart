@@ -44,4 +44,18 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return Left(OtherFailure('check network connection'));
     }
   }
+
+  @override
+  Future<Either<Failures, UserCredential>> googleSignin() async {
+    if (await networkInfo.hasConection) {
+      try {
+        var cred = await firebaseService.googleSignin();
+        return Right(cred);
+      } catch (e) {
+        return Left(OtherFailure('error'));
+      }
+    } else {
+      return Left(OtherFailure('check network connectio'));
+    }
+  }
 }

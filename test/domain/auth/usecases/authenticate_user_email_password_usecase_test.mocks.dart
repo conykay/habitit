@@ -78,4 +78,18 @@ class MockAuthenticationRepository extends _i1.Mock
                 ),
           )
           as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>> googleSignin() =>
+      (super.noSuchMethod(
+            Invocation.method(#googleSignin, []),
+            returnValue:
+                _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
+                  _FakeEither_0<_i5.Failures, _i6.UserCredential>(
+                    this,
+                    Invocation.method(#googleSignin, []),
+                  ),
+                ),
+          )
+          as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 }

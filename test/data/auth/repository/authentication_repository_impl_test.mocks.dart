@@ -77,6 +77,16 @@ class MockAuthFirebaseService extends _i1.Mock
             ),
           )
           as _i4.Future<_i2.UserCredential>);
+
+  @override
+  _i4.Future<_i2.UserCredential> googleSignin() =>
+      (super.noSuchMethod(
+            Invocation.method(#googleSignin, []),
+            returnValue: _i4.Future<_i2.UserCredential>.value(
+              _FakeUserCredential_0(this, Invocation.method(#googleSignin, [])),
+            ),
+          )
+          as _i4.Future<_i2.UserCredential>);
 }
 
 /// A class which mocks [NetworkInfo].

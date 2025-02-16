@@ -160,4 +160,59 @@ void main() {
       });
     });
   });
+  group('Google user with email and password', () {
+    test('Checking for internet connection', () async {
+      //arrange
+      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      //act
+      await authenticationRepositoryImpl.googleSignin();
+      //assert
+      verify(mockNetworkInfo.hasConection);
+    });
+
+    group('Device is online', () {
+      setUp(() {
+        when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      });
+
+      test(
+          'Should return user credential when user has been authenticated successfuly',
+          () async {
+        final tUsercred = MockUserCredential();
+        //arrange
+        when(mockAuthFirebaseService.googleSignin())
+            .thenAnswer((_) async => tUsercred);
+        //act
+        var result = await authenticationRepositoryImpl.googleSignin();
+        //assert
+        verify(mockNetworkInfo.hasConection).called(1);
+        verify(mockAuthFirebaseService.googleSignin()).called(1);
+        expect(result, Right(tUsercred));
+        verifyNoMoreInteractions(mockAuthFirebaseService);
+      });
+
+      test('error Sigin throws exception', () async {
+        when(mockAuthFirebaseService.googleSignin()).thenThrow(Exception());
+
+        var result = await authenticationRepositoryImpl.googleSignin();
+
+        expect(result, Left(OtherFailure(Exception().toString())));
+
+        verify(mockAuthFirebaseService.googleSignin()).called(1);
+        verifyNoMoreInteractions(mockAuthFirebaseService);
+      });
+    });
+
+    group('Device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.hasConection).thenAnswer((_) async => false);
+      });
+
+      test('return offline error', () async {
+        await authenticationRepositoryImpl.googleSignin();
+        verify(mockNetworkInfo.hasConection).called(1);
+        verifyZeroInteractions(mockAuthFirebaseService);
+      });
+    });
+  });
 }

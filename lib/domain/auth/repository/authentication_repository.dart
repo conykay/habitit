@@ -8,4 +8,5 @@ abstract class AuthenticationRepository {
       {required AuthUserReqEntity authData});
   Future<Either<Failures, UserCredential>> signinUserEmailPassword(
       {required AuthUserReqEntity authData});
+  Future<Either<Failures, UserCredential>> googleSignin();
 }
