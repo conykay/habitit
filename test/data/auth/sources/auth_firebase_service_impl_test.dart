@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habitit/core/platform_info/platform_info.dart';
@@ -9,17 +8,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'auth_firebase_service_impl_test.mocks.dart';
-
-class ExtendedMockUserCredential extends MockUserCredential {
-  @override
-  AuthCredential? get credential => super.noSuchMethod(
-        Invocation.getter(#credential),
-        returnValue: MockAuthCredential(),
-        returnValueForMissingStub: null,
-      ) as AuthCredential?;
-}
-
-class MockAuthCredential extends Mock implements AuthCredential {}
 
 @GenerateMocks([
   FirebaseAuth,
@@ -92,5 +80,6 @@ void main() {
       });
     });
   }); */
-  //Todo: Implement google sign in tests
+
+  //Implement google sign in test.
 }
