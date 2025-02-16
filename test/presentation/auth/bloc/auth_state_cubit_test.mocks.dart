@@ -13,6 +13,7 @@ import 'package:habitit/domain/auth/repository/authentication_repository.dart'
     as _i2;
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart'
     as _i4;
+import 'package:habitit/domain/auth/usecases/signin_email_password.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -32,15 +33,15 @@ import 'package:mockito/mockito.dart' as _i1;
 class _FakeAuthenticationRepository_0 extends _i1.SmartFake
     implements _i2.AuthenticationRepository {
   _FakeAuthenticationRepository_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
 class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
   _FakeEither_1(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+    : super(parent, parentInvocation);
 }
 
-/// A class which mocks [AuthenticateUserEmailPasswordUseCase].
+/// A class which mocks [CreateUserEmailPasswordUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCreateUserEmailPasswordUseCase extends _i1.Mock
@@ -50,26 +51,65 @@ class MockCreateUserEmailPasswordUseCase extends _i1.Mock
   }
 
   @override
-  _i2.AuthenticationRepository get repository => (super.noSuchMethod(
-        Invocation.getter(#repository),
-        returnValue: _FakeAuthenticationRepository_0(
-          this,
-          Invocation.getter(#repository),
-        ),
-      ) as _i2.AuthenticationRepository);
+  _i2.AuthenticationRepository get repository =>
+      (super.noSuchMethod(
+            Invocation.getter(#repository),
+            returnValue: _FakeAuthenticationRepository_0(
+              this,
+              Invocation.getter(#repository),
+            ),
+          )
+          as _i2.AuthenticationRepository);
 
   @override
   _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>> call({
     _i8.AuthUserReqEntity? params,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(#call, [], {#params: params}),
-        returnValue:
-            _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>.value(
-          _FakeEither_1<_i6.Failures, _i7.UserCredential>(
-            this,
             Invocation.method(#call, [], {#params: params}),
-          ),
-        ),
-      ) as _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>);
+            returnValue:
+                _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>.value(
+                  _FakeEither_1<_i6.Failures, _i7.UserCredential>(
+                    this,
+                    Invocation.method(#call, [], {#params: params}),
+                  ),
+                ),
+          )
+          as _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>);
+}
+
+/// A class which mocks [SigninEmailPasswordUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSigninEmailPasswordUseCase extends _i1.Mock
+    implements _i9.SigninEmailPasswordUseCase {
+  MockSigninEmailPasswordUseCase() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.AuthenticationRepository get repository =>
+      (super.noSuchMethod(
+            Invocation.getter(#repository),
+            returnValue: _FakeAuthenticationRepository_0(
+              this,
+              Invocation.getter(#repository),
+            ),
+          )
+          as _i2.AuthenticationRepository);
+
+  @override
+  _i5.Future<_i3.Either<dynamic, dynamic>> call({
+    _i8.AuthUserReqEntity? params,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [], {#params: params}),
+            returnValue: _i5.Future<_i3.Either<dynamic, dynamic>>.value(
+              _FakeEither_1<dynamic, dynamic>(
+                this,
+                Invocation.method(#call, [], {#params: params}),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.Either<dynamic, dynamic>>);
 }

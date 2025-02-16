@@ -24,14 +24,10 @@ void main() {
         firebaseService: mockAuthFirebaseService, networkInfo: mockNetworkInfo);
   });
 
-  group('Authenticate user with email and password', () {
-    final tAuthUserReq =
-        AuthUserReqEntity(email: 'test@email.com', password: 'testPass');
+  final tAuthUserReq =
+      AuthUserReqEntity(email: 'test@email.com', password: 'testPass');
 
-    setUp(() {
-      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
-    });
-
+  group('Create user with email and password', () {
     test('Should check for internet connection', () async {
       //arrange
       when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
@@ -78,6 +74,73 @@ void main() {
         expect(result, Left(OtherFailure(Exception().toString())));
 
         verify(mockAuthFirebaseService.createUserEmailPassword(
+                authData: tAuthUserReq))
+            .called(1);
+        verifyNoMoreInteractions(mockAuthFirebaseService);
+      });
+    });
+
+    group('Device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.hasConection).thenAnswer((_) async => false);
+      });
+
+      test('return offline error', () async {
+        await authenticationRepositoryImpl.createUserEmailPassword(
+            authData: tAuthUserReq);
+        verify(mockNetworkInfo.hasConection).called(1);
+        verifyZeroInteractions(mockAuthFirebaseService);
+      });
+    });
+  });
+
+  group('Signin user with email and password', () {
+    test('Checking for internet connection', () async {
+      //arrange
+      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      //act
+      await authenticationRepositoryImpl.signinUserEmailPassword(
+          authData: tAuthUserReq);
+      //assert
+      verify(mockNetworkInfo.hasConection);
+    });
+
+    group('Device is online', () {
+      setUp(() {
+        when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      });
+
+      test(
+          'Should return user credential when user has been authenticated successfuly',
+          () async {
+        final tUsercred = MockUserCredential();
+        //arrange
+        when(mockAuthFirebaseService.signinUserEmailPassword(
+                authData: tAuthUserReq))
+            .thenAnswer((_) async => tUsercred);
+        //act
+        var result = await authenticationRepositoryImpl.signinUserEmailPassword(
+            authData: tAuthUserReq);
+        //assert
+        verify(mockNetworkInfo.hasConection).called(1);
+        verify(mockAuthFirebaseService.signinUserEmailPassword(
+                authData: tAuthUserReq))
+            .called(1);
+        expect(result, Right(tUsercred));
+        verifyNoMoreInteractions(mockAuthFirebaseService);
+      });
+
+      test('error Sigin throws exception', () async {
+        when(mockAuthFirebaseService.signinUserEmailPassword(
+                authData: tAuthUserReq))
+            .thenThrow(Exception());
+
+        var result = await authenticationRepositoryImpl.signinUserEmailPassword(
+            authData: tAuthUserReq);
+
+        expect(result, Left(OtherFailure(Exception().toString())));
+
+        verify(mockAuthFirebaseService.signinUserEmailPassword(
                 authData: tAuthUserReq))
             .called(1);
         verifyNoMoreInteractions(mockAuthFirebaseService);

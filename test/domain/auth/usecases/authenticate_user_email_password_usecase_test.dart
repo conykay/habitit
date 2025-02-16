@@ -23,7 +23,7 @@ void main() {
   final tAuthUserReq =
       AuthUserReqEntity(email: 'test@test.com', password: 'testPass');
   final userCred = MockUserCredential();
-  test('When pass user creation request', () async {
+  test('Success passing the user creation request', () async {
     when(repository.createUserEmailPassword(authData: tAuthUserReq))
         .thenAnswer((_) async => Right(userCred));
 
@@ -34,7 +34,7 @@ void main() {
     verify(repository.createUserEmailPassword(authData: tAuthUserReq));
     verifyNoMoreInteractions(repository);
   });
-  test('When fail user creation request', () async {
+  test('When fail passing user creation request', () async {
     when(repository.createUserEmailPassword(authData: tAuthUserReq))
         .thenAnswer((_) async => Left(OtherFailure('auth failed')));
 

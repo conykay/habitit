@@ -58,6 +58,25 @@ class MockAuthFirebaseService extends _i1.Mock
             ),
           )
           as _i4.Future<_i2.UserCredential>);
+
+  @override
+  _i4.Future<_i2.UserCredential> signinUserEmailPassword({
+    required _i5.AuthUserReqEntity? authData,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#signinUserEmailPassword, [], {
+              #authData: authData,
+            }),
+            returnValue: _i4.Future<_i2.UserCredential>.value(
+              _FakeUserCredential_0(
+                this,
+                Invocation.method(#signinUserEmailPassword, [], {
+                  #authData: authData,
+                }),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.UserCredential>);
 }
 
 /// A class which mocks [NetworkInfo].

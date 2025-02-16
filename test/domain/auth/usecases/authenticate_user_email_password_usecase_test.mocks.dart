@@ -59,4 +59,23 @@ class MockAuthenticationRepository extends _i1.Mock
                 ),
           )
           as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>
+  signinUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
+      (super.noSuchMethod(
+            Invocation.method(#signinUserEmailPassword, [], {
+              #authData: authData,
+            }),
+            returnValue:
+                _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
+                  _FakeEither_0<_i5.Failures, _i6.UserCredential>(
+                    this,
+                    Invocation.method(#signinUserEmailPassword, [], {
+                      #authData: authData,
+                    }),
+                  ),
+                ),
+          )
+          as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 }

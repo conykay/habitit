@@ -28,4 +28,20 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return Left(OtherFailure('No connection'));
     }
   }
+
+  @override
+  Future<Either<Failures, UserCredential>> signinUserEmailPassword(
+      {required AuthUserReqEntity authData}) async {
+    if (await networkInfo.hasConection) {
+      try {
+        var cred =
+            await firebaseService.signinUserEmailPassword(authData: authData);
+        return Right(cred);
+      } catch (e) {
+        return Left(OtherFailure(e.toString()));
+      }
+    } else {
+      return Left(OtherFailure('check network connection'));
+    }
+  }
 }
