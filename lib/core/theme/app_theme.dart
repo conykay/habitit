@@ -16,7 +16,7 @@ class AppTheme {
         contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         border: OutlineInputBorder(
             borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(20)),
+            borderRadius: BorderRadius.circular(50)),
         filled: true,
         fillColor: Colors.grey.withOpacity(0.2),
         labelStyle: TextStyle(fontSize: 20),
@@ -46,7 +46,7 @@ class AppTheme {
         contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         border: OutlineInputBorder(
             borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(20)),
+            borderRadius: BorderRadius.circular(50)),
         filled: true,
         fillColor: Colors.grey.withOpacity(0.2),
         labelStyle: TextStyle(fontSize: 20),

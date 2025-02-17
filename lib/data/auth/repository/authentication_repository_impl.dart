@@ -20,6 +20,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       try {
         var cred =
             await firebaseService.createUserEmailPassword(authData: authData);
+
         return Right(cred);
       } catch (e) {
         return Left(OtherFailure(e.toString()));
@@ -52,10 +53,10 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         var cred = await firebaseService.googleSignin();
         return Right(cred);
       } catch (e) {
-        return Left(OtherFailure('error'));
+        return Left(OtherFailure(e.toString()));
       }
     } else {
-      return Left(OtherFailure('check network connectio'));
+      return Left(OtherFailure('check network connection'));
     }
   }
 

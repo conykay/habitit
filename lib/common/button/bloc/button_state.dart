@@ -5,7 +5,7 @@ enum Buttonstate { inital, loading, loaded, failed }
 
 class ButtonState extends Equatable {
   final Buttonstate state;
-  final String? error;
+  final dynamic error;
   final dynamic data;
   ButtonState({
     required this.state,
