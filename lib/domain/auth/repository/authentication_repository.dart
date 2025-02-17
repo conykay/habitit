@@ -9,4 +9,5 @@ abstract class AuthenticationRepository {
   Future<Either<Failures, UserCredential>> signinUserEmailPassword(
       {required AuthUserReqEntity authData});
   Future<Either<Failures, UserCredential>> googleSignin();
+  Future<Either<Failures, dynamic>> logout();
 }

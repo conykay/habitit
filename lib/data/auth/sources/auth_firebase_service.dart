@@ -10,6 +10,7 @@ abstract class AuthFirebaseService {
   Future<UserCredential> signinUserEmailPassword(
       {required AuthUserReqEntity authData});
   Future<UserCredential> googleSignin();
+  Future<void> logout();
 }
 
 class AuthFirebaseServiceImpl implements AuthFirebaseService {
@@ -63,6 +64,15 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
 
       var cred = await auth.signInWithCredential(credential);
       return cred;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      await auth.signOut();
     } catch (e) {
       rethrow;
     }

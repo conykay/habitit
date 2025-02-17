@@ -87,6 +87,15 @@ class MockAuthFirebaseService extends _i1.Mock
             ),
           )
           as _i4.Future<_i2.UserCredential>);
+
+  @override
+  _i4.Future<void> logout() =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }
 
 /// A class which mocks [NetworkInfo].

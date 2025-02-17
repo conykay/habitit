@@ -92,4 +92,17 @@ class MockAuthenticationRepository extends _i1.Mock
                 ),
           )
           as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failures, dynamic>> logout() =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, []),
+            returnValue: _i4.Future<_i2.Either<_i5.Failures, dynamic>>.value(
+              _FakeEither_0<_i5.Failures, dynamic>(
+                this,
+                Invocation.method(#logout, []),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.Either<_i5.Failures, dynamic>>);
 }
