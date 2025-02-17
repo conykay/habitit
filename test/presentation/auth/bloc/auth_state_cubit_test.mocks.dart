@@ -14,6 +14,7 @@ import 'package:habitit/domain/auth/repository/authentication_repository.dart'
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart'
     as _i4;
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart' as _i9;
+import 'package:habitit/domain/auth/usecases/signin_google.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -102,6 +103,40 @@ class MockSigninEmailPasswordUseCase extends _i1.Mock
   _i5.Future<_i3.Either<dynamic, dynamic>> call({
     _i8.AuthUserReqEntity? params,
   }) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [], {#params: params}),
+            returnValue: _i5.Future<_i3.Either<dynamic, dynamic>>.value(
+              _FakeEither_1<dynamic, dynamic>(
+                this,
+                Invocation.method(#call, [], {#params: params}),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.Either<dynamic, dynamic>>);
+}
+
+/// A class which mocks [SigninGoogleUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSigninGoogleUseCase extends _i1.Mock
+    implements _i10.SigninGoogleUseCase {
+  MockSigninGoogleUseCase() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.AuthenticationRepository get repository =>
+      (super.noSuchMethod(
+            Invocation.getter(#repository),
+            returnValue: _FakeAuthenticationRepository_0(
+              this,
+              Invocation.getter(#repository),
+            ),
+          )
+          as _i2.AuthenticationRepository);
+
+  @override
+  _i5.Future<_i3.Either<dynamic, dynamic>> call({dynamic params}) =>
       (super.noSuchMethod(
             Invocation.method(#call, [], {#params: params}),
             returnValue: _i5.Future<_i3.Either<dynamic, dynamic>>.value(

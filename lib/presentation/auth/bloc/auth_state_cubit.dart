@@ -2,6 +2,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
+import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/bloc/auth_state.dart';
 
 import '../../../domain/auth/entities/auth_user_req_entity.dart';
@@ -25,6 +26,15 @@ class AuthStateCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     var response = await useCase.call(params: authInfo);
+    response.fold((e) => emit(AuthError()),
+        (data) => emit(AuthComplete(userCredential: data)));
+  }
+
+  void googleSignIn({
+    required SigninGoogleUseCase useCase,
+  }) async {
+    emit(AuthLoading());
+    var response = await useCase.call();
     response.fold((e) => emit(AuthError()),
         (data) => emit(AuthComplete(userCredential: data)));
   }

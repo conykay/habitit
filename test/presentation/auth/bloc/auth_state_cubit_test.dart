@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
+import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/bloc/auth_state.dart';
 import 'package:habitit/presentation/auth/bloc/auth_state_cubit.dart';
 import 'package:mockito/annotations.dart';
@@ -12,14 +13,20 @@ import 'package:mockito/mockito.dart';
 import '../../../data/auth/sources/auth_firebase_service_impl_test.mocks.dart';
 import 'auth_state_cubit_test.mocks.dart';
 
-@GenerateMocks([CreateUserEmailPasswordUseCase, SigninEmailPasswordUseCase])
+@GenerateMocks([
+  CreateUserEmailPasswordUseCase,
+  SigninEmailPasswordUseCase,
+  SigninGoogleUseCase,
+])
 void main() {
   late MockCreateUserEmailPasswordUseCase createUserUseCase;
   late MockSigninEmailPasswordUseCase signinUserUseCase;
+  late MockSigninGoogleUseCase googleUseCase;
 
   setUp(() {
     createUserUseCase = MockCreateUserEmailPasswordUseCase();
     signinUserUseCase = MockSigninEmailPasswordUseCase();
+    googleUseCase = MockSigninGoogleUseCase();
   });
 
   final tUserAuth =
@@ -57,5 +64,16 @@ void main() {
       expect: () => [isA<AuthLoading>(), isA<AuthComplete>()],
       verify: (bloc) {
         verify(signinUserUseCase.call(params: tUserAuth)).called(1);
+      });
+  blocTest('emits loading, loaded when sigin with google is called',
+      setUp: () {
+        when(googleUseCase.call())
+            .thenAnswer((_) async => Right(MockUserCredential()));
+      },
+      build: () => AuthStateCubit(),
+      act: (bloc) => bloc.googleSignIn(useCase: googleUseCase),
+      expect: () => [isA<AuthLoading>(), isA<AuthComplete>()],
+      verify: (bloc) {
+        verify(googleUseCase.call()).called(1);
       });
 }
