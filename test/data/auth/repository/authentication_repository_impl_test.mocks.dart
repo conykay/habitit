@@ -96,6 +96,14 @@ class MockAuthFirebaseService extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> isLoggedIn() =>
+      (super.noSuchMethod(
+            Invocation.method(#isLoggedIn, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 }
 
 /// A class which mocks [NetworkInfo].
@@ -113,4 +121,13 @@ class MockNetworkInfo extends _i1.Mock implements _i6.NetworkInfo {
             returnValue: _i4.Future<bool>.value(false),
           )
           as _i4.Future<bool>);
+}
+
+/// A class which mocks [UserCredential].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockUserCredential extends _i1.Mock implements _i2.UserCredential {
+  MockUserCredential() {
+    _i1.throwOnMissingStub(this);
+  }
 }

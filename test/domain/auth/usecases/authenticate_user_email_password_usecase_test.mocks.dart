@@ -105,4 +105,12 @@ class MockAuthenticationRepository extends _i1.Mock
             ),
           )
           as _i4.Future<_i2.Either<_i5.Failures, dynamic>>);
+
+  @override
+  _i4.Future<bool> isLoggedIn() =>
+      (super.noSuchMethod(
+            Invocation.method(#isLoggedIn, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 }

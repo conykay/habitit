@@ -11,7 +11,7 @@ class SigninEmailPasswordUseCase
   SigninEmailPasswordUseCase(this.repository);
 
   @override
-  Future<Either> call({AuthUserReqEntity? params}) {
+  Future<Either<Failures, UserCredential>> call({AuthUserReqEntity? params}) {
     return repository.signinUserEmailPassword(authData: params!);
   }
 }

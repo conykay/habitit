@@ -10,4 +10,5 @@ abstract class AuthenticationRepository {
       {required AuthUserReqEntity authData});
   Future<Either<Failures, UserCredential>> googleSignin();
   Future<Either<Failures, dynamic>> logout();
+  Future<bool> isLoggedIn();
 }
