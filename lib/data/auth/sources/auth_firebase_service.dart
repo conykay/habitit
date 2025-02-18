@@ -54,6 +54,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
       return await auth.signInWithEmailAndPassword(
           email: authData.email, password: authData.password);
     } catch (e) {
+      print(e.toString());
       rethrow;
     }
   }

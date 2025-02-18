@@ -1,32 +1,74 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:habitit/common/button/bloc/button_state.dart';
+import 'package:habitit/common/button/bloc/button_state_cubit.dart';
+import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
+import 'package:habitit/core/network/network_info.dart';
+import 'package:habitit/data/auth/repository/authentication_repository_impl.dart';
+import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
+import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
+import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
+import 'package:habitit/presentation/home/pages/home_page.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+
+import '../../../domain/auth/usecases/signin_google.dart';
 
 class SigninPage extends StatelessWidget {
   SigninPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: SingleChildScrollView(
-          child: Center(
-            child: SizedBox(
-              width: MediaQuery.sizeOf(context).width > 600 ? 400 : null,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildIntro(context),
-                  SignInWidget(),
-                ],
+    return RepositoryProvider(
+      create: (context) => AuthenticationRepositoryImpl(
+          firebaseService: AuthFirebaseServiceImpl(
+            firestore: FirebaseFirestore.instance,
+            auth: FirebaseAuth.instance,
+          ),
+          networkInfo: NetworkInfoImpl(
+            internetConnectionChecker: InternetConnectionChecker.instance,
+          )),
+      child: BlocProvider(
+        create: (context) => ButtonStateCubit(),
+        child: BlocListener<ButtonStateCubit, ButtonState>(
+          listener: (context, state) {
+            if (state.state == Buttonstate.loaded) {
+              AppNavigator.pushReplacement(context, HomePage());
+            }
+            if (state.state == Buttonstate.failed) {
+              var snackBar = SnackBar(
+                content: Text(state.error.toString()),
+                behavior: SnackBarBehavior.floating,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          },
+          child: Scaffold(
+            body: SafeArea(
+                child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: SingleChildScrollView(
+                child: Center(
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width > 600 ? 400 : null,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildIntro(context),
+                        SignInWidget(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+            )),
           ),
         ),
-      )),
+      ),
     );
   }
 
@@ -57,8 +99,8 @@ class SigninPage extends StatelessWidget {
           'Log in to Continue',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 30,
-            color: Theme.of(context).colorScheme.primary,
+            fontSize: 25,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ],
@@ -71,15 +113,22 @@ class SignInWidget extends StatelessWidget {
 
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: [
           SizedBox(height: 25),
           TextFormField(
             controller: _emailTextController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'This field cannot be empty';
+              }
+            },
             decoration: InputDecoration(
               hintText: 'Email',
             ),
@@ -87,21 +136,40 @@ class SignInWidget extends StatelessWidget {
           SizedBox(height: 20),
           TextFormField(
             controller: _passwordTextController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'password cannot be empty';
+              }
+            },
             decoration: InputDecoration(
               hintText: 'Password',
             ),
           ),
           SizedBox(height: 25),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text('Continue'),
+          ReactiveElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                context.read<ButtonStateCubit>().call(
+                    usecase: SigninEmailPasswordUseCase(
+                        context.read<AuthenticationRepositoryImpl>()),
+                    params: AuthUserReqEntity(
+                      email: _emailTextController.text,
+                      password: _emailTextController.text,
+                    ));
+              }
+            },
+            title: 'Continue',
           ),
           SizedBox(height: 25),
           Divider(thickness: 1),
           SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {},
-            child: Row(
+          ReactiveElevatedButton(
+            onPressed: () {
+              context.read<ButtonStateCubit>().call(
+                  usecase: SigninGoogleUseCase(
+                      context.read<AuthenticationRepositoryImpl>()));
+            },
+            content: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FaIcon(

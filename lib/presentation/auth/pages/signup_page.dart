@@ -98,7 +98,7 @@ class SignupPage extends StatelessWidget {
           'Signup & Get Started',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 28,
+            fontSize: 25,
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
