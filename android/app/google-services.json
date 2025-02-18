@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "447620558965",
+    "project_id": "habitit-ef892",
+    "storage_bucket": "habitit-ef892.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447620558965:android:5aabb26330a5d77fef483c",
+        "android_client_info": {
+          "package_name": "com.example.habitit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447620558965-lun6omgfel93rjp9ohmbcl2tufqdhalh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.habitit",
+            "certificate_hash": "15abf66a833626d796d4bd775b2ab7c54c42b7b4"
+          }
+        },
+        {
+          "client_id": "447620558965-a0drheirkfkaoqkb6c6kq3c81oifp0bj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcF01jAVrkOou2tUW-Dlsnp125mcgL-gc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447620558965-a0drheirkfkaoqkb6c6kq3c81oifp0bj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "447620558965-4chho0g6faoq6a1cqcj85s39hr97u2bd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.habitit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
