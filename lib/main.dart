@@ -1,11 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
+import 'package:habitit/firebase_options.dart';
+import 'package:habitit/presentation/auth/pages/signup_page.dart';
 
 import 'core/theme/repository/theme_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MainApp(
     themeRepository: ThemeRepository(),
   ));
@@ -35,20 +43,7 @@ class MainApp extends StatelessWidget {
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: state.themeMode,
-            home: Scaffold(
-              appBar: AppBar(
-                actions: [
-                  Switch(
-                    value: state.themeMode == ThemeMode.dark,
-                    onChanged: (_) async =>
-                        context.read<ThemeCubit>().switchTheme(),
-                  ),
-                ],
-              ),
-              body: Center(
-                child: Text('Hello World!'),
-              ),
-            ),
+            home: SignupPage(),
           );
         }),
       ),
