@@ -8,8 +8,9 @@ class SigninGoogleUseCase
     extends UseCase<Either<Failures, UserCredential>, dynamic> {
   final AuthenticationRepository repository;
   SigninGoogleUseCase(this.repository);
+
   @override
-  Future<Either> call({params}) {
+  Future<Either<Failures, UserCredential>> call({params}) {
     return repository.googleSignin();
   }
 }

@@ -10,8 +10,9 @@ class LogoutUserUseCase extends UseCase<Either<Failures, dynamic>, dynamic> {
   LogoutUserUseCase({
     required this.repository,
   });
+
   @override
-  Future<Either> call({params}) {
+  Future<Either<Failures, dynamic>> call({params}) {
     return repository.logout();
   }
 }
