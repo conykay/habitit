@@ -9,7 +9,7 @@ import 'package:habitit/data/auth/repository/authentication_repository_impl.dart
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
-import 'package:habitit/presentation/home/pages/home_page.dart';
+import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
 
 import '../../../domain/auth/usecases/signin_google.dart';
 
@@ -23,7 +23,7 @@ class SigninPage extends StatelessWidget {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
           if (state.state == Buttonstate.loaded) {
-            AppNavigator.pushAndRemove(context, HomePage());
+            AppNavigator.pushAndRemove(context, NavigationBasePage());
           }
           if (state.state == Buttonstate.failed) {
             var snackBar = SnackBar(

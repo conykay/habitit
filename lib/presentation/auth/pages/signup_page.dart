@@ -11,7 +11,7 @@ import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
-import 'package:habitit/presentation/home/pages/home_page.dart';
+import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -23,7 +23,7 @@ class SignupPage extends StatelessWidget {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
           if (state.state == Buttonstate.loaded) {
-            AppNavigator.pushAndRemove(context, HomePage());
+            AppNavigator.pushAndRemove(context, NavigationBasePage());
           }
           if (state.state == Buttonstate.failed) {
             OtherFailure failure = state.error;

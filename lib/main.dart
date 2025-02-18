@@ -12,7 +12,7 @@ import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
-import 'package:habitit/presentation/home/pages/home_page.dart';
+import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import 'core/theme/repository/theme_repository.dart';
@@ -72,7 +72,7 @@ class MainApp extends StatelessWidget {
               home: BlocListener<AuthStateCubit, AuthState>(
                 listener: (context, state) {
                   if (state is Authenticated) {
-                    AppNavigator.pushReplacement(context, HomePage());
+                    AppNavigator.pushReplacement(context, NavigationBasePage());
                   }
                   if (state is UnAuthenticated) {
                     AppNavigator.pushReplacement(context, SignupPage());
