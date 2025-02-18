@@ -13,6 +13,7 @@ abstract class AuthFirebaseService {
       {required AuthUserReqEntity authData});
   Future<UserCredential> googleSignin();
   Future<void> logout();
+  Future<bool> isLoggedIn();
 }
 
 class AuthFirebaseServiceImpl implements AuthFirebaseService {
@@ -98,6 +99,19 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
       await auth.signOut();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    try {
+      if (auth.currentUser != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

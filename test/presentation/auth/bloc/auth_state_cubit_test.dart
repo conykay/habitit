@@ -10,7 +10,7 @@ import 'package:habitit/presentation/auth/bloc/auth_state_cubit.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../../data/auth/sources/auth_firebase_service_impl_test.mocks.dart';
+import '../../../data/auth/repository/authentication_repository_impl_test.mocks.dart';
 import 'auth_state_cubit_test.mocks.dart';
 
 @GenerateMocks([

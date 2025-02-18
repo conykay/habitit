@@ -73,4 +73,17 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return Left(OtherFailure('check network connection'));
     }
   }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    if (await networkInfo.hasConection) {
+      try {
+        return await firebaseService.isLoggedIn();
+      } catch (e) {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 }

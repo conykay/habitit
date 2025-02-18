@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/network/network_info.dart';
@@ -8,10 +9,13 @@ import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../sources/auth_firebase_service_impl_test.mocks.dart';
 import 'authentication_repository_impl_test.mocks.dart';
 
-@GenerateMocks([AuthFirebaseService, NetworkInfo])
+@GenerateMocks([
+  AuthFirebaseService,
+  NetworkInfo,
+  UserCredential,
+])
 void main() {
   late AuthenticationRepositoryImpl authenticationRepositoryImpl;
   late MockAuthFirebaseService mockAuthFirebaseService;
@@ -213,6 +217,17 @@ void main() {
         verify(mockNetworkInfo.hasConection).called(1);
         verifyZeroInteractions(mockAuthFirebaseService);
       });
+    });
+  });
+
+  group('check if user is logged in', () {
+    setUp(() {
+      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+    });
+    test('user is logged in', () async {
+      when(mockAuthFirebaseService.isLoggedIn()).thenAnswer((_) async => true);
+      var loggedin = await authenticationRepositoryImpl.isLoggedIn();
+      expect(loggedin, true);
     });
   });
 }

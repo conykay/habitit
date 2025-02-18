@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../../data/auth/sources/auth_firebase_service_impl_test.mocks.dart';
+import '../../../data/auth/repository/authentication_repository_impl_test.mocks.dart';
 import 'authenticate_user_email_password_usecase_test.mocks.dart';
 
 void main() {
