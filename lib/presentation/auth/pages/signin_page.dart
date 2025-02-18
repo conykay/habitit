@@ -19,7 +19,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '../../../domain/auth/usecases/signin_google.dart';
 
 class SigninPage extends StatelessWidget {
-  SigninPage({super.key});
+  const SigninPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +128,7 @@ class SignInWidget extends StatelessWidget {
               if (value!.isEmpty) {
                 return 'This field cannot be empty';
               }
+              return null;
             },
             decoration: InputDecoration(
               hintText: 'Email',
@@ -140,6 +141,7 @@ class SignInWidget extends StatelessWidget {
               if (value!.isEmpty) {
                 return 'password cannot be empty';
               }
+              return null;
             },
             decoration: InputDecoration(
               hintText: 'Password',

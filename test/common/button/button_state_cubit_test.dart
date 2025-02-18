@@ -20,7 +20,6 @@ void main() {
   });
 
   final tParams = {'param1': 'value1'};
-  final tResult = 'result';
   final tCred = MockUserCredential();
 
   group('ButtonStateCubit', () {
