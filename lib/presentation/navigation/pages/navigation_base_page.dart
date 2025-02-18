@@ -5,8 +5,20 @@ import 'package:habitit/common/navigation/navigation_state.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/navigation.dart';
 
+import '../../analytics/pages/analytics_page.dart';
+import '../../habits/pages/habits_page.dart';
+import '../../home/pages/home_page.dart';
+import '../../profile/pages/profile_page.dart';
+
 class NavigationBasePage extends StatelessWidget {
-  const NavigationBasePage({super.key});
+  NavigationBasePage({super.key});
+
+  final List<Widget> pages = [
+    HomePage(),
+    HabitsPage(),
+    AnalyticsPage(),
+    ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +53,10 @@ class NavigationBasePage extends StatelessWidget {
               ],
             );
           })),
-      body: Center(
-        child: Text('Tiny Tina Trashhh'),
+      body: BlocBuilder<NavigationStateCubit, NavigationState>(
+        builder: (context, state) {
+          return pages[state.index];
+        },
       ),
       bottomNavigationBar: BlocBuilder<NavigationStateCubit, NavigationState>(
           builder: (context, state) {
@@ -61,7 +75,11 @@ class NavigationBasePage extends StatelessWidget {
                     ),
                   ))
               .toList(),
-          onDestinationSelected: (index) {},
+          onDestinationSelected: (index) {
+            context
+                .read<NavigationStateCubit>()
+                .getNavBarItem(NavItem.values[index]);
+          },
         );
       }),
     );

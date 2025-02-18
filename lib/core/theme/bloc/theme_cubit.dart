@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/core/theme/repository/theme_repository.dart';
+
+import '../repository/theme_repository.dart';
 
 part 'theme_state.dart';
 

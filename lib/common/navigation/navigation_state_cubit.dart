@@ -11,14 +11,13 @@ class NavigationStateCubit extends Cubit<NavigationState> {
         emit(NavigationState(navItem: NavItem.home, index: 0));
         break;
       case NavItem.habits:
-        emit(NavigationState(navItem: NavItem.home, index: 1));
+        emit(NavigationState(navItem: NavItem.habits, index: 1));
         break;
       case NavItem.analytics:
-        emit(NavigationState(navItem: NavItem.home, index: 2));
+        emit(NavigationState(navItem: NavItem.analytics, index: 2));
         break;
-
       case NavItem.profile:
-        emit(NavigationState(navItem: NavItem.home, index: 3));
+        emit(NavigationState(navItem: NavItem.profile, index: 3));
         break;
     }
   }
