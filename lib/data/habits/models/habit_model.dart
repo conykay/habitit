@@ -8,6 +8,8 @@ import 'package:habitit/core/sync/syncable.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:hive/hive.dart';
 
+part 'habit_model.g.dart';
+
 @HiveType(typeId: 0)
 class HabitModel extends HiveSyncable with EquatableMixin {
   @HiveField(0)

@@ -29,13 +29,23 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeAuthenticationRepository_0 extends _i1.SmartFake
     implements _i2.AuthenticationRepository {
-  _FakeAuthenticationRepository_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeAuthenticationRepository_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
-  _FakeEither_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeEither_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [SigninGoogleUseCase].
@@ -48,29 +58,32 @@ class MockSigninGoogleUseCase extends _i1.Mock
   }
 
   @override
-  _i2.AuthenticationRepository get repository =>
-      (super.noSuchMethod(
-            Invocation.getter(#repository),
-            returnValue: _FakeAuthenticationRepository_0(
-              this,
-              Invocation.getter(#repository),
-            ),
-          )
-          as _i2.AuthenticationRepository);
+  _i2.AuthenticationRepository get repository => (super.noSuchMethod(
+        Invocation.getter(#repository),
+        returnValue: _FakeAuthenticationRepository_0(
+          this,
+          Invocation.getter(#repository),
+        ),
+      ) as _i2.AuthenticationRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>> call({
-    dynamic params,
-  }) =>
+  _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>> call(
+          {dynamic params}) =>
       (super.noSuchMethod(
-            Invocation.method(#call, [], {#params: params}),
-            returnValue:
-                _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>.value(
-                  _FakeEither_1<_i6.Failures, _i7.UserCredential>(
-                    this,
-                    Invocation.method(#call, [], {#params: params}),
-                  ),
-                ),
-          )
-          as _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>);
+        Invocation.method(
+          #call,
+          [],
+          {#params: params},
+        ),
+        returnValue:
+            _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>.value(
+                _FakeEither_1<_i6.Failures, _i7.UserCredential>(
+          this,
+          Invocation.method(
+            #call,
+            [],
+            {#params: params},
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>);
 }

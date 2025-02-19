@@ -5,14 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
+import 'package:habitit/core/helper/hive/register_hive_adapters.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/network/network_info.dart';
+import 'package:habitit/core/sync/sync_coordinator.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
+import 'package:habitit/data/habits/models/habit_model.dart';
+import 'package:habitit/data/habits/source/firebase_service.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
 import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import 'core/theme/repository/theme_repository.dart';
@@ -21,10 +27,17 @@ import 'data/auth/sources/auth_firebase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  registerHiveAdapters();
+  //open hive boxes
+  final habitBox = await Hive.openBox<HabitModel>('Habits');
+  final firebaseService = FirebaseServiceImpl();
+  final syncCoordinator =
+      SyncCoordinator(firebaseService: firebaseService, habitBox: habitBox);
+  syncCoordinator.initialize();
   runApp(MainApp(
     themeRepository: ThemeRepository(),
   ));

@@ -40,4 +40,38 @@ class HabitsRepositoryImpl implements HabitRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either> getAllHabits() async {
+    final connectivity = await Connectivity().checkConnectivity();
+    final bool isOnline = connectivity != ConnectivityResult.none;
+    var habitList = <HabitModel>[];
+    try {
+      if (isOnline) {
+        habitList = await _firebaseService.getAllHabits();
+      } else {
+        habitList = await _hiveService.getAllHabits();
+      }
+      return Right(habitList);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either> getHabit({required String id}) async {
+    final connectivity = await Connectivity().checkConnectivity();
+    final bool isOnline = connectivity != ConnectivityResult.none;
+    try {
+      var habit;
+      if (isOnline) {
+        habit = await _firebaseService.getHabit(id: id);
+      } else {
+        habit = await _hiveService.getHabit(id: id);
+      }
+      return Right(habit);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }

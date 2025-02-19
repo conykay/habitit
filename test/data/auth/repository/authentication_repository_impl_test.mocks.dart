@@ -27,8 +27,13 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeUserCredential_0 extends _i1.SmartFake
     implements _i2.UserCredential {
-  _FakeUserCredential_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeUserCredential_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [AuthFirebaseService].
@@ -41,69 +46,76 @@ class MockAuthFirebaseService extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.UserCredential> createUserEmailPassword({
-    required _i5.AuthUserReqEntity? authData,
-  }) =>
+  _i4.Future<_i2.UserCredential> createUserEmailPassword(
+          {required _i5.AuthUserReqEntity? authData}) =>
       (super.noSuchMethod(
-            Invocation.method(#createUserEmailPassword, [], {
-              #authData: authData,
-            }),
-            returnValue: _i4.Future<_i2.UserCredential>.value(
-              _FakeUserCredential_0(
-                this,
-                Invocation.method(#createUserEmailPassword, [], {
-                  #authData: authData,
-                }),
-              ),
-            ),
-          )
-          as _i4.Future<_i2.UserCredential>);
+        Invocation.method(
+          #createUserEmailPassword,
+          [],
+          {#authData: authData},
+        ),
+        returnValue: _i4.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
+          this,
+          Invocation.method(
+            #createUserEmailPassword,
+            [],
+            {#authData: authData},
+          ),
+        )),
+      ) as _i4.Future<_i2.UserCredential>);
 
   @override
-  _i4.Future<_i2.UserCredential> signinUserEmailPassword({
-    required _i5.AuthUserReqEntity? authData,
-  }) =>
+  _i4.Future<_i2.UserCredential> signinUserEmailPassword(
+          {required _i5.AuthUserReqEntity? authData}) =>
       (super.noSuchMethod(
-            Invocation.method(#signinUserEmailPassword, [], {
-              #authData: authData,
-            }),
-            returnValue: _i4.Future<_i2.UserCredential>.value(
-              _FakeUserCredential_0(
-                this,
-                Invocation.method(#signinUserEmailPassword, [], {
-                  #authData: authData,
-                }),
-              ),
-            ),
-          )
-          as _i4.Future<_i2.UserCredential>);
+        Invocation.method(
+          #signinUserEmailPassword,
+          [],
+          {#authData: authData},
+        ),
+        returnValue: _i4.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
+          this,
+          Invocation.method(
+            #signinUserEmailPassword,
+            [],
+            {#authData: authData},
+          ),
+        )),
+      ) as _i4.Future<_i2.UserCredential>);
 
   @override
-  _i4.Future<_i2.UserCredential> googleSignin() =>
-      (super.noSuchMethod(
-            Invocation.method(#googleSignin, []),
-            returnValue: _i4.Future<_i2.UserCredential>.value(
-              _FakeUserCredential_0(this, Invocation.method(#googleSignin, [])),
-            ),
-          )
-          as _i4.Future<_i2.UserCredential>);
+  _i4.Future<_i2.UserCredential> googleSignin() => (super.noSuchMethod(
+        Invocation.method(
+          #googleSignin,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
+          this,
+          Invocation.method(
+            #googleSignin,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.UserCredential>);
 
   @override
-  _i4.Future<void> logout() =>
-      (super.noSuchMethod(
-            Invocation.method(#logout, []),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
+  _i4.Future<void> logout() => (super.noSuchMethod(
+        Invocation.method(
+          #logout,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i4.Future<bool> isLoggedIn() =>
-      (super.noSuchMethod(
-            Invocation.method(#isLoggedIn, []),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> isLoggedIn() => (super.noSuchMethod(
+        Invocation.method(
+          #isLoggedIn,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }
 
 /// A class which mocks [NetworkInfo].
@@ -115,12 +127,10 @@ class MockNetworkInfo extends _i1.Mock implements _i6.NetworkInfo {
   }
 
   @override
-  _i4.Future<bool> get hasConection =>
-      (super.noSuchMethod(
-            Invocation.getter(#hasConection),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> get hasConection => (super.noSuchMethod(
+        Invocation.getter(#hasConection),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }
 
 /// A class which mocks [UserCredential].

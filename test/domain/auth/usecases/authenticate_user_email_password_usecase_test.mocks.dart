@@ -28,8 +28,13 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
-  _FakeEither_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeEither_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [AuthenticationRepository].
@@ -43,74 +48,86 @@ class MockAuthenticationRepository extends _i1.Mock
 
   @override
   _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>
-  createUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
-      (super.noSuchMethod(
-            Invocation.method(#createUserEmailPassword, [], {
-              #authData: authData,
-            }),
+      createUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #createUserEmailPassword,
+              [],
+              {#authData: authData},
+            ),
             returnValue:
                 _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
-                  _FakeEither_0<_i5.Failures, _i6.UserCredential>(
-                    this,
-                    Invocation.method(#createUserEmailPassword, [], {
-                      #authData: authData,
-                    }),
-                  ),
-                ),
-          )
-          as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+                    _FakeEither_0<_i5.Failures, _i6.UserCredential>(
+              this,
+              Invocation.method(
+                #createUserEmailPassword,
+                [],
+                {#authData: authData},
+              ),
+            )),
+          ) as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 
   @override
   _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>
-  signinUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
-      (super.noSuchMethod(
-            Invocation.method(#signinUserEmailPassword, [], {
-              #authData: authData,
-            }),
+      signinUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #signinUserEmailPassword,
+              [],
+              {#authData: authData},
+            ),
             returnValue:
                 _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
-                  _FakeEither_0<_i5.Failures, _i6.UserCredential>(
-                    this,
-                    Invocation.method(#signinUserEmailPassword, [], {
-                      #authData: authData,
-                    }),
-                  ),
-                ),
-          )
-          as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+                    _FakeEither_0<_i5.Failures, _i6.UserCredential>(
+              this,
+              Invocation.method(
+                #signinUserEmailPassword,
+                [],
+                {#authData: authData},
+              ),
+            )),
+          ) as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 
   @override
   _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>> googleSignin() =>
       (super.noSuchMethod(
-            Invocation.method(#googleSignin, []),
-            returnValue:
-                _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
-                  _FakeEither_0<_i5.Failures, _i6.UserCredential>(
-                    this,
-                    Invocation.method(#googleSignin, []),
-                  ),
-                ),
-          )
-          as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
+        Invocation.method(
+          #googleSignin,
+          [],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
+                _FakeEither_0<_i5.Failures, _i6.UserCredential>(
+          this,
+          Invocation.method(
+            #googleSignin,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failures, dynamic>> logout() =>
-      (super.noSuchMethod(
-            Invocation.method(#logout, []),
-            returnValue: _i4.Future<_i2.Either<_i5.Failures, dynamic>>.value(
-              _FakeEither_0<_i5.Failures, dynamic>(
-                this,
-                Invocation.method(#logout, []),
-              ),
-            ),
-          )
-          as _i4.Future<_i2.Either<_i5.Failures, dynamic>>);
+  _i4.Future<_i2.Either<_i5.Failures, dynamic>> logout() => (super.noSuchMethod(
+        Invocation.method(
+          #logout,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failures, dynamic>>.value(
+            _FakeEither_0<_i5.Failures, dynamic>(
+          this,
+          Invocation.method(
+            #logout,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failures, dynamic>>);
 
   @override
-  _i4.Future<bool> isLoggedIn() =>
-      (super.noSuchMethod(
-            Invocation.method(#isLoggedIn, []),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> isLoggedIn() => (super.noSuchMethod(
+        Invocation.method(
+          #isLoggedIn,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }

@@ -25,8 +25,13 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
-  _FakeEither_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeEither_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [HabitRepository].
@@ -38,17 +43,22 @@ class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<dynamic, dynamic>> addHabit({
-    required _i5.HabitEnity? habit,
-  }) =>
+  _i4.Future<_i2.Either<dynamic, dynamic>> addHabit(
+          {required _i5.HabitEnity? habit}) =>
       (super.noSuchMethod(
-            Invocation.method(#addHabit, [], {#habit: habit}),
-            returnValue: _i4.Future<_i2.Either<dynamic, dynamic>>.value(
-              _FakeEither_0<dynamic, dynamic>(
-                this,
-                Invocation.method(#addHabit, [], {#habit: habit}),
-              ),
-            ),
-          )
-          as _i4.Future<_i2.Either<dynamic, dynamic>>);
+        Invocation.method(
+          #addHabit,
+          [],
+          {#habit: habit},
+        ),
+        returnValue: _i4.Future<_i2.Either<dynamic, dynamic>>.value(
+            _FakeEither_0<dynamic, dynamic>(
+          this,
+          Invocation.method(
+            #addHabit,
+            [],
+            {#habit: habit},
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<dynamic, dynamic>>);
 }

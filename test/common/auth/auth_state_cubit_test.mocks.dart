@@ -26,8 +26,13 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeAuthenticationRepository_0 extends _i1.SmartFake
     implements _i2.AuthenticationRepository {
-  _FakeAuthenticationRepository_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeAuthenticationRepository_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [UserLoggedInUseCase].
@@ -40,21 +45,21 @@ class MockUserLoggedInUseCase extends _i1.Mock
   }
 
   @override
-  _i2.AuthenticationRepository get repository =>
-      (super.noSuchMethod(
-            Invocation.getter(#repository),
-            returnValue: _FakeAuthenticationRepository_0(
-              this,
-              Invocation.getter(#repository),
-            ),
-          )
-          as _i2.AuthenticationRepository);
+  _i2.AuthenticationRepository get repository => (super.noSuchMethod(
+        Invocation.getter(#repository),
+        returnValue: _FakeAuthenticationRepository_0(
+          this,
+          Invocation.getter(#repository),
+        ),
+      ) as _i2.AuthenticationRepository);
 
   @override
-  _i4.Future<bool> call({dynamic params}) =>
-      (super.noSuchMethod(
-            Invocation.method(#call, [], {#params: params}),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
+  _i4.Future<bool> call({dynamic params}) => (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [],
+          {#params: params},
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }
