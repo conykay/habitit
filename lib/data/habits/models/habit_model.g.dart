@@ -21,7 +21,7 @@ class HabitModelAdapter extends TypeAdapter<HabitModel> {
       name: fields[1] as String,
       description: fields[2] as String?,
       frequency: fields[3] as HabitFrequency,
-      startDate: fields[4] as Timestamp,
+      startDate: fields[4] as DateTime,
       completedDates: (fields[5] as List).cast<DateTime>(),
     ).._synced = fields[6] as bool;
   }

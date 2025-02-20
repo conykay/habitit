@@ -1,9 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
+import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
-
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
 import '../source/firebase_service.dart';
@@ -12,29 +10,36 @@ import '../source/hive_service.dart';
 class HabitsRepositoryImpl implements HabitRepository {
   final HiveService _hiveService;
   final FirebaseService _firebaseService;
+  final NetworkInfo _networkInfo;
+
   HabitsRepositoryImpl({
     required HiveService hiveService,
     required FirebaseService firebaseService,
+    required NetworkInfo networkInfo,
   })  : _hiveService = hiveService,
-        _firebaseService = firebaseService;
+        _firebaseService = firebaseService,
+        _networkInfo = networkInfo;
 
   @override
-  Future<Either> addHabit({required HabitEnity habit}) async {
-    final connectivity = await Connectivity().checkConnectivity();
-    final bool isOnline = connectivity != ConnectivityResult.none;
-    final HabitModel habitModel = habit.toModel();
+  Future<Either> addHabit({required HabitModel habit}) async {
+    var isOnline = await _networkInfo.hasConection;
+
     try {
       if (isOnline) {
         try {
-          await _firebaseService.addHabit(habit: habitModel);
-          habitModel.synced = true;
+          await _firebaseService.addHabit(habit: habit).then((_) async {
+            habit.synced = true;
+            await _hiveService.addHabit(habit: habit);
+          });
         } catch (e) {
-          habitModel.synced = false;
+          habit.synced = false;
+          return Left(e.toString());
         }
       } else {
-        habitModel.synced = false;
+        habit.synced = false;
+        await _hiveService.addHabit(habit: habit);
       }
-      await _hiveService.addHabit(habit: habitModel);
+
       return Right('Saved success fully');
     } catch (e) {
       return Left(e.toString());
@@ -43,16 +48,24 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> getAllHabits() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    final bool isOnline = connectivity != ConnectivityResult.none;
+    var isOnline = await _networkInfo.hasConection;
+
     var habitList = <HabitModel>[];
     try {
       if (isOnline) {
-        habitList = await _firebaseService.getAllHabits();
+        var localList = await _hiveService.getAllHabits();
+        var remoteList = await _firebaseService.getAllHabits();
+        for (var element in remoteList) {
+          if (!localList.contains(element)) {
+            await _hiveService.addHabit(habit: element);
+          }
+        }
+        habitList = await _hiveService.getAllHabits();
+        print('This is what is brought back');
       } else {
         habitList = await _hiveService.getAllHabits();
       }
-      return Right(habitList);
+      return Right(habitList.map((e) => e.toEntity()).toList());
     } catch (e) {
       return Left(e.toString());
     }
@@ -60,10 +73,10 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> getHabit({required String id}) async {
-    final connectivity = await Connectivity().checkConnectivity();
-    final bool isOnline = connectivity != ConnectivityResult.none;
+    var isOnline = await _networkInfo.hasConection;
+
     try {
-      var habit;
+      HabitModel habit;
       if (isOnline) {
         habit = await _firebaseService.getHabit(id: id);
       } else {

@@ -6,7 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
-import 'package:habitit/domain/habits/entities/habit_enity.dart' as _i5;
+import 'package:habitit/data/habits/models/habit_model.dart' as _i5;
 import 'package:habitit/domain/habits/repository/habit_repository.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -44,7 +44,7 @@ class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> addHabit(
-          {required _i5.HabitEnity? habit}) =>
+          {required _i5.HabitModel? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #addHabit,
@@ -58,6 +58,42 @@ class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
             #addHabit,
             [],
             {#habit: habit},
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<dynamic, dynamic>>);
+
+  @override
+  _i4.Future<_i2.Either<dynamic, dynamic>> getAllHabits() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllHabits,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<dynamic, dynamic>>.value(
+            _FakeEither_0<dynamic, dynamic>(
+          this,
+          Invocation.method(
+            #getAllHabits,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<dynamic, dynamic>>);
+
+  @override
+  _i4.Future<_i2.Either<dynamic, dynamic>> getHabit({required String? id}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getHabit,
+          [],
+          {#id: id},
+        ),
+        returnValue: _i4.Future<_i2.Either<dynamic, dynamic>>.value(
+            _FakeEither_0<dynamic, dynamic>(
+          this,
+          Invocation.method(
+            #getHabit,
+            [],
+            {#id: id},
           ),
         )),
       ) as _i4.Future<_i2.Either<dynamic, dynamic>>);

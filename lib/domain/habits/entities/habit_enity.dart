@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-enum HabitFrequency { daily, weekly }
+import '../../../data/habits/models/habit_frequency.dart';
 
 class HabitEnity extends Equatable {
   final String id;
@@ -11,6 +11,7 @@ class HabitEnity extends Equatable {
   final HabitFrequency frequency;
   final Timestamp startDate;
   final List<DateTime>? completedDates;
+  final bool synced;
   const HabitEnity({
     required this.id,
     required this.name,
@@ -18,6 +19,7 @@ class HabitEnity extends Equatable {
     required this.frequency,
     required this.startDate,
     this.completedDates,
+    required this.synced,
   });
 
   @override

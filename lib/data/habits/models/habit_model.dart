@@ -8,9 +8,12 @@ import 'package:habitit/core/sync/syncable.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:hive/hive.dart';
 
+import 'habit_frequency.dart';
+
 part 'habit_model.g.dart';
 
 @HiveType(typeId: 0)
+// ignore: must_be_immutable
 class HabitModel extends HiveSyncable with EquatableMixin {
   @HiveField(0)
   final String id;
@@ -25,7 +28,7 @@ class HabitModel extends HiveSyncable with EquatableMixin {
   final HabitFrequency frequency;
 
   @HiveField(4)
-  final Timestamp startDate;
+  final DateTime startDate;
 
   @HiveField(5)
   final List<DateTime> completedDates;
@@ -49,7 +52,7 @@ class HabitModel extends HiveSyncable with EquatableMixin {
       'name': name,
       'description': description,
       'frequency': frequency.toString().split('.').last,
-      'startDate': startDate.toDate().toString(),
+      'startDate': Timestamp.fromDate(startDate),
       'completedDates':
           completedDates.map((x) => x.millisecondsSinceEpoch).toList(),
       'synced': synced,
@@ -65,9 +68,9 @@ class HabitModel extends HiveSyncable with EquatableMixin {
       frequency: HabitFrequency.values.firstWhere(
           (e) => e.toString().split('.').last == map['frequency'],
           orElse: () => HabitFrequency.daily),
-      startDate: Timestamp.fromDate(DateTime.parse(map['startDate'])),
-      completedDates: List<DateTime>.from(
-        (map['completedDates'] as List<int>).map<DateTime>(
+      startDate: (map['startDate'] as Timestamp).toDate(),
+      completedDates: List.from(
+        (map['completedDates']).map(
           (x) => DateTime.fromMillisecondsSinceEpoch(x),
         ),
       ),
@@ -99,8 +102,9 @@ extension HabitEntityX on HabitModel {
         name: name,
         description: description,
         frequency: frequency,
-        startDate: startDate,
+        startDate: Timestamp.fromDate(startDate),
         completedDates: completedDates,
+        synced: synced,
       );
 }
 
@@ -109,7 +113,7 @@ extension HabitModelX on HabitEnity {
       id: id,
       name: name,
       frequency: frequency,
-      startDate: startDate,
+      startDate: startDate.toDate(),
       synced: false,
       completedDates: completedDates ?? []);
 }

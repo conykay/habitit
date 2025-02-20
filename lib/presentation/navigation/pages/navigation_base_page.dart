@@ -7,9 +7,17 @@ import 'package:habitit/common/navigation/navigation_state.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/navigation/navigation.dart';
+import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
+import '../../../data/habits/repository/habits_repository_impl.dart';
+import '../../../data/habits/source/firebase_service.dart';
+import '../../../data/habits/source/hive_service.dart';
+import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 import '../../analytics/pages/analytics_page.dart';
+import '../../habits/bloc/habit_state_cubit.dart';
+import '../../habits/bloc/selected_frequency_cubit.dart';
 import '../../habits/pages/habits_page.dart';
 import '../../home/pages/home_page.dart';
 import '../../profile/pages/profile_page.dart';
@@ -25,17 +33,44 @@ class NavigationBasePage extends StatelessWidget {
     ProfilePage(),
   ];
 
+  final hiveService = HiveServiceImpl();
+  final firebaseService = FirebaseServiceImpl();
+  final internet = InternetConnectionChecker.createInstance();
+  final networkInfo = NetworkInfoImpl(
+      internetConnectionChecker: InternetConnectionChecker.instance);
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NavigationStateCubit(),
-      child: LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth >= 600) {
-          return _largeDeviceLayout();
-        } else {
-          return _smallDeviceLayout();
-        }
-      }),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => HabitsRepositoryImpl(
+              hiveService: hiveService,
+              firebaseService: firebaseService,
+              networkInfo: networkInfo),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => NavigationStateCubit(),
+          ),
+          BlocProvider(
+            create: (context) => SelectedFrequencyCubit(),
+          ),
+          BlocProvider(
+              create: (context) => HabitStateCubit(
+                  usecase: GetAllHabitsUsecase(
+                      repository: context.read<HabitsRepositoryImpl>()))),
+        ],
+        child: LayoutBuilder(builder: (context, constraints) {
+          if (constraints.maxWidth >= 600) {
+            return _largeDeviceLayout();
+          } else {
+            return _smallDeviceLayout();
+          }
+        }),
+      ),
     );
   }
 

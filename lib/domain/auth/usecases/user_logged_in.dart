@@ -6,7 +6,7 @@ class UserLoggedInUseCase extends UseCase<bool, dynamic> {
   UserLoggedInUseCase(this.repository);
 
   @override
-  Future<bool> call({params}) {
-    return repository.isLoggedIn();
+  Future<bool> call({params}) async {
+    return await repository.isLoggedIn();
   }
 }
