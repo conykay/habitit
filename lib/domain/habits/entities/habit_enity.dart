@@ -23,5 +23,6 @@ class HabitEnity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, name, description, frequency, startDate];
+  List<Object?> get props =>
+      [id, name, description, frequency, startDate, completedDates];
 }

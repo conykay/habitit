@@ -76,13 +76,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   Future<bool> isLoggedIn() async {
-    print('Authentication repository reached');
-    if (await networkInfo.hasConection) {
-      print('Authentication repository Network confirmed');
-
-      return await firebaseService.isLoggedIn();
-    } else {
-      return false;
-    }
+    return await firebaseService.isLoggedIn();
   }
 }
