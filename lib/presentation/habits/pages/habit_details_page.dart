@@ -1,9 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:habitit/common/habit/streaks_calculator.dart';
+import 'package:habitit/data/habits/models/habit_frequency.dart';
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
+
+import '../widget/habit_calendar_widget.dart';
 
 class HabitDetailsPage extends StatelessWidget {
-  const HabitDetailsPage({super.key});
+  final HabitEnity habit;
+  const HabitDetailsPage({
+    super.key,
+    required this.habit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +41,14 @@ class HabitDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Meditation',
+                habit.name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25,
                 ),
               ),
               Text(
-                'Meditate as  often as everyday if possible without fail',
+                habit.description ?? '',
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 18,
@@ -66,7 +75,9 @@ class HabitDetailsPage extends StatelessWidget {
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            'Daily',
+                            habit.frequency == HabitFrequency.daily
+                                ? 'Daily'
+                                : 'Weekly',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -96,7 +107,7 @@ class HabitDetailsPage extends StatelessWidget {
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                           Text(
-                            '10 Days',
+                            '${habit.completedDates!.length} Days',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -135,7 +146,7 @@ class HabitDetailsPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '10 days',
+                              '${_streak(completedDays: habit.completedDates!)} days',
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.secondary,
                                 fontSize: 25,
@@ -160,19 +171,16 @@ class HabitDetailsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              TableCalendar(
-                focusedDay: DateTime.now(),
-                firstDay: DateTime.now().subtract(Duration(days: 10)),
-                lastDay: DateTime.now().add(Duration(days: 730)),
-                headerVisible: false,
-                calendarStyle: CalendarStyle(
-                  isTodayHighlighted: false,
-                ),
-              )
+              HabitCalendarWidget(habit: habit)
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _streak({required List<DateTime> completedDays}) {
+    var streak = calculateLongestStreak(completedDays);
+    return streak.toString();
   }
 }
