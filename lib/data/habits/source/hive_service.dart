@@ -14,8 +14,6 @@ class HiveServiceImpl implements HiveService {
     final habitBox = await Hive.openBox<HabitModel>('Habits');
     try {
       await habitBox.put(habit.id, habit);
-      print(habitBox.get(habit.id));
-      print('this was reached');
     } catch (e) {
       rethrow;
     }
@@ -25,8 +23,6 @@ class HiveServiceImpl implements HiveService {
   Future<List<HabitModel>> getAllHabits() async {
     final habitBox = await Hive.openBox<HabitModel>('Habits');
     try {
-      print('this was reached');
-      print(habitBox.length);
       return habitBox.values.toList();
     } catch (e) {
       throw ('$e' 'Error in getting all habits');

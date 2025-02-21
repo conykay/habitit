@@ -61,7 +61,6 @@ class HabitsRepositoryImpl implements HabitRepository {
           }
         }
         habitList = await _hiveService.getAllHabits();
-        print('This is what is brought back');
       } else {
         habitList = await _hiveService.getAllHabits();
       }
