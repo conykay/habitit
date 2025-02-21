@@ -7,6 +7,7 @@ abstract class FirebaseService {
   Future<List<HabitModel>> getAllHabits();
   Future<HabitModel> getHabit({required String id});
   Future<void> editHabit({required HabitModel edited});
+  Future<void> deleteHabit({required HabitModel habit});
 }
 
 class FirebaseServiceImpl implements FirebaseService {
@@ -55,6 +56,16 @@ class FirebaseServiceImpl implements FirebaseService {
       var docRef = ref.doc(user!.uid).collection('Habits').doc(edited.id);
       edited.synced = true;
       await docRef.set(edited.toMap());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteHabit({required HabitModel habit}) async {
+    try {
+      var docRef = ref.doc(user!.uid).collection('Habits').doc(habit.id);
+      await docRef.delete();
     } catch (e) {
       rethrow;
     }

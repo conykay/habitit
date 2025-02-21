@@ -7,4 +7,5 @@ abstract class HabitRepository {
   Future<Either> getAllHabits();
   Future<Either> getHabit({required String id});
   Future<Either> editHabit({required HabitEnity habit});
+  Future<Either> deleteHabit({required HabitEnity habit});
 }

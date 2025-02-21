@@ -113,4 +113,28 @@ class HabitsRepositoryImpl implements HabitRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either> deleteHabit({required HabitEnity habit}) async {
+    var isOnline = await _networkInfo.hasConection;
+    try {
+      if (isOnline) {
+        try {
+          await _firebaseService
+              .deleteHabit(habit: habit.toModel())
+              .then((_) async {
+            await _hiveService.deleteHabit(habit: habit.toModel());
+          });
+        } catch (e) {
+          return Left(e.toString());
+        }
+      } else {
+        throw Exception('Cannot perform this operation offline');
+      }
+
+      return Right('Deleted successfuly');
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }

@@ -76,13 +76,54 @@ class HabitDetailsPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.secondary,
                 );
               }),
-              IconButton(
-                onPressed: () {},
-                icon: FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
+              Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () async {
+                    final repo = context.read<HabitsRepositoryImpl>();
+
+                    var value = await showDialog(
+                        context: context,
+                        builder: (context) => RepositoryProvider.value(
+                              value: repo,
+                              child: AlertDialog(
+                                title: Text('Delete Habit'),
+                                content: Text(
+                                    'Are you sure you want to delete this habit.'),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text('Dissmiss')),
+                                  SizedBox(height: 10),
+                                  Builder(builder: (context) {
+                                    return ElevatedButton(
+                                        onPressed: () {
+                                          context
+                                              .read<HabitsRepositoryImpl>()
+                                              .deleteHabit(habit: habit)
+                                              .then((_) {
+                                            if (context.mounted) {
+                                              Navigator.pop(context, true);
+                                            }
+                                          });
+                                        },
+                                        child: Text('Delete'));
+                                  }),
+                                ],
+                              ),
+                            ));
+
+                    if (value && context.mounted) {
+                      Navigator.pop(context, value);
+                    }
+                  },
+                  icon: FaIcon(
+                    FontAwesomeIcons.trashCan,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                );
+              }),
             ],
           ),
           body: SingleChildScrollView(

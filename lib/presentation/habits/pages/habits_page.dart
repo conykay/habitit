@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
@@ -41,12 +40,16 @@ class HabitsPage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           var habit = state.habits[index];
                           return GestureDetector(
-                            onTap: () {
-                              AppNavigator.push(
+                            onTap: () async {
+                              var isChange = await Navigator.push(
                                   context,
-                                  HabitDetailsPage(
-                                    habit: habit,
-                                  ));
+                                  MaterialPageRoute(
+                                      builder: (context) => HabitDetailsPage(
+                                            habit: habit,
+                                          )));
+                              if (isChange ?? false && context.mounted) {
+                                context.read<HabitStateCubit>().getHabits();
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(8),

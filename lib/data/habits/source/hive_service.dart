@@ -6,6 +6,7 @@ abstract class HiveService {
   Future<List<HabitModel>> getAllHabits();
   Future<HabitModel> getHabit({required String id});
   Future<void> editHabit({required HabitModel edited});
+  Future<void> deleteHabit({required HabitModel habit});
 }
 
 class HiveServiceImpl implements HiveService {
@@ -44,6 +45,16 @@ class HiveServiceImpl implements HiveService {
     final habitBox = await Hive.openBox<HabitModel>('Habits');
     try {
       habitBox.put(edited.id, edited);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteHabit({required HabitModel habit}) async {
+    final habitBox = await Hive.openBox<HabitModel>('Habits');
+    try {
+      await habitBox.delete(habit.id);
     } catch (e) {
       rethrow;
     }
