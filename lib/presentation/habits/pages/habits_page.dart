@@ -47,8 +47,10 @@ class HabitsPage extends StatelessWidget {
                                       builder: (context) => HabitDetailsPage(
                                             habit: habit,
                                           )));
-                              if (isChange ?? false && context.mounted) {
-                                context.read<HabitStateCubit>().getHabits();
+                              if (isChange ?? false) {
+                                if (context.mounted) {
+                                  context.read<HabitStateCubit>().getHabits();
+                                }
                               }
                             },
                             child: Container(
