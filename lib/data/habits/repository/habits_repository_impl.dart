@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
 import '../source/firebase_service.dart';
@@ -82,6 +83,32 @@ class HabitsRepositoryImpl implements HabitRepository {
         habit = await _hiveService.getHabit(id: id);
       }
       return Right(habit);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either> editHabit({required HabitEnity habit}) async {
+    var isOnline = await _networkInfo.hasConection;
+    HabitModel editedHabit = habit.toModel();
+    try {
+      if (isOnline) {
+        try {
+          await _firebaseService.editHabit(edited: editedHabit).then((_) async {
+            editedHabit.synced = true;
+            await _hiveService.editHabit(edited: editedHabit);
+          });
+        } catch (e) {
+          editedHabit.synced = false;
+          return Left(e.toString());
+        }
+      } else {
+        editedHabit.synced = false;
+        await _hiveService.editHabit(edited: editedHabit);
+      }
+
+      return Right('Edited successfuly success fully');
     } catch (e) {
       return Left(e.toString());
     }

@@ -40,7 +40,7 @@ class SyncCoordinator {
     });
 
     // Periodic sync every 15 minutes
-    _periodicTimer = Timer.periodic(Duration(minutes: 1), (_) {
+    _periodicTimer = Timer.periodic(Duration(minutes: 15), (_) {
       print('The sync manager is active');
       _syncAll();
     });

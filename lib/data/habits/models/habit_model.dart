@@ -113,6 +113,7 @@ extension HabitModelX on HabitEnity {
       id: id,
       name: name,
       frequency: frequency,
+      description: description,
       startDate: startDate.toDate(),
       synced: false,
       completedDates: completedDates ?? []);

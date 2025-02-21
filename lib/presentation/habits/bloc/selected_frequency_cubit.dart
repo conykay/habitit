@@ -9,4 +9,6 @@ class SelectedFrequencyCubit extends Cubit<HabitFrequency> {
     selectedFequency = frequency;
     emit(frequency);
   }
+
+  void setInitial({required HabitFrequency initState}) => emit(initState);
 }

@@ -35,7 +35,6 @@ class NavigationBasePage extends StatelessWidget {
 
   final hiveService = HiveServiceImpl();
   final firebaseService = FirebaseServiceImpl();
-  final internet = InternetConnectionChecker.createInstance();
   final networkInfo = NetworkInfoImpl(
       internetConnectionChecker: InternetConnectionChecker.instance);
 
