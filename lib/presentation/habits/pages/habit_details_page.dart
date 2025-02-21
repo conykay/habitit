@@ -21,7 +21,13 @@ class HabitDetailsPage extends StatelessWidget {
         title: Text('Details'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) => Container(
+                        child: Text(habit.name),
+                      ));
+            },
             icon: FaIcon(FontAwesomeIcons.penClip),
             color: Theme.of(context).colorScheme.secondary,
           ),

@@ -7,6 +7,7 @@ class AuthStateCubit extends Cubit<AuthState> {
   final UserLoggedInUseCase usecase;
   AuthStateCubit(this.usecase) : super(CheckingAuth());
   void isAutheniticated() async {
+    print('Authentication cubit reached');
     var isLoggedIn = await usecase.call();
     if (isLoggedIn) {
       emit(Authenticated());
