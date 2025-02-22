@@ -104,9 +104,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
 
   @override
   Future<bool> isLoggedIn() async {
-    print('Firebase service reached  reached');
     if (auth.currentUser != null) {
-      print('User confirmed reached: ${auth.currentUser}');
       return true;
     } else {
       return false;
