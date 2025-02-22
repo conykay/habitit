@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
 
-abstract class FirebaseService {
+abstract class HabitsFirebaseService {
   Future<void> addHabit({required HabitModel habit});
   Future<List<HabitModel>> getAllHabits();
   Future<HabitModel> getHabit({required String id});
@@ -10,7 +10,7 @@ abstract class FirebaseService {
   Future<void> deleteHabit({required HabitModel habit});
 }
 
-class FirebaseServiceImpl implements FirebaseService {
+class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
   final User? user = FirebaseAuth.instance.currentUser;
   final CollectionReference ref =
       FirebaseFirestore.instance.collection('Users');

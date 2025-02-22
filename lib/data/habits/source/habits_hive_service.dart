@@ -1,7 +1,7 @@
 import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:hive/hive.dart';
 
-abstract class HiveService {
+abstract class HabitsHiveService {
   Future<void> addHabit({required HabitModel habit});
   Future<List<HabitModel>> getAllHabits();
   Future<HabitModel> getHabit({required String id});
@@ -9,7 +9,7 @@ abstract class HiveService {
   Future<void> deleteHabit({required HabitModel habit});
 }
 
-class HiveServiceImpl implements HiveService {
+class HabitsHiveServiceImpl implements HabitsHiveService {
   @override
   Future<void> addHabit({required HabitModel habit}) async {
     final habitBox = await Hive.openBox<HabitModel>('Habits');

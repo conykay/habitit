@@ -5,17 +5,17 @@ import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-import '../source/firebase_service.dart';
-import '../source/hive_service.dart';
+import '../source/habits_firebase_service.dart';
+import '../source/habits_hive_service.dart';
 
 class HabitsRepositoryImpl implements HabitRepository {
-  final HiveService _hiveService;
-  final FirebaseService _firebaseService;
+  final HabitsHiveService _hiveService;
+  final HabitsFirebaseService _firebaseService;
   final NetworkInfo _networkInfo;
 
   HabitsRepositoryImpl({
-    required HiveService hiveService,
-    required FirebaseService firebaseService,
+    required HabitsHiveService hiveService,
+    required HabitsFirebaseService firebaseService,
     required NetworkInfo networkInfo,
   })  : _hiveService = hiveService,
         _firebaseService = firebaseService,

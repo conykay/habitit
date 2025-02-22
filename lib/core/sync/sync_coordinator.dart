@@ -7,10 +7,10 @@ import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-import '../../data/habits/source/firebase_service.dart';
+import '../../data/habits/source/habits_firebase_service.dart';
 
 class SyncCoordinator {
-  final FirebaseService firebaseService;
+  final HabitsFirebaseService firebaseService;
   final Box<HabitModel> habitBox;
   late final List<GenericSyncManager<dynamic>> _syncManagers;
 

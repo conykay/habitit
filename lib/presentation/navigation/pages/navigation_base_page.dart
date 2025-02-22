@@ -12,8 +12,8 @@ import 'package:habitit/presentation/notifications/pages/notification_page.dart'
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../data/habits/repository/habits_repository_impl.dart';
-import '../../../data/habits/source/firebase_service.dart';
-import '../../../data/habits/source/hive_service.dart';
+import '../../../data/habits/source/habits_firebase_service.dart';
+import '../../../data/habits/source/habits_hive_service.dart';
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 import '../../analytics/pages/analytics_page.dart';
 import '../../habits/bloc/habit_state_cubit.dart';
@@ -33,8 +33,8 @@ class NavigationBasePage extends StatelessWidget {
     ProfilePage(),
   ];
 
-  final hiveService = HiveServiceImpl();
-  final firebaseService = FirebaseServiceImpl();
+  final hiveService = HabitsHiveServiceImpl();
+  final firebaseService = HabitsFirebaseServiceImpl();
   final networkInfo = NetworkInfoImpl(
       internetConnectionChecker: InternetConnectionChecker.instance);
 

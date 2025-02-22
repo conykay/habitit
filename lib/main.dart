@@ -11,7 +11,8 @@ import 'package:habitit/core/sync/sync_coordinator.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
-import 'package:habitit/data/habits/source/firebase_service.dart';
+import 'package:habitit/data/habits/source/habits_firebase_service.dart';
+import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
@@ -32,11 +33,14 @@ void main() async {
   );
   Hive.registerAdapter(HabitModelAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
+  Hive.registerAdapter(UserRewardsModelAdapter());
   //open hive boxes
   final habitBox = await Hive.openBox<HabitModel>('Habits');
-  final firebaseService = FirebaseServiceImpl();
-  final syncCoordinator =
-      SyncCoordinator(firebaseService: firebaseService, habitBox: habitBox);
+  final rewardsBox = await Hive.openBox<UserRewardsModel>('Rewards');
+  final habitsFirebaseService = HabitsFirebaseServiceImpl();
+  final syncCoordinator = SyncCoordinator(
+      firebaseService: habitsFirebaseService, habitBox: habitBox);
+
   syncCoordinator.initialize();
   runApp(MainApp(
     themeRepository: ThemeRepository(),

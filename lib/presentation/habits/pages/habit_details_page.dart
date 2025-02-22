@@ -9,8 +9,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../core/network/network_info.dart';
 import '../../../data/habits/repository/habits_repository_impl.dart';
-import '../../../data/habits/source/firebase_service.dart';
-import '../../../data/habits/source/hive_service.dart';
+import '../../../data/habits/source/habits_firebase_service.dart';
+import '../../../data/habits/source/habits_hive_service.dart';
 import '../bloc/selected_frequency_cubit.dart';
 import '../widget/details_app_bar.dart';
 import '../widget/habit_calendar_widget.dart';
@@ -22,8 +22,8 @@ class HabitDetailsPage extends StatelessWidget {
     required this.habit,
   });
 
-  final hiveService = HiveServiceImpl();
-  final firebaseService = FirebaseServiceImpl();
+  final hiveService = HabitsHiveServiceImpl();
+  final firebaseService = HabitsFirebaseServiceImpl();
   final networkInfo = NetworkInfoImpl(
       internetConnectionChecker: InternetConnectionChecker.instance);
 

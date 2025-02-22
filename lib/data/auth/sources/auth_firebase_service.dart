@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habitit/core/platform_info/platform_info.dart';
+import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 
 import '../../../domain/auth/entities/auth_user_req_entity.dart';
 import '../models/user_creation_req.dart';
@@ -42,6 +43,12 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
               email: authData.email,
               userId: cred.user!.uid)
           .toMap());
+      await userCollectionRef
+          .doc(cred.user!.uid)
+          .collection('Rewards')
+          .doc('user_rewards')
+          .set(UserRewardsModel(xp: 0, level: 1, earnedBadges: [], synced: true)
+              .toMap());
       return cred;
     } catch (e) {
       rethrow;
