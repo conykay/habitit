@@ -1,3 +1,5 @@
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
+
 int calculateCurrentStreak(List<DateTime> completedDates) {
   if (completedDates.isEmpty) return 0;
 
@@ -55,4 +57,16 @@ int calculateLongestStreak(List<DateTime> completedDates) {
   }
 
   return longestStreak;
+}
+
+int longestStreakInAllHabits(List<HabitEnity> habits) {
+  var longestStreak = 0;
+  var highestStreak = 0;
+  for (var habit in habits) {
+    longestStreak = calculateLongestStreak(habit.completedDates!);
+    if (longestStreak > highestStreak) {
+      highestStreak = longestStreak;
+    }
+  }
+  return highestStreak;
 }

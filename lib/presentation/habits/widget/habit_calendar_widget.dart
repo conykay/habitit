@@ -37,6 +37,7 @@ class HabitCalendarWidget extends StatelessWidget {
       headerVisible: true,
       calendarStyle: CalendarStyle(
         isTodayHighlighted: false,
+        markerSize: 0,
       ),
       eventLoader: (day) {
         return events[normalizeDate(day)] ?? [];
