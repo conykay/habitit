@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 part 'user_rewards_model.g.dart';
 
 @HiveType(typeId: 3)
+// ignore: must_be_immutable
 class UserRewardsModel extends HiveSyncable with EquatableMixin {
   @HiveField(0)
   int xp;
