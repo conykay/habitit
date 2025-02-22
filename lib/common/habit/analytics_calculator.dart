@@ -70,3 +70,56 @@ int longestStreakInAllHabits(List<HabitEnity> habits) {
   }
   return highestStreak;
 }
+
+double calculateAdherenceRate(HabitEnity habit) {
+  final normalizedStart = DateTime(habit.startDate.toDate().year,
+      habit.startDate.toDate().month, habit.startDate.toDate().day);
+  final today = DateTime.now();
+  final normalizedToday = DateTime(today.year, today.month, today.day);
+
+  final totalDays = normalizedToday.difference(normalizedStart).inDays + 1;
+
+  final completedDaysSet = habit.completedDates!
+      .map((d) => DateTime(d.year, d.month, d.day))
+      .toSet();
+
+  if (totalDays <= 0) return 0.0;
+  return (completedDaysSet.length / totalDays) * 100;
+}
+
+Map<DateTime, int> getDailyCompletionData(
+  List<HabitEnity> habits, {
+  DateTime? start,
+  DateTime? end,
+}) {
+  DateTime normalize(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  final today = normalize(DateTime.now());
+  end = end != null ? normalize(end) : today;
+
+  if (start == null) {
+    if (habits.isEmpty) return {};
+    start = habits
+        .map((h) => normalize(h.startDate.toDate()))
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+  } else {
+    start = normalize(start);
+  }
+
+  Map<DateTime, int> dailyData = {};
+  for (DateTime date = start;
+      !date.isAfter(end);
+      date = date.add(Duration(days: 1))) {
+    dailyData[date] = 0;
+  }
+
+  for (final habit in habits) {
+    for (final d in habit.completedDates!) {
+      final normalized = normalize(d);
+      if (normalized.isBefore(start) || normalized.isAfter(end)) continue;
+      dailyData[normalized] = (dailyData[normalized] ?? 0) + 1;
+    }
+  }
+
+  return dailyData;
+}
