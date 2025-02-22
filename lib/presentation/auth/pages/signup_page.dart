@@ -35,24 +35,39 @@ class SignupPage extends StatelessWidget {
           }
         },
         child: Scaffold(
-          body: SafeArea(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            child: SingleChildScrollView(
-              child: Center(
-                child: SizedBox(
-                  width: MediaQuery.sizeOf(context).width > 600 ? 400 : null,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildIntro(context),
-                      SignupWidget(),
-                    ],
-                  ),
+          body: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      )),
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: _buildIntro(context),
                 ),
               ),
-            ),
-          )),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      )),
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: SignupWidget(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -60,15 +75,16 @@ class SignupPage extends StatelessWidget {
 
   Widget _buildIntro(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'Welcome To Habitit',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 35,
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).canvasColor,
           ),
         ),
         SizedBox(height: 24),
@@ -76,18 +92,9 @@ class SignupPage extends StatelessWidget {
           'Habits are the compound interest of self-improvement',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 20,
-          ),
-        ),
-        SizedBox(height: 24),
-        Text(
-          'Signup & Get Started',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              color: Theme.of(context).colorScheme.onPrimary),
         ),
       ],
     );
@@ -108,6 +115,15 @@ class SignupWidget extends StatelessWidget {
       key: _formState,
       child: Column(
         children: [
+          SizedBox(height: 24),
+          Text(
+            'Signup & Get Started',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
           SizedBox(height: 25),
           TextFormField(
             controller: _nameTextController,
