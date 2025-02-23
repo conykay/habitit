@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
+import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../common/button/bloc/button_state.dart';
@@ -124,19 +127,32 @@ class NewHabitCustomModal extends StatelessWidget {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           try {
-                            await context.read<ButtonStateCubit>().call(
-                                usecase: AddHabitUsecase(
-                                    habitRepository:
-                                        context.read<HabitsRepositoryImpl>()),
-                                params: HabitModel(
-                                    id: Uuid().v4(),
-                                    name: _habitNameController.text,
-                                    description:
-                                        _habitDescriptionController.text,
-                                    frequency: context
-                                        .read<SelectedFrequencyCubit>()
-                                        .state,
-                                    startDate: DateTime.now()));
+                            await context
+                                .read<ButtonStateCubit>()
+                                .call(
+                                    usecase: AddHabitUsecase(
+                                        habitRepository: context
+                                            .read<HabitsRepositoryImpl>()),
+                                    params: HabitModel(
+                                        id: Uuid().v4(),
+                                        name: _habitNameController.text,
+                                        description:
+                                            _habitDescriptionController.text,
+                                        frequency: context
+                                            .read<SelectedFrequencyCubit>()
+                                            .state,
+                                        startDate: DateTime.now()))
+                                .then((_) async {
+                              if (context.mounted) {
+                                context
+                                    .read<UserRewardsCubit>()
+                                    .updateUserRewards(
+                                        usecase: AddUserXpUsecase(
+                                            repository: context
+                                                .read<RewardsRepositoryImpl>()),
+                                        xp: 10);
+                              }
+                            });
                             if (context.mounted) {
                               Navigator.pop(context, true);
                             }

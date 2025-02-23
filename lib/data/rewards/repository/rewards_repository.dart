@@ -67,9 +67,15 @@ class RewardsRepositoryImpl implements RewardsRepository {
   UserRewardsModel _updateReward(
       UserRewardsModel userRewardsModel, int xpAmmount) {
     userRewardsModel.xp += xpAmmount;
+    if (xpAmmount == 10) {
+      userRewardsModel.earnedBadges.add('first_Habit');
+    }
     int newLevel = (userRewardsModel.xp ~/ 100) + 1;
     if (newLevel > userRewardsModel.level) {
       userRewardsModel.level = newLevel;
+    }
+    if (userRewardsModel.level == 10) {
+      userRewardsModel.earnedBadges.add('level_ten');
     }
     return userRewardsModel;
   }

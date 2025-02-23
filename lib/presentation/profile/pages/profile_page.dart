@@ -6,6 +6,8 @@ import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
+import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
@@ -20,7 +22,10 @@ class ProfilePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: context.read<UserRewardsCubit>()..getUserRewards(),
+          value: context.read<UserRewardsCubit>()
+            ..getUserRewards(
+                usecase: GetUserRewardsUsecase(
+                    repository: context.read<RewardsRepositoryImpl>())),
         ),
         BlocProvider.value(
           value: context.read<HabitStateCubit>()..getHabits(),
@@ -114,17 +119,21 @@ class ProfilePage extends StatelessWidget {
                         'You havent earned any badges,create your first habit to start.'),
                   );
                 }
+                var userbadge = badges
+                    .where((badge) =>
+                        state.rewards.earnedBadges.contains(badge.id))
+                    .toList();
                 return ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
                       return AchievementBadge(
-                        colors: badges[index].colors,
-                        icon: badges[index].icon,
-                        name: badges[index].name,
+                        colors: userbadge[index].colors,
+                        icon: userbadge[index].icon,
+                        name: userbadge[index].name,
                       );
                     },
                     separatorBuilder: (context, index) => SizedBox(width: 10),
-                    itemCount: badges.length);
+                    itemCount: userbadge.length);
               }
 
               return Container();

@@ -10,7 +10,6 @@ import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/data/rewards/repository/rewards_repository.dart';
 import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
-import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -46,46 +45,39 @@ class NavigationBasePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(
-          create: (context) => HabitsRepositoryImpl(
-              hiveService: habitsHiveService,
-              firebaseService: habitsFirebaseService,
-              networkInfo: networkInfo),
+    return RepositoryProvider(
+      create: (context) => HabitsRepositoryImpl(
+          hiveService: habitsHiveService,
+          firebaseService: habitsFirebaseService,
+          networkInfo: networkInfo),
+      child: RepositoryProvider(
+        create: (context) => RewardsRepositoryImpl(
+            hiveService: rewardsHiveService,
+            firebaseService: rewardsFirebaseService,
+            networkInfo: networkInfo),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => NavigationStateCubit(),
+            ),
+            BlocProvider(
+              create: (context) => SelectedFrequencyCubit(),
+            ),
+            BlocProvider(
+              create: (context) => HabitStateCubit(
+                  usecase: GetAllHabitsUsecase(
+                      repository: context.read<HabitsRepositoryImpl>())),
+            ),
+            BlocProvider(create: (context) => UserRewardsCubit())
+          ],
+          child: LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth >= 600) {
+              return _largeDeviceLayout();
+            } else {
+              return _smallDeviceLayout();
+            }
+          }),
         ),
-        RepositoryProvider(
-          create: (context) => RewardsRepositoryImpl(
-              hiveService: rewardsHiveService,
-              firebaseService: rewardsFirebaseService,
-              networkInfo: networkInfo),
-        ),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => NavigationStateCubit(),
-          ),
-          BlocProvider(
-            create: (context) => SelectedFrequencyCubit(),
-          ),
-          BlocProvider(
-            create: (context) => HabitStateCubit(
-                usecase: GetAllHabitsUsecase(
-                    repository: context.read<HabitsRepositoryImpl>())),
-          ),
-          BlocProvider(
-            create: (context) => UserRewardsCubit(GetUserRewardsUsecase(
-                repository: context.read<RewardsRepositoryImpl>())),
-          )
-        ],
-        child: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth >= 600) {
-            return _largeDeviceLayout();
-          } else {
-            return _smallDeviceLayout();
-          }
-        }),
       ),
     );
   }

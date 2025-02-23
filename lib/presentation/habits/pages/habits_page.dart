@@ -1,11 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
+import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/habits/bloc/selected_frequency_cubit.dart';
 import 'package:habitit/presentation/habits/pages/habit_details_page.dart';
+import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:intl/intl.dart';
 
 import '../widget/new_habit_modal.dart';
@@ -36,101 +40,7 @@ class HabitsPage extends StatelessWidget {
                         child: Text('No habits found'),
                       );
                     }
-                    return ListView.separated(
-                        itemBuilder: (context, index) {
-                          var habit = state.habits[index];
-                          return GestureDetector(
-                            onTap: () async {
-                              var isChange = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HabitDetailsPage(
-                                            habit: habit,
-                                          )));
-                              if (isChange ?? false) {
-                                if (context.mounted) {
-                                  context.read<HabitStateCubit>().getHabits();
-                                }
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondary
-                                    .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    habit.name,
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(habit.description ?? ''),
-                                            Text(
-                                              habit.frequency.name
-                                                  .toUpperCase(),
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text.rich(TextSpan(
-                                                text: habit
-                                                    .completedDates!.length
-                                                    .toString(),
-                                                children: [
-                                                  TextSpan(
-                                                      text: ' days Completed')
-                                                ])),
-                                            Text.rich(TextSpan(
-                                                text: 'Since: ',
-                                                children: [
-                                                  TextSpan(
-                                                      text: DateFormat.yMd()
-                                                          .format(habit
-                                                              .startDate
-                                                              .toDate()))
-                                                ])),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
-                        itemCount: state.habits.length);
+                    return HabitsListView(habits: state.habits);
                   }
                   if (state is HabitError) {
                     return Center(
@@ -150,20 +60,37 @@ class HabitsPage extends StatelessWidget {
                 child: Builder(builder: (context) {
                   return FloatingActionButton(
                     onPressed: () async {
-                      final repo = context.read<HabitsRepositoryImpl>();
+                      final habitRepo = context.read<HabitsRepositoryImpl>();
+                      final rewardRepo = context.read<RewardsRepositoryImpl>();
                       final selectedCubit =
                           context.read<SelectedFrequencyCubit>();
                       final habitstate = context.read<HabitStateCubit>();
+                      final rewardState = context.read<UserRewardsCubit>();
                       final result = await showModalBottomSheet(
                         context: context,
                         builder: (context) {
-                          return RepositoryProvider.value(
-                            value: repo,
-                            child: BlocProvider.value(
-                              value: habitstate,
-                              child: BlocProvider.value(
+                          return MultiRepositoryProvider(
+                            providers: [
+                              RepositoryProvider.value(
+                                value: habitRepo,
+                              ),
+                              RepositoryProvider.value(
+                                value: rewardRepo,
+                              ),
+                            ],
+                            child: MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: habitstate,
+                                ),
+                                BlocProvider.value(
                                   value: selectedCubit,
-                                  child: NewHabitCustomModal()),
+                                ),
+                                BlocProvider.value(
+                                  value: rewardState,
+                                ),
+                              ],
+                              child: NewHabitCustomModal(),
                             ),
                           );
                         },
@@ -183,5 +110,94 @@ class HabitsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class HabitsListView extends StatelessWidget {
+  final List<HabitEnity> habits;
+  const HabitsListView({
+    super.key,
+    required this.habits,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        itemBuilder: (context, index) {
+          var habit = habits[index];
+          return GestureDetector(
+            onTap: () async {
+              var isChange = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HabitDetailsPage(
+                            habit: habit,
+                          )));
+              if (isChange ?? false) {
+                if (context.mounted) {
+                  context.read<HabitStateCubit>().getHabits();
+                }
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    habit.name,
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(habit.description ?? ''),
+                            Text(
+                              habit.frequency.name.toUpperCase(),
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text.rich(TextSpan(
+                                text: habit.completedDates!.length.toString(),
+                                children: [TextSpan(text: ' days Completed')])),
+                            Text.rich(TextSpan(text: 'Since: ', children: [
+                              TextSpan(
+                                  text: DateFormat.yMd()
+                                      .format(habit.startDate.toDate()))
+                            ])),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (context, index) => SizedBox(height: 10),
+        itemCount: habits.length);
   }
 }

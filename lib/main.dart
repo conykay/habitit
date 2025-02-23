@@ -13,7 +13,6 @@ import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/data/habits/source/habits_firebase_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
-import 'package:habitit/domain/auth/usecases/logout_user.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
