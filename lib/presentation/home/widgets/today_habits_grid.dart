@@ -10,6 +10,9 @@ import 'package:habitit/presentation/home/bloc/mark_habit_complete_cubit.dart';
 import 'package:habitit/presentation/home/bloc/mark_habit_complete_sate.dart';
 
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
+import '../../../domain/rewards/repository/rewards_repository.dart';
+import '../../../domain/rewards/usecases/add_user_xp_usecase.dart';
+import '../../profile/bloc/user_rewards_cubit.dart';
 
 class TodayHabitsWidget extends StatelessWidget {
   final List<HabitEnity> habits;
@@ -68,6 +71,11 @@ class TodayHabitsWidget extends StatelessWidget {
                           context
                               .read<MarkHabitCompleteCubit>()
                               .markComplete(habit: editedHabit);
+                          context.read<UserRewardsCubit>().updateUserRewards(
+                              usecase: AddUserXpUsecase(
+                                  repository:
+                                      context.read<RewardsRepository>()),
+                              xp: 20);
                           context.read<HabitStateCubit>().getHabits(
                               usecase: GetAllHabitsUsecase(
                                   repository: context.read<HabitRepository>()));

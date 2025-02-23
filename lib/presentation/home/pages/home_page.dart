@@ -83,18 +83,18 @@ class HomePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${_greeting()[0]},',
+          '${_greeting[0]},',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
         Text(
-          _greeting()[1],
+          _greeting[1],
           style: TextStyle(fontSize: 18),
         ),
       ],
     );
   }
 
-  List<String> _greeting() {
+  List<String> get _greeting {
     var hour = DateTime.now().hour;
     if (hour < 12) {
       return ['Good Morning', 'Ready to tackle the day ?'];
