@@ -13,6 +13,7 @@ import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/data/habits/source/habits_firebase_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
+import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
@@ -59,7 +60,7 @@ class MainApp extends StatelessWidget {
       providers: [
         RepositoryProvider<ThemeRepository>(
             create: (context) => _themeRepository),
-        RepositoryProvider<AuthenticationRepositoryImpl>(
+        RepositoryProvider<AuthenticationRepository>(
           create: (context) => AuthenticationRepositoryImpl(
               firebaseService: AuthFirebaseServiceImpl(
                 firestore: FirebaseFirestore.instance,
@@ -77,9 +78,10 @@ class MainApp extends StatelessWidget {
                     ThemeCubit(themeRepository: _themeRepository)
                       ..getCurrentTheme()),
             BlocProvider(
-                create: (context) => AuthStateCubit(UserLoggedInUseCase(
-                    context.read<AuthenticationRepositoryImpl>()))
-                  ..isAutheniticated()),
+                create: (context) => AuthStateCubit()
+                  ..isAutheniticated(
+                      usecase: UserLoggedInUseCase(
+                          context.read<AuthenticationRepository>()))),
           ],
           child: BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
             return MaterialApp(

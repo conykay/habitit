@@ -2,9 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
-import 'package:habitit/data/rewards/repository/rewards_repository.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
+import 'package:habitit/domain/habits/usecases/get_all_habits_usecase.dart';
+import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/habits/bloc/selected_frequency_cubit.dart';
@@ -20,7 +21,10 @@ class HabitsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<HabitStateCubit>()..getHabits(),
+      value: context.read<HabitStateCubit>()
+        ..getHabits(
+            usecase: GetAllHabitsUsecase(
+                repository: context.read<HabitRepository>())),
       child: SizedBox(
         width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
         child: Stack(
@@ -60,8 +64,8 @@ class HabitsPage extends StatelessWidget {
                 child: Builder(builder: (context) {
                   return FloatingActionButton(
                     onPressed: () async {
-                      final habitRepo = context.read<HabitsRepositoryImpl>();
-                      final rewardRepo = context.read<RewardsRepositoryImpl>();
+                      final habitRepo = context.read<HabitRepository>();
+                      final rewardRepo = context.read<RewardsRepository>();
                       final selectedCubit =
                           context.read<SelectedFrequencyCubit>();
                       final habitstate = context.read<HabitStateCubit>();
@@ -97,7 +101,9 @@ class HabitsPage extends StatelessWidget {
                       );
                       if (result == true) {
                         if (context.mounted) {
-                          context.read<HabitStateCubit>().getHabits();
+                          context.read<HabitStateCubit>().getHabits(
+                              usecase: GetAllHabitsUsecase(
+                                  repository: context.read<HabitRepository>()));
                         }
                       }
                     },
@@ -135,7 +141,9 @@ class HabitsListView extends StatelessWidget {
                           )));
               if (isChange ?? false) {
                 if (context.mounted) {
-                  context.read<HabitStateCubit>().getHabits();
+                  context.read<HabitStateCubit>().getHabits(
+                      usecase: GetAllHabitsUsecase(
+                          repository: context.read<HabitRepository>()));
                 }
               }
             },

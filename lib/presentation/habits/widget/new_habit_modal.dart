@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
+import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:uuid/uuid.dart';
@@ -10,7 +11,6 @@ import '../../../common/button/bloc/button_state_cubit.dart';
 import '../../../common/button/widget/reactive_elevated_button.dart';
 import '../../../data/habits/models/habit_frequency.dart';
 import '../../../data/habits/models/habit_model.dart';
-import '../../../data/habits/repository/habits_repository_impl.dart';
 import '../../../domain/habits/usecases/add_habit_usecase.dart';
 import '../bloc/selected_frequency_cubit.dart';
 
@@ -131,8 +131,8 @@ class NewHabitCustomModal extends StatelessWidget {
                                 .read<ButtonStateCubit>()
                                 .call(
                                     usecase: AddHabitUsecase(
-                                        habitRepository: context
-                                            .read<HabitsRepositoryImpl>()),
+                                        habitRepository:
+                                            context.read<HabitRepository>()),
                                     params: HabitModel(
                                         id: Uuid().v4(),
                                         name: _habitNameController.text,
@@ -149,7 +149,7 @@ class NewHabitCustomModal extends StatelessWidget {
                                     .updateUserRewards(
                                         usecase: AddUserXpUsecase(
                                             repository: context
-                                                .read<RewardsRepositoryImpl>()),
+                                                .read<RewardsRepository>()),
                                         xp: 10);
                               }
                             });

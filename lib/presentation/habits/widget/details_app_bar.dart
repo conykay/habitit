@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-import '../../../data/habits/repository/habits_repository_impl.dart';
 import '../bloc/selected_frequency_cubit.dart';
 import '../widget/edit_habit_modal.dart';
 
@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
         Builder(builder: (context) {
           return IconButton(
             onPressed: () async {
-              final repo = context.read<HabitsRepositoryImpl>();
+              final repo = context.read<HabitRepository>();
               final selectedCubit = context.read<SelectedFrequencyCubit>();
               final result = await showModalBottomSheet(
                 context: context,
@@ -57,7 +57,7 @@ class CustomAppBar extends StatelessWidget {
         Builder(builder: (context) {
           return IconButton(
             onPressed: () async {
-              final repo = context.read<HabitsRepositoryImpl>();
+              final repo = context.read<HabitRepository>();
 
               var value = await showDialog(
                   context: context,
@@ -78,7 +78,7 @@ class CustomAppBar extends StatelessWidget {
                               return ElevatedButton(
                                   onPressed: () {
                                     context
-                                        .read<HabitsRepositoryImpl>()
+                                        .read<HabitRepository>()
                                         .deleteHabit(habit: habit)
                                         .then((_) {
                                       if (context.mounted) {

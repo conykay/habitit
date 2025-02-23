@@ -6,13 +6,19 @@ import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
-import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/core/theme/bloc/theme_cubit.dart';
+import 'package:habitit/domain/auth/usecases/logout_user.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
+import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_state.dart';
 import 'package:habitit/presentation/profile/widgets/badge.dart';
+
+import '../../../domain/auth/repository/authentication_repository.dart';
+import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -25,10 +31,13 @@ class ProfilePage extends StatelessWidget {
           value: context.read<UserRewardsCubit>()
             ..getUserRewards(
                 usecase: GetUserRewardsUsecase(
-                    repository: context.read<RewardsRepositoryImpl>())),
+                    repository: context.read<RewardsRepository>())),
         ),
         BlocProvider.value(
-          value: context.read<HabitStateCubit>()..getHabits(),
+          value: context.read<HabitStateCubit>()
+            ..getHabits(
+                usecase: GetAllHabitsUsecase(
+                    repository: context.read<HabitRepository>())),
         ),
       ],
       child: BlocListener<AuthStateCubit, AuthState>(
@@ -61,13 +70,25 @@ class ProfilePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Brightness', style: TextStyle(fontSize: 20)),
-                        Switch(value: true, onChanged: (value) {})
+                        BlocBuilder<ThemeCubit, ThemeState>(
+                          builder: (context, state) {
+                            return Switch(
+                                value: state.themeMode == ThemeMode.dark,
+                                onChanged: (_) async =>
+                                    context.read<ThemeCubit>().switchTheme());
+                          },
+                        )
                       ],
                     ),
                   ),
                   SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      context.read<AuthStateCubit>().logout(
+                          usecase: LogoutUserUseCase(
+                              repository:
+                                  context.read<AuthenticationRepository>()));
+                    },
                     child: Container(
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -171,7 +192,7 @@ class ProfilePage extends StatelessWidget {
                     Text('Points',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor)),
+                            color: Theme.of(context).colorScheme.primary)),
                     Text.rich(
                         TextSpan(text: state.rewards.xp.toString(), children: [
                           TextSpan(text: 'xp', style: TextStyle(fontSize: 20))
@@ -179,7 +200,7 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 45,
-                            color: Theme.of(context).primaryColor))
+                            color: Theme.of(context).colorScheme.primary))
                   ],
                 )),
                 Expanded(
@@ -190,12 +211,12 @@ class ProfilePage extends StatelessWidget {
                     Text('Level',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor)),
+                            color: Theme.of(context).colorScheme.primary)),
                     Text(state.rewards.level.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 45,
-                            color: Theme.of(context).primaryColor))
+                            color: Theme.of(context).colorScheme.primary))
                   ],
                 )),
               ],

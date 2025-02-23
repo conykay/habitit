@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../core/network/network_info.dart';
@@ -29,7 +30,7 @@ class HabitDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
+    return RepositoryProvider<HabitRepository>(
       create: (context) => HabitsRepositoryImpl(
           hiveService: hiveService,
           firebaseService: firebaseService,

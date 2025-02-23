@@ -5,8 +5,8 @@ import 'package:habitit/common/button/bloc/button_state.dart';
 import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
-import 'package:habitit/data/auth/repository/authentication_repository_impl.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
+import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
 import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
@@ -45,7 +45,7 @@ class SigninPage extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 80),
                       decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(20),
                             bottomRight: Radius.circular(20),
@@ -161,7 +161,7 @@ class SignInWidget extends StatelessWidget {
               if (_formKey.currentState!.validate()) {
                 context.read<ButtonStateCubit>().call(
                     usecase: SigninEmailPasswordUseCase(
-                        context.read<AuthenticationRepositoryImpl>()),
+                        context.read<AuthenticationRepository>()),
                     params: AuthUserReqEntity(
                       email: _emailTextController.text,
                       password: _emailTextController.text,
@@ -177,7 +177,7 @@ class SignInWidget extends StatelessWidget {
             onPressed: () {
               context.read<ButtonStateCubit>().call(
                   usecase: SigninGoogleUseCase(
-                      context.read<AuthenticationRepositoryImpl>()));
+                      context.read<AuthenticationRepository>()));
             },
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,

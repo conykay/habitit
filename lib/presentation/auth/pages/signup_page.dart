@@ -6,8 +6,8 @@ import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
 import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
-import 'package:habitit/data/auth/repository/authentication_repository_impl.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
+import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
@@ -40,9 +40,9 @@ class SignupPage extends StatelessWidget {
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 60),
                   decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20),
@@ -172,7 +172,7 @@ class SignupWidget extends StatelessWidget {
               if (_formState.currentState!.validate()) {
                 context.read<ButtonStateCubit>().call(
                     usecase: CreateUserEmailPasswordUseCase(
-                        context.read<AuthenticationRepositoryImpl>()),
+                        context.read<AuthenticationRepository>()),
                     params: AuthUserReqEntity(
                       email: _emailTextController.text,
                       password: _emailTextController.text,
@@ -190,7 +190,7 @@ class SignupWidget extends StatelessWidget {
               onPressed: () {
                 context.read<ButtonStateCubit>().call(
                     usecase: SigninGoogleUseCase(
-                        context.read<AuthenticationRepositoryImpl>()));
+                        context.read<AuthenticationRepository>()));
               },
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/analytics/widgets/adherence_rates.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 
+import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 import '../widgets/daily_data_chart.dart';
 
 class AnalyticsPage extends StatelessWidget {
@@ -15,7 +17,10 @@ class AnalyticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<HabitStateCubit>()..getHabits(),
+      value: context.read<HabitStateCubit>()
+        ..getHabits(
+            usecase: GetAllHabitsUsecase(
+                repository: context.read<HabitRepository>())),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
         child: BlocBuilder<HabitStateCubit, HabitState>(
