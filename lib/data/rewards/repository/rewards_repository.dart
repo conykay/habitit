@@ -51,7 +51,7 @@ class RewardsRepositoryImpl implements RewardsRepository {
       if (isOnline) {
         var localReward = await _hiveService.getUserRewards();
         var remoteReward = await _firebaseService.getUserRewards();
-        if (!localReward.synced) {
+        if (!localReward.synced || !localReward.isInBox) {
           await _hiveService.updateUserRewards(rewardModel: remoteReward);
         }
         userReward = await _hiveService.getUserRewards();

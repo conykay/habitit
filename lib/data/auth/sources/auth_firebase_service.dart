@@ -62,7 +62,6 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
       return await auth.signInWithEmailAndPassword(
           email: authData.email, password: authData.password);
     } catch (e) {
-      print(e.toString());
       rethrow;
     }
   }
@@ -93,6 +92,13 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
                 email: cred.user!.email!,
                 userId: cred.user!.uid)
             .toMap());
+        await userCollectionRef
+            .doc(cred.user!.uid)
+            .collection('Rewards')
+            .doc('user_rewards')
+            .set(UserRewardsModel(
+                    xp: 0, level: 1, earnedBadges: [], synced: true)
+                .toMap());
       }
       return cred;
     } catch (e) {

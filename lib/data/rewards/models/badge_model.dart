@@ -9,10 +9,12 @@ class BadgeModel extends Equatable {
   final int requiredXp;
   final String criteria;
   final IconData icon;
+  final List<Color> colors;
   const BadgeModel({
     required this.id,
     required this.name,
     required this.description,
+    required this.colors,
     this.requiredXp = 0,
     this.criteria = '',
     this.icon = Icons.star,

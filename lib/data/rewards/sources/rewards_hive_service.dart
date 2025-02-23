@@ -11,7 +11,12 @@ class RewardsHiveServiceImpl implements RewardsHiveService {
   Future<UserRewardsModel> getUserRewards() async {
     final rewardBox = await Hive.openBox<UserRewardsModel>('Rewards');
     try {
-      return rewardBox.values.first;
+      if (rewardBox.values.isNotEmpty) {
+        return rewardBox.values.first;
+      } else {
+        return UserRewardsModel(
+            xp: 0, level: 1, earnedBadges: [], synced: false);
+      }
     } catch (e) {
       rethrow;
     }
@@ -22,7 +27,7 @@ class RewardsHiveServiceImpl implements RewardsHiveService {
       {required UserRewardsModel rewardModel}) async {
     final rewardBox = await Hive.openBox<UserRewardsModel>('Rewards');
     try {
-      await rewardBox.putAt(0, rewardModel);
+      await rewardBox.put(0, rewardModel);
     } catch (e) {
       rethrow;
     }

@@ -2,13 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:habitit/common/navigation/navigation_state.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/navigation/navigation.dart';
 import 'package:habitit/core/network/network_info.dart';
+import 'package:habitit/data/rewards/repository/rewards_repository.dart';
+import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
+import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
+import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
+import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../data/habits/repository/habits_repository_impl.dart';
@@ -33,8 +37,10 @@ class NavigationBasePage extends StatelessWidget {
     ProfilePage(),
   ];
 
-  final hiveService = HabitsHiveServiceImpl();
-  final firebaseService = HabitsFirebaseServiceImpl();
+  final habitsHiveService = HabitsHiveServiceImpl();
+  final habitsFirebaseService = HabitsFirebaseServiceImpl();
+  final rewardsHiveService = RewardsHiveServiceImpl();
+  final rewardsFirebaseService = RewardsFirebaseServiceImpl();
   final networkInfo = NetworkInfoImpl(
       internetConnectionChecker: InternetConnectionChecker.instance);
 
@@ -44,8 +50,14 @@ class NavigationBasePage extends StatelessWidget {
       providers: [
         RepositoryProvider(
           create: (context) => HabitsRepositoryImpl(
-              hiveService: hiveService,
-              firebaseService: firebaseService,
+              hiveService: habitsHiveService,
+              firebaseService: habitsFirebaseService,
+              networkInfo: networkInfo),
+        ),
+        RepositoryProvider(
+          create: (context) => RewardsRepositoryImpl(
+              hiveService: rewardsHiveService,
+              firebaseService: rewardsFirebaseService,
               networkInfo: networkInfo),
         ),
       ],
@@ -58,9 +70,14 @@ class NavigationBasePage extends StatelessWidget {
             create: (context) => SelectedFrequencyCubit(),
           ),
           BlocProvider(
-              create: (context) => HabitStateCubit(
-                  usecase: GetAllHabitsUsecase(
-                      repository: context.read<HabitsRepositoryImpl>()))),
+            create: (context) => HabitStateCubit(
+                usecase: GetAllHabitsUsecase(
+                    repository: context.read<HabitsRepositoryImpl>())),
+          ),
+          BlocProvider(
+            create: (context) => UserRewardsCubit(GetUserRewardsUsecase(
+                repository: context.read<RewardsRepositoryImpl>())),
+          )
         ],
         child: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth >= 600) {

@@ -32,17 +32,6 @@ class UserRewardsModel extends HiveSyncable with EquatableMixin {
   }) : _synced = synced;
 
   @override
-  List<Object> get props => [xp, level, earnedBadges, _synced];
-
-  @override
-  bool get synced => _synced;
-
-  @override
-  set synced(bool value) {
-    _synced = value;
-  }
-
-  @override
   bool get stringify => true;
 
   Map<String, dynamic> toMap() {
@@ -50,7 +39,7 @@ class UserRewardsModel extends HiveSyncable with EquatableMixin {
       'xp': xp,
       'level': level,
       'earnedBadges': earnedBadges,
-      '_synced': _synced,
+      'synced': synced,
     };
   }
 
@@ -67,6 +56,16 @@ class UserRewardsModel extends HiveSyncable with EquatableMixin {
 
   factory UserRewardsModel.fromJson(String source) =>
       UserRewardsModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  @override
+  List<Object> get props => [xp, level, earnedBadges, synced];
+
+  @override
+  bool get synced => _synced;
+
+  @override
+  set synced(bool value) {
+    _synced = value;
+  }
 }
 
 extension UserRewardsXEntity on UserRewardsModel {
