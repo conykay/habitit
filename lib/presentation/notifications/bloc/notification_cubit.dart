@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habitit/data/notifications/models/notification_item.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
@@ -12,15 +13,28 @@ class NotificationCubit extends Cubit<NotificationState> {
     _messageSubscription =
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
+
       if (notification != null && notification.body != null) {
-        addNotification(notification: notification.body!);
+        addNotification(
+            notification: NotificationItem(
+                data: message.data,
+                sentAt: message.sentTime,
+                title: notification.title,
+                body: notification.body,
+                category: message.category));
       }
     });
     _openedAppSubscription =
         FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       final notification = message.notification;
       if (notification != null && notification.body != null) {
-        addNotification(notification: "Opened: ${notification.body!}");
+        addNotification(
+            notification: NotificationItem(
+                data: message.data,
+                sentAt: message.sentTime,
+                title: notification.title,
+                body: notification.body,
+                category: message.category));
       }
     });
   }
@@ -28,12 +42,18 @@ class NotificationCubit extends Cubit<NotificationState> {
   Future<void> onBackgroundHandler(RemoteMessage? message) async {
     final notification = message!.notification;
     if (notification != null && notification.body != null) {
-      addNotification(notification: "Opened: ${notification.body!}");
+      addNotification(
+          notification: NotificationItem(
+              data: message.data,
+              sentAt: message.sentTime,
+              title: notification.title,
+              body: notification.body,
+              category: message.category));
     }
   }
 
-  void addNotification({required String notification}) async {
-    final updateNotifications = List<String>.from(state.notifications)
+  void addNotification({required NotificationItem notification}) async {
+    final updateNotifications = List<NotificationItem>.from(state.notifications)
       ..add(notification);
     emit(NotificationState(notifications: updateNotifications));
   }

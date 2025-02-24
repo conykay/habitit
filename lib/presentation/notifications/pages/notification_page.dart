@@ -37,7 +37,25 @@ class NotificationPage extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: Colors.blue.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(10)),
-                    child: Text(notification),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(notification.title!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text(notification.body!),
+                        Text(
+                          DateTime(
+                                  notification.sentAt!.month,
+                                  notification.sentAt!.day,
+                                  notification.sentAt!.hour,
+                                  notification.sentAt!.minute)
+                              .toString(),
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
                   );
                 },
                 separatorBuilder: (context, index) => SizedBox(height: 10),
