@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habitit/core/platform_info/platform_info.dart';
+import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 
 import '../../../domain/auth/entities/auth_user_req_entity.dart';
@@ -49,6 +50,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
           .doc('user_rewards')
           .set(UserRewardsModel(xp: 0, level: 1, earnedBadges: [], synced: true)
               .toMap());
+      onUserLoggedIn(cred.user!);
       return cred;
     } catch (e) {
       rethrow;
@@ -59,8 +61,10 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
   Future<UserCredential> signinUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
     try {
-      return await auth.signInWithEmailAndPassword(
+      var cred = await auth.signInWithEmailAndPassword(
           email: authData.email, password: authData.password);
+      onUserLoggedIn(cred.user!);
+      return cred;
     } catch (e) {
       rethrow;
     }
@@ -100,6 +104,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
                     xp: 0, level: 1, earnedBadges: [], synced: true)
                 .toMap());
       }
+      onUserLoggedIn(cred.user!);
       return cred;
     } catch (e) {
       rethrow;
@@ -122,5 +127,18 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
     } else {
       return false;
     }
+  }
+
+// store token for notifications
+  void onUserLoggedIn(User user) async {
+    final notificationService = NotificationService();
+    final token = await notificationService.getToken();
+    if (token != null) {
+      await userCollectionRef.doc(user.uid).update({'token': token});
+    }
+    // token refresh
+    notificationService.listenToTokenRefresh((newToken) async {
+      userCollectionRef.doc(user.uid).update({'token': newToken});
+    });
   }
 }

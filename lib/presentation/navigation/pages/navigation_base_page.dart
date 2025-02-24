@@ -9,12 +9,15 @@ import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/navigation/navigation.dart';
 import 'package:habitit/core/network/network_info.dart';
+import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/data/rewards/repository/rewards_repository.dart';
 import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
+import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
+import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -30,9 +33,14 @@ import '../../home/pages/home_page.dart';
 import '../../profile/pages/profile_page.dart';
 import '../widgets/custom_top_navigator.dart';
 
-class NavigationBasePage extends StatelessWidget {
+class NavigationBasePage extends StatefulWidget {
   NavigationBasePage({super.key});
 
+  @override
+  State<NavigationBasePage> createState() => _NavigationBasePageState();
+}
+
+class _NavigationBasePageState extends State<NavigationBasePage> {
   final List<Widget> pages = [
     HomePage(),
     HabitsPage(),
@@ -41,11 +49,24 @@ class NavigationBasePage extends StatelessWidget {
   ];
 
   final habitsHiveService = HabitsHiveServiceImpl();
+
   final habitsFirebaseService = HabitsFirebaseServiceImpl();
+
   final rewardsHiveService = RewardsHiveServiceImpl();
+
   final rewardsFirebaseService = RewardsFirebaseServiceImpl();
+
   final networkInfo = NetworkInfoImpl(
       internetConnectionChecker: InternetConnectionChecker.instance);
+  Future<void> getPermisions() async {
+    await NotificationService().grantAppPermission();
+  }
+
+  @override
+  void initState() {
+    getPermisions();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,16 +87,11 @@ class NavigationBasePage extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => NavigationStateCubit(),
-          ),
-          BlocProvider(
-            create: (context) => SelectedFrequencyCubit(),
-          ),
-          BlocProvider(
-            create: (context) => HabitStateCubit(),
-          ),
-          BlocProvider(create: (context) => UserRewardsCubit())
+          BlocProvider(create: (context) => NavigationStateCubit()),
+          BlocProvider(create: (context) => SelectedFrequencyCubit()),
+          BlocProvider(create: (context) => HabitStateCubit()),
+          BlocProvider(create: (context) => UserRewardsCubit()),
+          BlocProvider(create: (context) => NotificationCubit())
         ],
         child: BlocListener<AuthStateCubit, AuthState>(
           listener: (context, state) {
@@ -110,11 +126,44 @@ class NavigationBasePage extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 30.0),
-                    child: IconButton(
-                        onPressed: () {
-                          AppNavigator.push(context, NotificationPage());
-                        },
-                        icon: FaIcon(FontAwesomeIcons.bell)),
+                    child: BlocBuilder<NotificationCubit, NotificationState>(
+                      builder: (context, state) {
+                        return Stack(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  AppNavigator.push(
+                                      context,
+                                      BlocProvider.value(
+                                          value:
+                                              context.read<NotificationCubit>(),
+                                          child: NotificationPage()));
+                                },
+                                icon: FaIcon(FontAwesomeIcons.bell)),
+                            state.notifications.isNotEmpty
+                                ? Positioned(
+                                    right: 11,
+                                    top: 11,
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      constraints: BoxConstraints(
+                                          minWidth: 10, minHeight: 10),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
+                                      child: Text(
+                                        state.notifications.length.toString(),
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        );
+                      },
+                    ),
                   )
                 ],
               );
@@ -136,11 +185,43 @@ class NavigationBasePage extends StatelessWidget {
             return AppBar(
               title: Text(title),
               actions: [
-                IconButton(
-                    onPressed: () {
-                      AppNavigator.push(context, NotificationPage());
-                    },
-                    icon: FaIcon(FontAwesomeIcons.bell))
+                BlocBuilder<NotificationCubit, NotificationState>(
+                  builder: (context, state) {
+                    return Stack(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              AppNavigator.push(
+                                  context,
+                                  BlocProvider.value(
+                                      value: context.read<NotificationCubit>(),
+                                      child: NotificationPage()));
+                            },
+                            icon: FaIcon(FontAwesomeIcons.bell)),
+                        state.notifications.isNotEmpty
+                            ? Positioned(
+                                right: 11,
+                                top: 11,
+                                child: Container(
+                                  padding: EdgeInsets.all(3),
+                                  constraints: BoxConstraints(
+                                      minWidth: 10, minHeight: 10),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  child: Text(
+                                    state.notifications.length.toString(),
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    );
+                  },
+                ),
               ],
             );
           })),

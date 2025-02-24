@@ -12,6 +12,8 @@ import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/data/habits/source/habits_firebase_service.dart';
+import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
+import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
@@ -32,6 +34,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await LocalNotificationService.initialize();
+  await NotificationService().getToken();
   Hive.registerAdapter(HabitModelAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardsModelAdapter());

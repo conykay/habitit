@@ -82,28 +82,35 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () {
-                      context.read<AuthStateCubit>().logout(
-                          usecase: LogoutUserUseCase(
-                              repository:
-                                  context.read<AuthenticationRepository>()));
+                  BlocBuilder<UserRewardsCubit, UserRewardsState>(
+                    builder: (context, state) {
+                      return GestureDetector(
+                        onTap: () {
+                          if (state is UserRewardsLoaded) {
+                            context.read<AuthStateCubit>().logout(
+                                usecase: LogoutUserUseCase(
+                                    repository: context
+                                        .read<AuthenticationRepository>()));
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Log Out',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.red)),
+                              FaIcon(FontAwesomeIcons.doorOpen,
+                                  color: Colors.red)
+                            ],
+                          ),
+                        ),
+                      );
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Log Out',
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.red)),
-                          FaIcon(FontAwesomeIcons.doorOpen, color: Colors.red)
-                        ],
-                      ),
-                    ),
                   )
                 ],
               )
