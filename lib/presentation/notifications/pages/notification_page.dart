@@ -19,21 +19,30 @@ class NotificationPage extends StatelessWidget {
             )
           ],
         ),
-        body: BlocBuilder<NotificationCubit, NotificationState>(
-            builder: (context, state) {
-          if (state.notifications.isEmpty) {
-            return Center(
-              child: Text('No notifications'),
-            );
-          }
-          return ListView.separated(
-              itemBuilder: (context, index) => Container(
-                    padding: EdgeInsets.all(20),
-                    color: Colors.orange.withValues(alpha: 0.2),
-                    child: Text(state.notifications[index]),
-                  ),
-              separatorBuilder: (context, index) => SizedBox(height: 20),
-              itemCount: state.notifications.length);
-        }));
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: BlocBuilder<NotificationCubit, NotificationState>(
+              builder: (context, state) {
+            if (state.notifications.isEmpty) {
+              return Center(
+                child: Text('No notifications'),
+              );
+            }
+            var reversedNotifications = state.notifications.reversed.toList();
+            return ListView.separated(
+                itemBuilder: (context, index) {
+                  var notification = reversedNotifications[index];
+                  return Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(notification),
+                  );
+                },
+                separatorBuilder: (context, index) => SizedBox(height: 10),
+                itemCount: state.notifications.length);
+          }),
+        ));
   }
 }
