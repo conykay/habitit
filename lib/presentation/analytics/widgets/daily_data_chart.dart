@@ -34,42 +34,46 @@ class DailyDataLineChart extends StatelessWidget {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          AspectRatio(
-              aspectRatio: 1.5,
-              child: LineChart(LineChartData(
-                minX: 0,
-                maxX: maxX,
-                minY: 0,
-                maxY: maxY,
-                titlesData: FlTitlesData(
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: maxX == 0 ? 1 : maxX,
-                      getTitlesWidget: (value, meta) {
-                        final date =
-                            startDate.add(Duration(days: value.toInt()));
-                        return Text("${date.month}/${date.day}",
-                            style: TextStyle(fontSize: 10));
-                      },
+          Container(
+            decoration: BoxDecoration(),
+            clipBehavior: Clip.hardEdge,
+            child: AspectRatio(
+                aspectRatio: 1.5,
+                child: LineChart(LineChartData(
+                  minX: 0,
+                  maxX: maxX,
+                  minY: 0,
+                  maxY: maxY,
+                  titlesData: FlTitlesData(
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: maxX == 0 ? 1 : maxX,
+                        getTitlesWidget: (value, meta) {
+                          final date =
+                              startDate.add(Duration(days: value.toInt()));
+                          return Text("${date.month}/${date.day}",
+                              style: TextStyle(fontSize: 10));
+                        },
+                      ),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: true, interval: 1),
                     ),
                   ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true, interval: 1),
-                  ),
-                ),
-                gridData: FlGridData(show: false),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: false,
-                    color: Colors.amber,
-                    barWidth: 3,
-                    dotData: FlDotData(show: true),
-                  ),
-                ],
-              )))
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: false,
+                      color: Colors.amber,
+                      barWidth: 3,
+                      dotData: FlDotData(show: true),
+                    ),
+                  ],
+                ))),
+          )
         ],
       );
     }

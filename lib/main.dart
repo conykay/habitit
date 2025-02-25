@@ -41,12 +41,12 @@ void main() async {
   Hive.registerAdapter(UserRewardsModelAdapter());
   //open hive boxes
   final habitBox = await Hive.openBox<HabitModel>('Habits');
-  final rewardsBox = await Hive.openBox<UserRewardsModel>('Rewards');
+  // final rewardsBox = await Hive.openBox<UserRewardsModel>('Rewards');
   final habitsFirebaseService = HabitsFirebaseServiceImpl();
-  final syncCoordinator = SyncCoordinator(
+  final habitSyncCoordinator = SyncCoordinator(
       firebaseService: habitsFirebaseService, habitBox: habitBox);
+  habitSyncCoordinator.initialize();
 
-  syncCoordinator.initialize();
   runApp(MainApp(
     themeRepository: ThemeRepository(),
   ));

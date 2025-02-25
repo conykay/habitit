@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
@@ -9,8 +10,11 @@ import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 import '../widgets/home_table_calendar.dart';
 import '../widgets/today_habits_grid.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  List<HabitEnity>? allHabits;
 
   @override
   Widget build(BuildContext context) {
@@ -40,23 +44,35 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 15),
             Expanded(child: BlocBuilder<HabitStateCubit, HabitState>(
                 builder: (context, state) {
-              if (state is HabitLoading) {
-                return Center(child: CircularProgressIndicator());
-              }
-              if (state is HabitLoaded) {
-                if (state.habits.isEmpty) {
-                  return Center(
-                    child: Text('Create some habits to see them here'),
-                  );
-                }
-                return TodayHabitsWidget(habits: state.habits);
-              }
+              var loading = state is HabitLoading;
               if (state is HabitError) {
                 return Center(
                   child: Text(state.message),
                 );
               }
-              return Container();
+              if (state is HabitLoaded) {
+                allHabits = state.habits;
+              }
+              if (allHabits != null) {
+                if (allHabits!.isEmpty) {
+                  return Center(
+                    child: Text('Create some habits to see them here'),
+                  );
+                }
+                return Column(
+                  children: [
+                    loading
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            child: LinearProgressIndicator(),
+                          )
+                        : SizedBox(),
+                    Expanded(child: TodayHabitsWidget(habits: allHabits!)),
+                  ],
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
             }))
           ],
         ),

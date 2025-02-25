@@ -10,6 +10,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '../../data/habits/source/habits_firebase_service.dart';
 
 class SyncCoordinator {
+  // final List<Map<dynamic,dynamic>> syncOperations; (convert to general function).
   final HabitsFirebaseService firebaseService;
   final Box<HabitModel> habitBox;
   late final List<GenericSyncManager<dynamic>> _syncManagers;

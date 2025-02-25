@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
+import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/analytics/widgets/adherence_rates.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
@@ -11,8 +12,11 @@ import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 import '../widgets/daily_data_chart.dart';
 
+// ignore: must_be_immutable
 class AnalyticsPage extends StatelessWidget {
-  const AnalyticsPage({super.key});
+  AnalyticsPage({super.key});
+
+  List<HabitEnity>? allHabits;
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +29,32 @@ class AnalyticsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
         child: BlocBuilder<HabitStateCubit, HabitState>(
           builder: (context, state) {
+            var loading = state is HabitLoading;
+
+            if (state is HabitError) {
+              return Center(
+                child: Text('Error retreiving data'),
+              );
+            }
             if (state is HabitLoaded) {
-              if (state.habits.isNotEmpty) {
-                var highestStreak = longestStreakInAllHabits(state.habits);
-                var dailyData = getDailyCompletionData(state.habits);
+              allHabits = state.habits;
+            }
+            if (allHabits != null) {
+              if (allHabits!.isNotEmpty) {
+                var highestStreak = longestStreakInAllHabits(allHabits!);
+                var dailyData = getDailyCompletionData(allHabits!);
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      loading
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: LinearProgressIndicator())
+                          : SizedBox(),
                       _streakBox(context, highestStreak),
                       SizedBox(height: 15),
-                      AdherenceRatesWidget(habits: state.habits),
+                      AdherenceRatesWidget(habits: allHabits!),
                       SizedBox(height: 15),
                       DailyDataLineChart(dailyData: dailyData)
                     ],
@@ -46,16 +65,11 @@ class AnalyticsPage extends StatelessWidget {
                   child: Text('Create some habits to track your progress'),
                 );
               }
-            }
-            if (state is HabitError) {
+            } else {
               return Center(
-                child: Text('There was an error'),
+                child: CircularProgressIndicator(),
               );
             }
-            if (state is HabitLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            return Container();
           },
         ),
       ),

@@ -32,18 +32,17 @@ class AdherenceRatesWidget extends StatelessWidget {
                 var color =
                     Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      habit.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    SizedBox(height: 8),
-                    SizedBox(
-                      height: 150,
-                      child: AspectRatio(
+                return SizedBox(
+                  width: 150,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        habit.name,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8),
+                      AspectRatio(
                         aspectRatio: 1,
                         child: PieChart(
                           duration: Duration(milliseconds: 150),
@@ -67,8 +66,8 @@ class AdherenceRatesWidget extends StatelessWidget {
                           ]),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
               separatorBuilder: (context, index) {

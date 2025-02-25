@@ -36,10 +36,27 @@ class TodayHabitsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayHabits = incompleteHabits;
+    if (displayHabits.isEmpty) {
+      return Center(
+        child: Column(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.flagCheckered,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 50,
+            ),
+            Text(
+              'You seem to be done for the day. Do something fun',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ],
+        ),
+      );
+    }
     return GridView.builder(
         itemCount: displayHabits.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, mainAxisSpacing: 20, crossAxisSpacing: 10),
+            crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10),
         itemBuilder: (context, index) {
           var color = Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
           var habit = displayHabits[index];

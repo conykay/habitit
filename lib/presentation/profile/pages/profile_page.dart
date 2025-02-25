@@ -22,10 +22,12 @@ import 'package:habitit/presentation/profile/widgets/badge.dart';
 import '../../../domain/auth/repository/authentication_repository.dart';
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 
+// ignore: must_be_immutable
 class ProfilePage extends StatelessWidget {
   ProfilePage({
     super.key,
   });
+
   UserRewardEntity? userReward;
 
   @override

@@ -35,6 +35,7 @@ class HabitCalendarWidget extends StatelessWidget {
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2100, 1, 1),
       headerVisible: true,
+      headerStyle: HeaderStyle(formatButtonVisible: false),
       calendarStyle: CalendarStyle(
         isTodayHighlighted: false,
         markerSize: 0,
