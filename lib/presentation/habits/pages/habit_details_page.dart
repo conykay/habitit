@@ -43,37 +43,42 @@ class HabitDetailsPage extends StatelessWidget {
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60),
               child: CustomAppBar(habit: habit)),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    habit.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
+          body: LayoutBuilder(builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 700),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        habit.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        ),
+                      ),
+                      Text(
+                        habit.description ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      _completedRepeat(),
+                      SizedBox(height: 20),
+                      _streakBox(context),
+                      SizedBox(height: 20),
+                      HabitCalendarWidget(habit: habit)
+                    ],
                   ),
-                  Text(
-                    habit.description ?? '',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  _completedRepeat(),
-                  SizedBox(height: 20),
-                  _streakBox(context),
-                  SizedBox(height: 20),
-                  HabitCalendarWidget(habit: habit)
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         ),
       ),
     );

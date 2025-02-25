@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
@@ -31,52 +32,60 @@ class HomePage extends StatelessWidget {
               MarkHabitCompleteCubit(context.read<HabitRepository>()),
         ),
       ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _greetingTitle(),
-            SizedBox(height: 15),
-            HomeTableCalendarWidget(context: context),
-            SizedBox(height: 15),
-            _taskSectionTitle(),
-            SizedBox(height: 15),
-            Expanded(child: BlocBuilder<HabitStateCubit, HabitState>(
-                builder: (context, state) {
-              var loading = state is HabitLoading;
-              if (state is HabitError) {
-                return Center(
-                  child: Text(state.message),
-                );
-              }
-              if (state is HabitLoaded) {
-                allHabits = state.habits;
-              }
-              if (allHabits != null) {
-                if (allHabits!.isEmpty) {
-                  return Center(
-                    child: Text('Create some habits to see them here'),
-                  );
-                }
-                return Column(
-                  children: [
-                    loading
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5),
-                            child: LinearProgressIndicator(),
-                          )
-                        : SizedBox(),
-                    Expanded(child: TodayHabitsWidget(habits: allHabits!)),
-                  ],
-                );
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            }))
-          ],
-        ),
-      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 700),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _greetingTitle(),
+                  SizedBox(height: 15),
+                  HomeTableCalendarWidget(context: context),
+                  SizedBox(height: 15),
+                  _taskSectionTitle(),
+                  SizedBox(height: 15),
+                  Expanded(child: BlocBuilder<HabitStateCubit, HabitState>(
+                      builder: (context, state) {
+                    var loading = state is HabitLoading;
+                    if (state is HabitError) {
+                      return Center(
+                        child: Text(state.message),
+                      );
+                    }
+                    if (state is HabitLoaded) {
+                      allHabits = state.habits;
+                    }
+                    if (allHabits != null) {
+                      if (allHabits!.isEmpty) {
+                        return Center(
+                          child: Text('Create some habits to see them here'),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          loading
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: LinearProgressIndicator(),
+                                )
+                              : SizedBox(),
+                          Expanded(
+                              child: TodayHabitsWidget(habits: allHabits!)),
+                        ],
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  }))
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 

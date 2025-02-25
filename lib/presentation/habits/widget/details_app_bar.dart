@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,31 +25,7 @@ class CustomAppBar extends StatelessWidget {
         Builder(builder: (context) {
           return IconButton(
             onPressed: () async {
-              final repo = context.read<HabitRepository>();
-              final selectedCubit = context.read<SelectedFrequencyCubit>();
-              final result = await showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return RepositoryProvider.value(
-                    value: repo,
-                    child: BlocProvider.value(
-                        value: selectedCubit,
-                        child: EditHabitWidget(
-                          habit: habit,
-                        )),
-                  );
-                },
-              );
-              if (result == true) {
-                if (context.mounted) {
-                  var snack = SnackBar(
-                    content: Text(
-                        'Content will be updated the next time you open this page'),
-                    behavior: SnackBarBehavior.floating,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snack);
-                }
-              }
+              await _editHabitPopUp(context);
             },
             icon: FaIcon(FontAwesomeIcons.penClip),
             color: Theme.of(context).colorScheme.secondary,
@@ -104,5 +81,55 @@ class CustomAppBar extends StatelessWidget {
         }),
       ],
     );
+  }
+
+  Future<void> _editHabitPopUp(BuildContext context) async {
+    final repo = context.read<HabitRepository>();
+    final selectedCubit = context.read<SelectedFrequencyCubit>();
+    late bool result;
+    if (!kIsWeb) {
+      result = await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return RepositoryProvider.value(
+            value: repo,
+            child: BlocProvider.value(
+                value: selectedCubit,
+                child: EditHabitWidget(
+                  habit: habit,
+                )),
+          );
+        },
+      );
+    } else {
+      result = await showDialog(
+        context: context,
+        builder: (context) {
+          return RepositoryProvider.value(
+            value: repo,
+            child: BlocProvider.value(
+                value: selectedCubit,
+                child: Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: EditHabitWidget(
+                    habit: habit,
+                  ),
+                )),
+          );
+        },
+      );
+    }
+    if (result == true) {
+      if (context.mounted) {
+        var snack = SnackBar(
+          content:
+              Text('Content will be updated the next time you open this page'),
+          behavior: SnackBarBehavior.floating,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snack);
+      }
+    }
   }
 }

@@ -10,7 +10,6 @@ import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
 import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
-
 import '../../../domain/auth/usecases/signin_google.dart';
 
 class SigninPage extends StatelessWidget {
@@ -34,42 +33,42 @@ class SigninPage extends StatelessWidget {
           }
         },
         child: Scaffold(
-          body: Center(
-            child: SizedBox(
-              width: MediaQuery.sizeOf(context).width > 600 ? 400 : null,
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 80),
-                      decoration: BoxDecoration(
+          resizeToAvoidBottomInset: true,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 60),
+                        decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20),
                             bottomRight: Radius.circular(20),
-                          )),
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: _buildIntro(context),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15),
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
+                          ),
+                        ),
+                        child: _buildIntro(context),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        decoration: BoxDecoration(
                           color: Theme.of(context).canvasColor,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(25),
                             topRight: Radius.circular(25),
-                          )),
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: SignInWidget(),
-                    ),
+                          ),
+                        ),
+                        child: SignInWidget(),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -92,9 +91,9 @@ class SigninPage extends StatelessWidget {
             color: Theme.of(context).canvasColor,
           ),
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         Text(
-          'Men\'s natures are alike, it is their habits that carry them far apart',
+          "Men's natures are alike, it is their habits that carry them far apart",
           textAlign: TextAlign.center,
           style: TextStyle(
               fontWeight: FontWeight.w400,
@@ -118,44 +117,31 @@ class SignInWidget extends StatelessWidget {
     return Form(
       key: _formKey,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Text(
-            'Log In ',
+            'Log In',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 28,
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           TextFormField(
             controller: _emailTextController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'This field cannot be empty';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              hintText: 'Email',
-            ),
+            validator: (value) =>
+                value!.isEmpty ? 'This field cannot be empty' : null,
+            decoration: const InputDecoration(hintText: 'Email'),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _passwordTextController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'password cannot be empty';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              hintText: 'Password',
-            ),
+            validator: (value) =>
+                value!.isEmpty ? 'Password cannot be empty' : null,
+            decoration: const InputDecoration(hintText: 'Password'),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           ReactiveElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
@@ -170,9 +156,9 @@ class SignInWidget extends StatelessWidget {
             },
             title: 'Continue',
           ),
-          SizedBox(height: 25),
-          Divider(thickness: 1),
-          SizedBox(height: 20),
+          const SizedBox(height: 25),
+          const Divider(thickness: 1),
+          const SizedBox(height: 20),
           ReactiveElevatedButton(
             onPressed: () {
               context.read<ButtonStateCubit>().call(
@@ -181,23 +167,21 @@ class SignInWidget extends StatelessWidget {
             },
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.google,
-                  size: 30,
-                ),
+              children: const [
+                FaIcon(FontAwesomeIcons.google, size: 30),
                 Text('oogle Log In'),
               ],
             ),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           GestureDetector(
             onTap: () {
               AppNavigator.pushReplacement(context, SignupPage());
             },
-            child: Text.rich(TextSpan(
-                text: 'New to change ?',
-                style: TextStyle(fontSize: 18),
+            child: Text.rich(
+              TextSpan(
+                text: 'New to change?',
+                style: const TextStyle(fontSize: 18),
                 children: [
                   TextSpan(
                     text: ' Sign Up',
@@ -205,8 +189,10 @@ class SignInWidget extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.secondary),
                   )
-                ])),
-          )
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

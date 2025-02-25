@@ -53,73 +53,47 @@ class ProfilePage extends StatelessWidget {
             AppNavigator.pushAndRemove(context, SigninPage());
           }
         },
-        child: BlocBuilder<UserRewardsCubit, UserRewardsState>(
-          builder: (context, state) {
-            if (state is UserRewardsError) {
-              return Center(
-                child: Text(state.error.toString()),
-              );
-            }
-            if (state is UserRewardsLoaded) {
-              userReward = state.rewards;
-            }
-            var isLoading = state is UserRewardsLoading;
-            if (userReward != null) {
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5.0),
-                      child: isLoading ? LinearProgressIndicator() : SizedBox(),
-                    ),
-                    _pointsDisplay(context, userReward!),
-                    SizedBox(height: 20),
-                    _acheivementsList(badgesEarned: userReward!.earnedBadges),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Preferences',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24)),
-                        SizedBox(height: 10),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.grey.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Brightness',
-                                  style: TextStyle(fontSize: 20)),
-                              BlocBuilder<ThemeCubit, ThemeState>(
-                                builder: (context, state) {
-                                  return Switch(
-                                      value: state.themeMode == ThemeMode.dark,
-                                      onChanged: (_) async => context
-                                          .read<ThemeCubit>()
-                                          .switchTheme());
-                                },
-                              )
-                            ],
+        child: LayoutBuilder(builder: (context, constrains) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 700),
+              child: BlocBuilder<UserRewardsCubit, UserRewardsState>(
+                builder: (context, state) {
+                  if (state is UserRewardsError) {
+                    return Center(
+                      child: Text(state.error.toString()),
+                    );
+                  }
+                  if (state is UserRewardsLoaded) {
+                    userReward = state.rewards;
+                  }
+                  var isLoading = state is UserRewardsLoading;
+                  if (userReward != null) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5.0),
+                            child: isLoading
+                                ? LinearProgressIndicator()
+                                : SizedBox(),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        BlocBuilder<UserRewardsCubit, UserRewardsState>(
-                          builder: (context, state) {
-                            return GestureDetector(
-                              onTap: () {
-                                if (state is UserRewardsLoaded) {
-                                  context.read<AuthStateCubit>().logout(
-                                      usecase: LogoutUserUseCase(
-                                          repository: context.read<
-                                              AuthenticationRepository>()));
-                                }
-                              },
-                              child: Container(
+                          _pointsDisplay(context, userReward!),
+                          SizedBox(height: 20),
+                          _acheivementsList(
+                              badgesEarned: userReward!.earnedBadges),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Preferences',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24)),
+                              SizedBox(height: 10),
+                              Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     color: Colors.grey.withValues(alpha: 0.2),
@@ -128,29 +102,71 @@ class ProfilePage extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Log Out',
-                                        style: TextStyle(
-                                            fontSize: 20, color: Colors.red)),
-                                    FaIcon(FontAwesomeIcons.doorOpen,
-                                        color: Colors.red)
+                                    Text('Brightness',
+                                        style: TextStyle(fontSize: 20)),
+                                    BlocBuilder<ThemeCubit, ThemeState>(
+                                      builder: (context, state) {
+                                        return Switch(
+                                            value: state.themeMode ==
+                                                ThemeMode.dark,
+                                            onChanged: (_) async => context
+                                                .read<ThemeCubit>()
+                                                .switchTheme());
+                                      },
+                                    )
                                   ],
                                 ),
                               ),
-                            );
-                          },
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+                              SizedBox(height: 10),
+                              BlocBuilder<UserRewardsCubit, UserRewardsState>(
+                                builder: (context, state) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (state is UserRewardsLoaded) {
+                                        context.read<AuthStateCubit>().logout(
+                                            usecase: LogoutUserUseCase(
+                                                repository: context.read<
+                                                    AuthenticationRepository>()));
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey
+                                              .withValues(alpha: 0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Log Out',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.red)),
+                                          FaIcon(FontAwesomeIcons.doorOpen,
+                                              color: Colors.red)
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

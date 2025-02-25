@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:habitit/firebase_options.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationService {
   final FirebaseMessaging messagingInstance = FirebaseMessaging.instance;
-
+  static const vapidKey =
+      "BGUpq07QOgLng69S4tb38gruFJMIfz522Py0GcIEe4JYyWUeOrtGd2pbr28gg3gNQNmW0fnkcPLQd7fAItgw6AE";
 // permissions
   Future<void> grantAppPermission() async {
     NotificationSettings notificationSettings =
@@ -37,7 +39,15 @@ class NotificationService {
   // get token
 
   Future<String?> getToken() async {
-    final token = await messagingInstance.getToken();
+    String? token;
+    if (DefaultFirebaseOptions.currentPlatform == DefaultFirebaseOptions.web) {
+      token = await messagingInstance.getToken(vapidKey: vapidKey);
+      if (kDebugMode) {
+        print(token);
+      }
+    } else {
+      token = await messagingInstance.getToken();
+    }
     return token;
   }
 

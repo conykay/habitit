@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,68 +28,71 @@ class HabitsPage extends StatelessWidget {
         ..getHabits(
             usecase: GetAllHabitsUsecase(
                 repository: context.read<HabitRepository>())),
-      child: SizedBox(
-        width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: BlocBuilder<HabitStateCubit, HabitState>(
-                builder: (context, state) {
-                  var loading = state is HabitLoading;
+      child: Center(
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
+          child: Stack(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: BlocBuilder<HabitStateCubit, HabitState>(
+                  builder: (context, state) {
+                    var loading = state is HabitLoading;
 
-                  if (state is HabitError) {
-                    return Center(
-                      child: Text(state.message),
-                    );
-                  }
-
-                  if (state is HabitLoaded) {
-                    allHabits = state.habits;
-                  }
-                  if (allHabits != null) {
-                    if (allHabits!.isEmpty) {
+                    if (state is HabitError) {
                       return Center(
-                        child: Text(
-                          'Create a Habit to Get Going',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
+                        child: Text(state.message),
                       );
                     }
-                    return Column(
-                      children: [
-                        loading
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5),
-                                child: LinearProgressIndicator())
-                            : SizedBox(),
-                        Expanded(child: HabitsListView(habits: allHabits!)),
-                      ],
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
+
+                    if (state is HabitLoaded) {
+                      allHabits = state.habits;
+                    }
+                    if (allHabits != null) {
+                      if (allHabits!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'Create a Habit to Get Going',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          loading
+                              ? Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: LinearProgressIndicator())
+                              : SizedBox(),
+                          Expanded(child: HabitsListView(habits: allHabits!)),
+                        ],
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0, right: 20),
-                child: Builder(builder: (context) {
-                  return FloatingActionButton(
-                    onPressed: () async {
-                      await _createNewHabit(context);
-                    },
-                    child: FaIcon(FontAwesomeIcons.plus),
-                  );
-                }),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0, right: 20),
+                  child: Builder(builder: (context) {
+                    return FloatingActionButton(
+                      onPressed: () async {
+                        await _createNewHabit(context);
+                      },
+                      child: FaIcon(FontAwesomeIcons.plus),
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -100,35 +104,73 @@ class HabitsPage extends StatelessWidget {
     final selectedCubit = context.read<SelectedFrequencyCubit>();
     final habitstate = context.read<HabitStateCubit>();
     final rewardState = context.read<UserRewardsCubit>();
-    final result = await showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return MultiRepositoryProvider(
-          providers: [
-            RepositoryProvider.value(
-              value: habitRepo,
-            ),
-            RepositoryProvider.value(
-              value: rewardRepo,
-            ),
-          ],
-          child: MultiBlocProvider(
+
+    late bool result;
+    if (kIsWeb) {
+      result = await showDialog(
+          context: context,
+          builder: (context) {
+            return MultiRepositoryProvider(
+              providers: [
+                RepositoryProvider.value(
+                  value: habitRepo,
+                ),
+                RepositoryProvider.value(
+                  value: rewardRepo,
+                ),
+              ],
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: habitstate,
+                  ),
+                  BlocProvider.value(
+                    value: selectedCubit,
+                  ),
+                  BlocProvider.value(
+                    value: rewardState,
+                  ),
+                ],
+                child: Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: NewHabitCustomModal()),
+              ),
+            );
+          });
+    } else {
+      result = await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return MultiRepositoryProvider(
             providers: [
-              BlocProvider.value(
-                value: habitstate,
+              RepositoryProvider.value(
+                value: habitRepo,
               ),
-              BlocProvider.value(
-                value: selectedCubit,
-              ),
-              BlocProvider.value(
-                value: rewardState,
+              RepositoryProvider.value(
+                value: rewardRepo,
               ),
             ],
-            child: NewHabitCustomModal(),
-          ),
-        );
-      },
-    );
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: habitstate,
+                ),
+                BlocProvider.value(
+                  value: selectedCubit,
+                ),
+                BlocProvider.value(
+                  value: rewardState,
+                ),
+              ],
+              child: NewHabitCustomModal(),
+            ),
+          );
+        },
+      );
+    }
+
     if (result == true) {
       if (context.mounted) {
         context.read<HabitStateCubit>().getHabits(

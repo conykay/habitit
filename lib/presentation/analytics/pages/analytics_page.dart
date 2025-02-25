@@ -25,54 +25,63 @@ class AnalyticsPage extends StatelessWidget {
         ..getHabits(
             usecase: GetAllHabitsUsecase(
                 repository: context.read<HabitRepository>())),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-        child: BlocBuilder<HabitStateCubit, HabitState>(
-          builder: (context, state) {
-            var loading = state is HabitLoading;
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 700),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+              child: BlocBuilder<HabitStateCubit, HabitState>(
+                builder: (context, state) {
+                  var loading = state is HabitLoading;
 
-            if (state is HabitError) {
-              return Center(
-                child: Text('Error retreiving data'),
-              );
-            }
-            if (state is HabitLoaded) {
-              allHabits = state.habits;
-            }
-            if (allHabits != null) {
-              if (allHabits!.isNotEmpty) {
-                var highestStreak = longestStreakInAllHabits(allHabits!);
-                var dailyData = getDailyCompletionData(allHabits!);
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      loading
-                          ? Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: LinearProgressIndicator())
-                          : SizedBox(),
-                      _streakBox(context, highestStreak),
-                      SizedBox(height: 15),
-                      AdherenceRatesWidget(habits: allHabits!),
-                      SizedBox(height: 15),
-                      DailyDataLineChart(dailyData: dailyData)
-                    ],
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Text('Create some habits to track your progress'),
-                );
-              }
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
-      ),
+                  if (state is HabitError) {
+                    return Center(
+                      child: Text('Error retreiving data'),
+                    );
+                  }
+                  if (state is HabitLoaded) {
+                    allHabits = state.habits;
+                  }
+                  if (allHabits != null) {
+                    if (allHabits!.isNotEmpty) {
+                      var highestStreak = longestStreakInAllHabits(allHabits!);
+                      var dailyData = getDailyCompletionData(allHabits!);
+                      return SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            loading
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: LinearProgressIndicator())
+                                : SizedBox(),
+                            _streakBox(context, highestStreak),
+                            SizedBox(height: 15),
+                            AdherenceRatesWidget(habits: allHabits!),
+                            SizedBox(height: 15),
+                            DailyDataLineChart(dailyData: dailyData)
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child:
+                            Text('Create some habits to track your progress'),
+                      );
+                    }
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 

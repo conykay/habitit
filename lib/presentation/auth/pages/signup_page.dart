@@ -35,38 +35,51 @@ class SignupPage extends StatelessWidget {
           }
         },
         child: Scaffold(
-          body: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 60),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                      )),
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: _buildIntro(context),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25),
-                      )),
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: SignupWidget(),
-                ),
-              ),
-            ],
+          resizeToAvoidBottomInset:
+              true, // Allows resizing when keyboard appears
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 600, // Limit width for better web design
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 60),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                            ),
+                            child: _buildIntro(context),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).canvasColor,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(25),
+                                topRight: Radius.circular(25),
+                              ),
+                            ),
+                            child: SignupWidget(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -87,7 +100,7 @@ class SignupPage extends StatelessWidget {
             color: Theme.of(context).canvasColor,
           ),
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         Text(
           'Habits are the compound interest of self-improvement',
           textAlign: TextAlign.center,
@@ -114,8 +127,9 @@ class SignupWidget extends StatelessWidget {
     return Form(
       key: _formState,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Text(
             'Signup & Get Started',
             style: TextStyle(
@@ -124,7 +138,7 @@ class SignupWidget extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           TextFormField(
             controller: _nameTextController,
             validator: (value) {
@@ -133,11 +147,11 @@ class SignupWidget extends StatelessWidget {
               }
               return null;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Name',
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _emailTextController,
             validator: (value) {
@@ -146,11 +160,11 @@ class SignupWidget extends StatelessWidget {
               }
               return null;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Email',
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _passwordTextController,
             validator: (value) {
@@ -162,11 +176,11 @@ class SignupWidget extends StatelessWidget {
               }
               return null;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Password',
             ),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           ReactiveElevatedButton(
             onPressed: () {
               if (_formState.currentState!.validate()) {
@@ -182,9 +196,9 @@ class SignupWidget extends StatelessWidget {
             },
             title: 'Continue',
           ),
-          SizedBox(height: 25),
-          Divider(thickness: 1),
-          SizedBox(height: 20),
+          const SizedBox(height: 25),
+          const Divider(thickness: 1),
+          const SizedBox(height: 20),
           Builder(builder: (context) {
             return ReactiveElevatedButton(
               onPressed: () {
@@ -194,7 +208,7 @@ class SignupWidget extends StatelessWidget {
               },
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: const [
                   FaIcon(
                     FontAwesomeIcons.google,
                     size: 30,
@@ -204,14 +218,14 @@ class SignupWidget extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           GestureDetector(
             onTap: () {
               AppNavigator.pushReplacement(context, SigninPage());
             },
             child: Text.rich(TextSpan(
                 text: 'Already have an account ?',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
                 children: [
                   TextSpan(
                     text: ' Log in',
@@ -220,7 +234,7 @@ class SignupWidget extends StatelessWidget {
                         color: Theme.of(context).colorScheme.secondary),
                   )
                 ])),
-          )
+          ),
         ],
       ),
     );
