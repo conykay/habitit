@@ -19,7 +19,7 @@ void main() {
   group('Authenticate User bloc', () {
     blocTest(
       'emits nothing when added',
-      build: () => AuthStateCubit(userLoggedInUseCase),
+      build: () => AuthStateCubit(),
       expect: () => [],
     );
   });
@@ -28,8 +28,8 @@ void main() {
       setUp: () {
         when(userLoggedInUseCase.call()).thenAnswer((_) async => true);
       },
-      build: () => AuthStateCubit(userLoggedInUseCase),
-      act: (bloc) => bloc.isAutheniticated(),
+      build: () => AuthStateCubit(),
+      act: (bloc) => bloc.isAutheniticated(usecase: userLoggedInUseCase),
       expect: () => [Authenticated()],
       verify: (_) {
         verify(userLoggedInUseCase.call()).called(1);

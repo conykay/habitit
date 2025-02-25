@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habitit/data/habits/models/habit_frequency.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 
@@ -11,7 +12,7 @@ void main() {
     name: 'name',
     description: 'description',
     frequency: HabitFrequency.daily,
-    startDate: Timestamp.now(),
+    startDate: DateTime.now(),
     completedDates: [],
     synced: false,
   );
@@ -23,7 +24,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toDate().toString(),
+      'startDate': tHabitModel.startDate.toString(),
       'completedDates': [],
       'synced': false,
     });
@@ -35,7 +36,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toDate().toString(),
+      'startDate': tHabitModel.startDate.toString(),
       'completedDates': [],
       'synced': false,
     };
@@ -50,7 +51,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toDate().toString(),
+      'startDate': tHabitModel.startDate.toString(),
       'completedDates': [],
       'synced': false,
     });
@@ -63,7 +64,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toDate().toString(),
+      'startDate': tHabitModel.startDate.toString(),
       'completedDates': [],
       'synced': false,
     });
@@ -78,7 +79,8 @@ void main() {
       name: 'name',
       description: 'description',
       frequency: HabitFrequency.daily,
-      startDate: tHabitModel.startDate,
+      startDate: Timestamp.fromDate(tHabitModel.startDate),
+      synced: true,
       completedDates: [],
     );
     expect(result, expectedEntity);
