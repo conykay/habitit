@@ -24,7 +24,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toString(),
+      'startDate': tHabitModel.startDate.toIso8601String(),
       'completedDates': [],
       'synced': false,
     });
@@ -36,7 +36,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toString(),
+      'startDate': Timestamp.fromDate(tHabitModel.startDate),
       'completedDates': [],
       'synced': false,
     };
@@ -46,12 +46,13 @@ void main() {
 
   test('should convert HabitModel to JSON', () {
     final result = tHabitModel.toJson();
+    print(result);
     final expectedJson = json.encode({
       'id': 'id',
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toString(),
+      'startDate': tHabitModel.startDate.toIso8601String(),
       'completedDates': [],
       'synced': false,
     });
@@ -64,7 +65,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': tHabitModel.startDate.toString(),
+      'startDate': tHabitModel.startDate.toIso8601String(),
       'completedDates': [],
       'synced': false,
     });

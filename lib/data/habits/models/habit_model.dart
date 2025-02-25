@@ -52,7 +52,7 @@ class HabitModel extends HiveSyncable with EquatableMixin {
       'name': name,
       'description': description,
       'frequency': frequency.toString().split('.').last,
-      'startDate': Timestamp.fromDate(startDate),
+      'startDate': startDate.toIso8601String(),
       'completedDates':
           completedDates.map((x) => x.millisecondsSinceEpoch).toList(),
       'synced': synced,
@@ -68,7 +68,7 @@ class HabitModel extends HiveSyncable with EquatableMixin {
       frequency: HabitFrequency.values.firstWhere(
           (e) => e.toString().split('.').last == map['frequency'],
           orElse: () => HabitFrequency.daily),
-      startDate: (map['startDate'] as Timestamp).toDate(),
+      startDate: DateTime.parse(map['startDate']),
       completedDates: List.from(
         (map['completedDates']).map(
           (x) => DateTime.fromMillisecondsSinceEpoch(x),
