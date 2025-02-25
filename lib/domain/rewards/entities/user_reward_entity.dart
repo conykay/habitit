@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+// ignore: must_be_immutable
 class UserRewardEntity extends Equatable {
   int xp;
   int level;
