@@ -19,12 +19,18 @@ class NotificationService {
 
     if (notificationSettings.authorizationStatus ==
         AuthorizationStatus.authorized) {
-      print('user granted permission');
+      if (kDebugMode) {
+        print('user granted permission');
+      }
     } else if (notificationSettings.authorizationStatus ==
         AuthorizationStatus.provisional) {
-      print('user granted provisional permission');
+      if (kDebugMode) {
+        print('user granted provisional permission');
+      }
     } else {
-      print('user did not grant permisions');
+      if (kDebugMode) {
+        print('user did not grant permisions');
+      }
     }
   }
 
@@ -47,7 +53,9 @@ class NotificationService {
       required String badgeName,
       required String badgeDescription}) async {
     try {
-      var url = Uri.parse('http://10.0.2.2:3000/api/sendBadgeNotification');
+      var url =
+          Uri.https('habititservice.onrender.com', 'api/sendBadgeNotification');
+
       var res = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -61,7 +69,9 @@ class NotificationService {
         print('Response body: ${res.body}');
       }
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 }
