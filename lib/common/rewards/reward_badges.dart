@@ -4,7 +4,7 @@ import 'package:habitit/data/rewards/models/badge_model.dart';
 
 List<BadgeModel> badges = [
   BadgeModel(
-      id: 'first_Habit',
+      id: 'first_habit',
       name: 'One Small Step',
       description: 'Created your first habit',
       icon: FontAwesomeIcons.hourglassStart,
@@ -38,6 +38,15 @@ List<BadgeModel> badges = [
       colors: [
         const Color.fromARGB(255, 182, 201, 9),
         const Color.fromARGB(255, 79, 86, 4)
+      ]),
+  BadgeModel(
+      id: 'level_up',
+      name: 'This Is Easy',
+      description: 'Got past level one',
+      icon: FontAwesomeIcons.baby,
+      colors: [
+        const Color.fromARGB(255, 201, 9, 188),
+        const Color.fromARGB(255, 57, 4, 86)
       ]),
   BadgeModel(
       id: 'level_100',

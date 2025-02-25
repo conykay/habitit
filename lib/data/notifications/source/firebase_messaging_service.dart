@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -40,18 +42,26 @@ class NotificationService {
   }
 // send notification request
 
-  static void sendNewBadgeNotification(
+  static Future<void> sendNewBadgeNotification(
       {required String uid,
       required String badgeName,
       required String badgeDescription}) async {
-    var url = Uri.http('localhost:3000', 'sendBadgeNotification');
-    var res = await http.post(url, body: {
-      'uid': uid,
-      'badgeName': badgeName,
-      'badgeDescription': badgeDescription
-    });
-    if (kDebugMode) {
-      print('Response body: ${res.body}');
+    try {
+      var url = Uri.parse('http://10.0.2.2:3000/api/sendBadgeNotification');
+      var res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "uid": uid,
+          "badgeName": badgeName,
+          "badgeDescription": badgeDescription
+        }),
+      );
+      if (kDebugMode) {
+        print('Response body: ${res.body}');
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }
