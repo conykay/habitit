@@ -22,11 +22,26 @@ jobs:
       - name: Check if README.md is the only file changed
         id: check
         run: |
-          # Use the commit range from the push event
-          git diff --name-only "${{ github.event.before }}" "${{ github.event.after }}" > changed_files.txt
+          # Grab the commit range from the push event
+          before="${{ github.event.before }}"
+          after="${{ github.event.after }}"
+          echo "Before: $before"
+          echo "After: $after"
+          
+          # If the commit range is not available, fallback to HEAD^ HEAD
+          if [ -z "$before" ] || [ -z "$after" ]; then
+            echo "Commit range not available, falling back to HEAD^ HEAD"
+            RANGE="HEAD^ HEAD"
+          else
+            RANGE="$before $after"
+          fi
+          echo "Using commit range: $RANGE"
+          
+          # Get the list of changed files in the commit range
+          git diff --name-only $RANGE > changed_files.txt
           echo "Changed files:"
           cat changed_files.txt
-
+          
           # If any file other than README.md is found, run CI.
           if grep -qv '^README.md$' changed_files.txt; then
             echo "Files other than README.md changed, running CI."
@@ -127,8 +142,8 @@ jobs:
         run: |
           WEB_URL="https://habitit-ef892.web.app/"
           APK_URL="https://github.com/conykay/habitit/actions/runs/${{ github.run_id }}/artifacts/2654119751"
-          sed -i "s|\\(\\*\\*Web App:\\*\\* \\).*|\\1[Habitit Web]($WEB_URL)|" README.md
-          sed -i "s|\\(\\*\\*Latest APK:\\*\\* \\).*|\\1[Habitit App]($APK_URL)|" README.md
+          sed -i "s|https://your-project-id.web.app|$WEB_URL|g" README.md
+          sed -i "s|https://your-artifact-apk-url.com|$APK_URL|g" README.md
       
       - name: Commit and Push Changes
         run: |
