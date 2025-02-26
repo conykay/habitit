@@ -16,7 +16,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
       - name: Check if README.md is the only file changed
         run: |
           # Use the commit range from the push event
