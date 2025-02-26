@@ -22,27 +22,22 @@ jobs:
       - name: Check if README.md is the only file changed
         id: check
         run: |
-          # Grab the commit range from the push event
           before="${{ github.event.before }}"
           after="${{ github.event.after }}"
-          echo "Before: $before"
-          echo "After: $after"
+          echo "Commit Before: $before"
+          echo "Commit After: $after"
           
-          # If the commit range is not available, fallback to HEAD^ HEAD
           if [ -z "$before" ] || [ -z "$after" ]; then
-            echo "Commit range not available, falling back to HEAD^ HEAD"
+            echo "Commit range unavailable, falling back to HEAD^ HEAD"
             RANGE="HEAD^ HEAD"
           else
             RANGE="$before $after"
           fi
-          echo "Using commit range: $RANGE"
           
-          # Get the list of changed files in the commit range
           git diff --name-only $RANGE > changed_files.txt
           echo "Changed files:"
           cat changed_files.txt
           
-          # If any file other than README.md is found, run CI.
           if grep -qv '^README.md$' changed_files.txt; then
             echo "Files other than README.md changed, running CI."
             echo "::set-output name=skip_ci::false"
@@ -142,13 +137,21 @@ jobs:
         run: |
           WEB_URL="https://habitit-ef892.web.app/"
           APK_URL="https://github.com/conykay/habitit/actions/runs/${{ github.run_id }}/artifacts/2654119751"
+          
+          echo "Updating README..."
           sed -i "s|https://your-project-id.web.app|$WEB_URL|g" README.md
           sed -i "s|https://your-artifact-apk-url.com|$APK_URL|g" README.md
-      
+
+          echo "Updated README contents:"
+          cat README.md
+
       - name: Commit and Push Changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add README.md
-          git commit -m "Update README with latest deployment links [skip ci]" || echo "No changes to commit"
+          
+          # Ensure we commit changes even if it says "no changes detected"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update README with latest deployment links [skip ci]"
+          
           git push origin production || echo "No changes to push"
