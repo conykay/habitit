@@ -97,4 +97,43 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3
+          flutter-version: "3.27.4"
+
+      - name: Install Firebase CLI
+        run: |
+          npm install -g firebase-tools
+          firebase --version
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  update-readme:
+    name: Update README with Deployment Links
+    runs-on: ubuntu-latest
+    needs: [deploy-web, build-apk]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update README
+        run: |
+          WEB_URL="https://habitit-ef892.web.app/"
+          APK_URL="https://github.com/conykay/habitit/actions/runs/${{ github.run_id }}/artifacts/2654119751"
+          sed -i "s|https://your-project-id.web.app|$WEB_URL|g" README.md
+          sed -i "s|https://your-artifact-apk-url.com|$APK_URL|g" README.md
+      
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add README.md
+          git commit -m "Update README with latest deployment links [skip ci]" || echo "No changes to commit"
+          git push origin production || echo "No changes to push"
