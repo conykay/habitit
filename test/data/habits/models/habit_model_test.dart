@@ -36,7 +36,7 @@ void main() {
       'name': 'name',
       'description': 'description',
       'frequency': 'daily',
-      'startDate': Timestamp.fromDate(tHabitModel.startDate),
+      'startDate': tHabitModel.startDate.toIso8601String(),
       'completedDates': [],
       'synced': false,
     };
