@@ -19,20 +19,28 @@ jobs:
       
       - name: Check if README.md is the only file changed
         run: |
+          if [[ $(git rev-parse --is-inside-work-tree) != "true" ]]; then
+            echo "Not inside a Git repo, skipping CI."
+            echo "skip_ci=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          if [[ $(git rev-list --count HEAD) -eq 1 ]]; then
+            echo "Only one commit exists, running CI."
+            echo "skip_ci=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
           git diff --name-only HEAD^ HEAD > changed_files.txt
           cat changed_files.txt  # Debugging: Print changed files
 
-          if [[ $(git rev-list --count HEAD) -eq 1 ]]; then
-            echo "First commit detected, running CI."
-            echo "skip_ci=false" >> $GITHUB_ENV
-          elif grep -qv 'README.md' changed_files.txt; then
+          if grep -qv 'README.md' changed_files.txt; then
             echo "Files other than README.md were changed, running CI."
             echo "skip_ci=false" >> $GITHUB_ENV
           else
             echo "Only README.md changed, skipping CI."
             echo "skip_ci=true" >> $GITHUB_ENV
           fi
-
   
   test:
     name: Run Flutter Tests
