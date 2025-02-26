@@ -41,7 +41,7 @@ void main() async {
   Hive.registerAdapter(UserRewardsModelAdapter());
   //open hive boxes
   final habitBox = await Hive.openBox<HabitModel>('Habits');
-  // final rewardsBox = await Hive.openBox<UserRewardsModel>('Rewards');
+
   final habitsFirebaseService = HabitsFirebaseServiceImpl();
   final habitSyncCoordinator = SyncCoordinator(
       firebaseService: habitsFirebaseService, habitBox: habitBox);
