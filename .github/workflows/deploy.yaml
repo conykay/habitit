@@ -19,14 +19,17 @@ jobs:
       
       - name: Check if README.md is the only file changed
         run: |
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          cat changed_files.txt  # Debugging: Print changed files
+
           if [[ $(git rev-list --count HEAD) -eq 1 ]]; then
-            # First commit, allow CI to run
+            echo "First commit detected, running CI."
             echo "skip_ci=false" >> $GITHUB_ENV
-          elif git diff --name-only HEAD^ HEAD | grep -qv 'README.md'; then
-            # Other files changed, allow CI to run
+          elif grep -qv 'README.md' changed_files.txt; then
+            echo "Files other than README.md were changed, running CI."
             echo "skip_ci=false" >> $GITHUB_ENV
           else
-            # Only README.md changed, skip CI
+            echo "Only README.md changed, skipping CI."
             echo "skip_ci=true" >> $GITHUB_ENV
           fi
 
