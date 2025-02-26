@@ -20,6 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check if README.md is the only file changed
+        id: check
         run: |
           # Use the commit range from the push event
           git diff --name-only "${{ github.event.before }}" "${{ github.event.after }}" > changed_files.txt
@@ -29,12 +30,12 @@ jobs:
           # If any file other than README.md is found, run CI.
           if grep -qv '^README.md$' changed_files.txt; then
             echo "Files other than README.md changed, running CI."
-            echo "skip_ci=false" >> $GITHUB_ENV
+            echo "::set-output name=skip_ci::false"
           else
             echo "Only README.md changed, skipping CI."
-            echo "skip_ci=true" >> $GITHUB_ENV
+            echo "::set-output name=skip_ci::true"
           fi
-  
+
   test:
     name: Run Flutter Tests
     runs-on: ubuntu-latest
@@ -47,7 +48,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.27.4" 
+          flutter-version: "3.27.4"
 
       - name: Install Dependencies
         run: flutter pub get
@@ -113,7 +114,7 @@ jobs:
         run: firebase deploy --only hosting --token "$FIREBASE_TOKEN"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-  
+
   update-readme:
     name: Update README with Deployment Links
     runs-on: ubuntu-latest
@@ -126,8 +127,8 @@ jobs:
         run: |
           WEB_URL="https://habitit-ef892.web.app/"
           APK_URL="https://github.com/conykay/habitit/actions/runs/${{ github.run_id }}/artifacts/2654119751"
-          sed -i "s|\(\*\*Web App:\*\* \).*|\1[Habitit Web]($WEB_URL)|" README.md
-          sed -i "s|\(\*\*Latest APK:\*\* \).*|\1[Habitit App]($APK_URL)|" README.md
+          sed -i "s|\\(\\*\\*Web App:\\*\\* \\).*|\\1[Habitit Web]($WEB_URL)|" README.md
+          sed -i "s|\\(\\*\\*Latest APK:\\*\\* \\).*|\\1[Habitit App]($APK_URL)|" README.md
       
       - name: Commit and Push Changes
         run: |
