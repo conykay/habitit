@@ -90,7 +90,7 @@ The workflow is defined in `.github/workflows/main.yml` and automates:
 ## Deployment Links
 
 - **Web App:** [Habitit Web](https://habitit-ef892.web.app/)
-- **Latest APK:** [Habitit App](https://github.com/conykay/habitit/actions/runs/13538676952/artifacts/2654119751)]
+- **Latest APK:** [Habitit App](https://github.com/conykay/habitit/actions/runs/13538676952/artifacts/2654119751)
 
 ---
 
