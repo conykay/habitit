@@ -93,8 +93,8 @@ The workflow (`.github/workflows/main.yml`) automates:
 
 ## 🌐 Deployment Links  
 
-- **Web App:** [Habitit Web](https://your-project-id.web.app)  
-- **Latest APK:** [Download APK](https://your-artifact-apk-url.com)  
+- **Web App:** [Habitit Web](https://your-project-id.web.app)
+- **Latest APK:** [Download APK](https://your-artifact-apk-url.com)
 
 ⚠️ **Note:** These links are automatically updated by the workflow after each deployment.
 
