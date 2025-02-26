@@ -8,14 +8,28 @@ on:
     branches:
       - production
 
-permissions:
-  contents: write
-
 jobs:
+  check-readme-update:
+    runs-on: ubuntu-latest
+    outputs:
+      skip_ci: ${{ steps.check.outputs.skip_ci }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Check if only README.md was updated
+        id: check
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -qv 'README.md'; then
+            echo "skip_ci=false" >> $GITHUB_ENV
+          else
+            echo "skip_ci=true" >> $GITHUB_ENV
+  
   test:
     name: Run Flutter Tests
     runs-on: ubuntu-latest
-
+    needs: check-readme-update
+    if: needs.check-readme-update.outputs.skip_ci == 'false'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -35,7 +49,6 @@ jobs:
     name: Build APK
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -61,7 +74,6 @@ jobs:
     name: Deploy Flutter Web to Firebase
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -88,35 +100,29 @@ jobs:
         run: flutter build web --release
 
       - name: Deploy to Firebase Hosting
-        run: |
-          firebase deploy --only hosting --token "$FIREBASE_TOKEN"
-          echo "WEB_APP_URL=https://your-project-id.web.app" >> $GITHUB_ENV
+        run: firebase deploy --only hosting --token "$FIREBASE_TOKEN"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
+  
   update-readme:
-    name: Update README with Latest Links
+    name: Update README with Deployment Links
     runs-on: ubuntu-latest
-    needs: [build-apk, deploy-web]  # Runs after both jobs complete
-
+    needs: [deploy-web, build-apk]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Get Latest APK Artifact URL
+      - name: Update README
         run: |
-          APK_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo "APK_URL=$APK_URL" >> $GITHUB_ENV
-
-      - name: Update README with new links
-        run: |
-          sed -i "s|https://your-project-id.web.app|$WEB_APP_URL|g" README.md
-          sed -i "s|https://your-artifact-apk-url.com|$APK_URL|g" README.md
-
-      - name: Commit & Push README Updates
+          WEB_URL="https://habitit-ef892.web.app/"
+          APK_URL="https://github.com/conykay/habitit/actions/runs/${{ github.run_id }}/artifacts/2654119751"
+          sed -i "s|\(\*\*Web App:\*\* \).*|\1[Habitit Web]($WEB_URL)|" README.md
+          sed -i "s|\(\*\*Latest APK:\*\* \).*|\1[Habitit App]($APK_URL)|" README.md
+      
+      - name: Commit and Push Changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add README.md
-          git commit -m "Update README with latest deployment links"
-          git push
+          git commit -m "Update README with latest deployment links [skip ci]" || echo "No changes to commit"
+          git push origin production || echo "No changes to push"
