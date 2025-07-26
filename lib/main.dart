@@ -31,9 +31,7 @@ import 'data/habits/models/habit_frequency.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalNotificationService.initialize();
   await NotificationService().getToken();
   Hive.registerAdapter(HabitModelAdapter());
