@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:habitit/core/sync/syncable.dart';
-
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:hive/hive.dart';
 
@@ -97,7 +96,7 @@ class HabitModel extends HiveSyncable with EquatableMixin {
 }
 
 extension HabitEntityX on HabitModel {
-  HabitEnity toEntity() => HabitEnity(
+  HabitEntity toEntity() => HabitEntity(
         id: id,
         name: name,
         description: description,
@@ -108,7 +107,7 @@ extension HabitEntityX on HabitModel {
       );
 }
 
-extension HabitModelX on HabitEnity {
+extension HabitModelX on HabitEntity {
   HabitModel toModel() => HabitModel(
       id: id,
       name: name,

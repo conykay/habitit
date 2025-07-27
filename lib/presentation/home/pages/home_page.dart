@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/home/bloc/mark_habit_complete_cubit.dart';
 
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
+import '../../../service_locator.dart';
 import '../widgets/home_table_calendar.dart';
 import '../widgets/today_habits_grid.dart';
 
@@ -14,7 +14,7 @@ import '../widgets/today_habits_grid.dart';
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
-  List<HabitEnity>? allHabits;
+  List<HabitEntity>? allHabits;
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,11 @@ class HomePage extends StatelessWidget {
         BlocProvider.value(
           value: context.read<HabitStateCubit>()
             ..getHabits(
-                usecase: GetAllHabitsUsecase(
-                    repository: context.read<HabitRepository>())),
+              usecase: sl.get<GetAllHabitsUseCase>(),
+            ),
         ),
         BlocProvider(
-          create: (context) =>
-              MarkHabitCompleteCubit(context.read<HabitRepository>()),
+          create: (context) => MarkHabitCompleteCubit(),
         ),
       ],
       child: LayoutBuilder(builder: (context, constraints) {

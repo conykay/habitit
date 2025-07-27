@@ -3,11 +3,20 @@ import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/core/platform_info/platform_info.dart';
 import 'package:habitit/core/theme/repository/theme_repository.dart';
 import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
+import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
+import 'package:habitit/data/habits/source/habits_firebase_service.dart';
+import 'package:habitit/data/habits/source/habits_hive_service.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/logout_user.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
+import 'package:habitit/domain/habits/repository/habit_repository.dart';
+import 'package:habitit/domain/habits/usecases/add_habit_usecase.dart';
+import 'package:habitit/domain/habits/usecases/delete_habit_usecase.dart';
+import 'package:habitit/domain/habits/usecases/edit_habit_usecase.dart';
+import 'package:habitit/domain/habits/usecases/get_all_habits_usecase.dart';
+import 'package:habitit/domain/habits/usecases/get_habit_usecase.dart';
 
 import 'data/auth/repository/authentication_repository_impl.dart';
 import 'domain/auth/repository/authentication_repository.dart';
@@ -21,12 +30,17 @@ Future<void> initializeGetItDependencies() async {
   //Auth
   sl.registerSingleton<AuthenticationRepository>(
       AuthenticationRepositoryImpl());
+  //Habits
+  sl.registerSingleton<HabitsRepository>(HabitsRepositoryImpl());
   //SERVICES
   //core
   sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
   sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
   //Auth
   sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
+  //HabitModule
+  sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
+  sl.registerSingleton<HabitsHiveService>(HabitsHiveServiceImpl());
   //USECASES
   //auth
   sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
@@ -36,4 +50,10 @@ Future<void> initializeGetItDependencies() async {
   sl.registerLazySingleton<SignInEmailPasswordUseCase>(
       () => SignInEmailPasswordUseCase());
   sl.registerLazySingleton<SignInGoogleUseCase>(() => SignInGoogleUseCase());
+  //HabitModule
+  sl.registerLazySingleton<GetAllHabitsUseCase>(() => GetAllHabitsUseCase());
+  sl.registerLazySingleton<GetHabitUseCase>(() => GetHabitUseCase());
+  sl.registerLazySingleton<AddHabitUseCase>(() => AddHabitUseCase());
+  sl.registerLazySingleton<EditHabitUseCase>(() => EditHabitUseCase());
+  sl.registerLazySingleton<DeleteHabitUseCase>(() => DeleteHabitUseCase());
 }

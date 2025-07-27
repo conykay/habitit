@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
@@ -12,6 +11,7 @@ import '../../../common/button/widget/reactive_elevated_button.dart';
 import '../../../data/habits/models/habit_frequency.dart';
 import '../../../data/habits/models/habit_model.dart';
 import '../../../domain/habits/usecases/add_habit_usecase.dart';
+import '../../../service_locator.dart';
 import '../bloc/selected_frequency_cubit.dart';
 
 class NewHabitCustomModal extends StatefulWidget {
@@ -69,7 +69,7 @@ class _NewHabitCustomModalState extends State<NewHabitCustomModal> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Comitment to change is only the first step',
+                      'Commitment to change is only the first step',
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                     Divider(),
@@ -141,9 +141,7 @@ class _NewHabitCustomModalState extends State<NewHabitCustomModal> {
                               await context
                                   .read<ButtonStateCubit>()
                                   .call(
-                                      usecase: AddHabitUsecase(
-                                          habitRepository:
-                                              context.read<HabitRepository>()),
+                                      usecase: sl.get<AddHabitUseCase>(),
                                       params: HabitModel(
                                           id: Uuid().v4(),
                                           name: _habitNameController.text,

@@ -4,27 +4,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/analytics/widgets/adherence_rates.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
+import '../../../service_locator.dart';
 import '../widgets/daily_data_chart.dart';
 
 // ignore: must_be_immutable
 class AnalyticsPage extends StatelessWidget {
   AnalyticsPage({super.key});
 
-  List<HabitEnity>? allHabits;
+  List<HabitEntity>? allHabits;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: context.read<HabitStateCubit>()
         ..getHabits(
-            usecase: GetAllHabitsUsecase(
-                repository: context.read<HabitRepository>())),
+          usecase: sl.get<GetAllHabitsUseCase>(),
+        ),
       child: LayoutBuilder(builder: (context, constraints) {
         return Center(
           child: ConstrainedBox(

@@ -15,7 +15,7 @@ class CustomAppBar extends StatelessWidget {
     required this.habit,
   });
 
-  final HabitEnity habit;
+  final HabitEntity habit;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class CustomAppBar extends StatelessWidget {
         Builder(builder: (context) {
           return IconButton(
             onPressed: () async {
-              final repo = context.read<HabitRepository>();
+              final repo = context.read<HabitsRepository>();
 
               var value = await showDialog(
                   context: context,
@@ -55,7 +55,7 @@ class CustomAppBar extends StatelessWidget {
                               return ElevatedButton(
                                   onPressed: () {
                                     context
-                                        .read<HabitRepository>()
+                                        .read<HabitsRepository>()
                                         .deleteHabit(habit: habit)
                                         .then((_) {
                                       if (context.mounted) {
@@ -84,40 +84,33 @@ class CustomAppBar extends StatelessWidget {
   }
 
   Future<void> _editHabitPopUp(BuildContext context) async {
-    final repo = context.read<HabitRepository>();
     final selectedCubit = context.read<SelectedFrequencyCubit>();
     late bool result;
     if (!kIsWeb) {
       result = await showModalBottomSheet(
         context: context,
         builder: (context) {
-          return RepositoryProvider.value(
-            value: repo,
-            child: BlocProvider.value(
-                value: selectedCubit,
-                child: EditHabitWidget(
-                  habit: habit,
-                )),
-          );
+          return BlocProvider.value(
+              value: selectedCubit,
+              child: EditHabitWidget(
+                habit: habit,
+              ));
         },
       );
     } else {
       result = await showDialog(
         context: context,
         builder: (context) {
-          return RepositoryProvider.value(
-            value: repo,
-            child: BlocProvider.value(
-                value: selectedCubit,
-                child: Dialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: EditHabitWidget(
-                    habit: habit,
-                  ),
-                )),
-          );
+          return BlocProvider.value(
+              value: selectedCubit,
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: EditHabitWidget(
+                  habit: habit,
+                ),
+              ));
         },
       );
     }

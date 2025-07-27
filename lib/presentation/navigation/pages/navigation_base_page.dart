@@ -13,7 +13,6 @@ import 'package:habitit/data/notifications/source/firebase_messaging_service.dar
 import 'package:habitit/data/rewards/repository/rewards_repository.dart';
 import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
@@ -21,9 +20,6 @@ import 'package:habitit/presentation/notifications/bloc/notification_state.dart'
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 
-import '../../../data/habits/repository/habits_repository_impl.dart';
-import '../../../data/habits/source/habits_firebase_service.dart';
-import '../../../data/habits/source/habits_hive_service.dart';
 import '../../../service_locator.dart';
 import '../../analytics/pages/analytics_page.dart';
 import '../../habits/bloc/habit_state_cubit.dart';
@@ -48,10 +44,6 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
     ProfilePage(),
   ];
 
-  final habitsHiveService = HabitsHiveServiceImpl();
-
-  final habitsFirebaseService = HabitsFirebaseServiceImpl();
-
   final rewardsHiveService = RewardsHiveServiceImpl();
 
   final rewardsFirebaseService = RewardsFirebaseServiceImpl();
@@ -71,12 +63,6 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<HabitRepository>(
-          create: (context) => HabitsRepositoryImpl(
-              hiveService: habitsHiveService,
-              firebaseService: habitsFirebaseService,
-              networkInfo: networkInfo),
-        ),
         RepositoryProvider<RewardsRepository>(
           create: (context) => RewardsRepositoryImpl(
               hiveService: rewardsHiveService,

@@ -15,3 +15,5 @@ class HabitStateCubit extends Cubit<HabitState> {
     );
   }
 }
+
+//todo: convert to bloc using events

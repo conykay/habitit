@@ -7,7 +7,6 @@ import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
@@ -18,6 +17,7 @@ import 'package:habitit/presentation/profile/bloc/user_rewards_state.dart';
 import 'package:habitit/presentation/profile/widgets/badge.dart';
 
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
+import '../../../service_locator.dart';
 
 // ignore: must_be_immutable
 class ProfilePage extends StatelessWidget {
@@ -40,8 +40,8 @@ class ProfilePage extends StatelessWidget {
         BlocProvider.value(
           value: context.read<HabitStateCubit>()
             ..getHabits(
-                usecase: GetAllHabitsUsecase(
-                    repository: context.read<HabitRepository>())),
+              usecase: sl.get<GetAllHabitsUseCase>(),
+            ),
         ),
       ],
       child: BlocListener<AuthStateCubit, AuthState>(
@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                           _pointsDisplay(context, userReward!),
                           SizedBox(height: 20),
-                          _acheivementsList(
+                          _achievementsList(
                               badgesEarned: userReward!.earnedBadges),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,8 +165,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Column _acheivementsList({required List<String> badgesEarned}) {
-    var userbadge =
+  Column _achievementsList({required List<String> badgesEarned}) {
+    var userBadge =
         badges.where((badge) => badgesEarned.contains(badge.id)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,13 +185,13 @@ class ProfilePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return AchievementBadge(
-                      colors: userbadge[index].colors,
-                      icon: userbadge[index].icon,
-                      name: userbadge[index].name,
+                      colors: userBadge[index].colors,
+                      icon: userBadge[index].icon,
+                      name: userBadge[index].name,
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(width: 10),
-                  itemCount: userbadge.length),
+                  itemCount: userBadge.length),
         ),
       ],
     );

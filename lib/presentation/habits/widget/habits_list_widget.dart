@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/habits/usecases/get_all_habits_usecase.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/habits/pages/habit_details_page.dart';
 import 'package:intl/intl.dart';
 
+import '../../../service_locator.dart';
+
 class HabitsListView extends StatelessWidget {
-  final List<HabitEnity> habits;
+  final List<HabitEntity> habits;
   const HabitsListView({
     super.key,
     required this.habits,
@@ -59,9 +60,9 @@ class HabitsListView extends StatelessWidget {
                           )));
               if (isChange ?? false) {
                 if (context.mounted) {
-                  context.read<HabitStateCubit>().getHabits(
-                      usecase: GetAllHabitsUsecase(
-                          repository: context.read<HabitRepository>()));
+                  context
+                      .read<HabitStateCubit>()
+                      .getHabits(usecase: sl.get<GetAllHabitsUseCase>());
                 }
               }
             },

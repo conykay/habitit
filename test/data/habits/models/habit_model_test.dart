@@ -75,7 +75,7 @@ void main() {
 
   test('should convert HabitModel to HabitEntity', () {
     final result = tHabitModel.toEntity();
-    final expectedEntity = HabitEnity(
+    final expectedEntity = HabitEntity(
       id: 'id',
       name: 'name',
       description: 'description',
