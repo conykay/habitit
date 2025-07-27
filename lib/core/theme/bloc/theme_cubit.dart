@@ -2,16 +2,15 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../service_locator.dart';
 import '../repository/theme_repository.dart';
 
 part 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
-  ThemeCubit({required ThemeRepository themeRepository})
-      : _themeRepository = themeRepository,
-        super(ThemeState());
-  final ThemeRepository _themeRepository;
+  ThemeCubit() : super(ThemeState());
   static late bool _isDarkTheme;
+  final _themeRepository = sl.get<ThemeRepository>();
 
   Future<void> getCurrentTheme() async {
     _themeRepository.getTheme().then((isDarkTheme) {
