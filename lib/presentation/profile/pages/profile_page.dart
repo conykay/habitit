@@ -2,13 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
-import 'package:habitit/domain/auth/usecases/logout_user.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
@@ -19,7 +17,6 @@ import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_state.dart';
 import 'package:habitit/presentation/profile/widgets/badge.dart';
 
-import '../../../domain/auth/repository/authentication_repository.dart';
 import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 
 // ignore: must_be_immutable
@@ -50,7 +47,7 @@ class ProfilePage extends StatelessWidget {
       child: BlocListener<AuthStateCubit, AuthState>(
         listener: (context, state) {
           if (state is UnAuthenticated) {
-            AppNavigator.pushAndRemove(context, SigninPage());
+            AppNavigator.pushAndRemove(context, SignInPage());
           }
         },
         child: LayoutBuilder(builder: (context, constrains) {
@@ -123,10 +120,7 @@ class ProfilePage extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () {
                                       if (state is UserRewardsLoaded) {
-                                        context.read<AuthStateCubit>().logout(
-                                            usecase: LogoutUserUseCase(
-                                                repository: context.read<
-                                                    AuthenticationRepository>()));
+                                        context.read<AuthStateCubit>().logout();
                                       }
                                     },
                                     child: Container(

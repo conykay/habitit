@@ -6,33 +6,23 @@ import 'package:habitit/data/notifications/source/firebase_messaging_service.dar
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 
 import '../../../domain/auth/entities/auth_user_req_entity.dart';
+import '../../../service_locator.dart';
 import '../models/user_creation_req.dart';
 
 abstract class AuthFirebaseService {
   Future<UserCredential> createUserEmailPassword(
       {required AuthUserReqEntity authData});
-  Future<UserCredential> signinUserEmailPassword(
+  Future<UserCredential> signInUserEmailPassword(
       {required AuthUserReqEntity authData});
-  Future<UserCredential> googleSignin();
+  Future<UserCredential> googleSignIn();
   Future<void> logout();
   Future<bool> isLoggedIn();
 }
 
-class AuthFirebaseServiceImpl implements AuthFirebaseService {
-  final FirebaseAuth auth;
-  final GoogleSignIn _googleSignIn;
-  final PlatformInfo _info;
-  final FirebaseFirestore firestore;
-
-  AuthFirebaseServiceImpl(
-      {required this.firestore,
-      required this.auth,
-      GoogleSignIn? googleSignIn,
-      PlatformInfo? platformInfo})
-      : _googleSignIn = googleSignIn ?? GoogleSignIn.standard(),
-        _info = platformInfo ?? PlatformInfoImpl();
+class AuthFirebaseServiceImpl extends AuthFirebaseService {
   final userCollectionRef = FirebaseFirestore.instance.collection('Users');
-
+  final auth = FirebaseAuth.instance;
+  GoogleSignIn get _googleSignIn => GoogleSignIn.standard();
   @override
   Future<UserCredential> createUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
@@ -58,7 +48,7 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
   }
 
   @override
-  Future<UserCredential> signinUserEmailPassword(
+  Future<UserCredential> signInUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
     try {
       var cred = await auth.signInWithEmailAndPassword(
@@ -71,10 +61,10 @@ class AuthFirebaseServiceImpl implements AuthFirebaseService {
   }
 
   @override
-  Future<UserCredential> googleSignin() async {
+  Future<UserCredential> googleSignIn() async {
     try {
       late final AuthCredential credential;
-      if (_info.isWeb) {
+      if (sl.get<PlatformInfoService>().isWeb) {
         final googleProvider = GoogleAuthProvider();
         final userCredential = await auth.signInWithPopup(googleProvider);
         credential = userCredential.credential!;

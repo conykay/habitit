@@ -11,7 +11,7 @@ import 'package:mockito/mockito.dart';
 import '../../data/auth/repository/authentication_repository_impl_test.mocks.dart';
 import 'button_state_cubit_test.mocks.dart';
 
-@GenerateMocks([SigninGoogleUseCase])
+@GenerateMocks([SignInGoogleUseCase])
 void main() {
   late MockSigninGoogleUseCase mockUseCase;
 

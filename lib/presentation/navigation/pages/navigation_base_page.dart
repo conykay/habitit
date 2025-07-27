@@ -20,11 +20,11 @@ import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart'
 import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
 import 'package:habitit/presentation/notifications/pages/notification_page.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../data/habits/repository/habits_repository_impl.dart';
 import '../../../data/habits/source/habits_firebase_service.dart';
 import '../../../data/habits/source/habits_hive_service.dart';
+import '../../../service_locator.dart';
 import '../../analytics/pages/analytics_page.dart';
 import '../../habits/bloc/habit_state_cubit.dart';
 import '../../habits/bloc/selected_frequency_cubit.dart';
@@ -56,8 +56,7 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
 
   final rewardsFirebaseService = RewardsFirebaseServiceImpl();
 
-  final networkInfo = NetworkInfoImpl(
-      internetConnectionChecker: InternetConnectionChecker.instance);
+  final networkInfo = sl.get<NetworkInfoService>();
   Future<void> getPermisions() async {
     await NotificationService().grantAppPermission();
   }
@@ -96,7 +95,7 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
         child: BlocListener<AuthStateCubit, AuthState>(
           listener: (context, state) {
             if (state is UnAuthenticated) {
-              AppNavigator.pushAndRemove(context, SigninPage());
+              AppNavigator.pushAndRemove(context, SignInPage());
             }
           },
           child: LayoutBuilder(builder: (context, constraints) {

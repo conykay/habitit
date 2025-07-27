@@ -11,19 +11,19 @@ import '../source/habits_hive_service.dart';
 class HabitsRepositoryImpl implements HabitRepository {
   final HabitsHiveService _hiveService;
   final HabitsFirebaseService _firebaseService;
-  final NetworkInfo _networkInfo;
+  final NetworkInfoService _networkInfo;
 
   HabitsRepositoryImpl({
     required HabitsHiveService hiveService,
     required HabitsFirebaseService firebaseService,
-    required NetworkInfo networkInfo,
+    required NetworkInfoService networkInfo,
   })  : _hiveService = hiveService,
         _firebaseService = firebaseService,
         _networkInfo = networkInfo;
 
   @override
   Future<Either> addHabit({required HabitModel habit}) async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
 
     try {
       if (isOnline) {
@@ -49,7 +49,7 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> getAllHabits() async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
 
     var habitList = <HabitModel>[];
     try {
@@ -73,7 +73,7 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> getHabit({required String id}) async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
 
     try {
       HabitModel habit;
@@ -90,7 +90,7 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> editHabit({required HabitEnity habit}) async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
     HabitModel editedHabit = habit.toModel();
     try {
       if (isOnline) {
@@ -116,7 +116,7 @@ class HabitsRepositoryImpl implements HabitRepository {
 
   @override
   Future<Either> deleteHabit({required HabitEnity habit}) async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
     try {
       if (isOnline) {
         try {

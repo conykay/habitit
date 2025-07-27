@@ -11,18 +11,18 @@ import '../../../core/network/network_info.dart';
 class RewardsRepositoryImpl implements RewardsRepository {
   final RewardsHiveService _hiveService;
   final RewardsFirebaseService _firebaseService;
-  final NetworkInfo _networkInfo;
+  final NetworkInfoService _networkInfo;
   RewardsRepositoryImpl({
     required RewardsHiveService hiveService,
     required RewardsFirebaseService firebaseService,
-    required NetworkInfo networkInfo,
+    required NetworkInfoService networkInfo,
   })  : _firebaseService = firebaseService,
         _hiveService = hiveService,
         _networkInfo = networkInfo;
 
   @override
   Future<Either> updateUserRewards({required int xpAmmount}) async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
     late UserRewardsModel userRewardsModel;
     try {
       if (isOnline) {
@@ -46,7 +46,7 @@ class RewardsRepositoryImpl implements RewardsRepository {
 
   @override
   Future<Either> getUserRewards() async {
-    var isOnline = await _networkInfo.hasConection;
+    var isOnline = await _networkInfo.hasConnection;
     late UserRewardsModel userReward;
     try {
       if (isOnline) {

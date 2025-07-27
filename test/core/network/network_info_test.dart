@@ -9,12 +9,12 @@ import 'network_info_test.mocks.dart';
 @GenerateMocks([InternetConnectionChecker])
 void main() {
   late MockInternetConnectionChecker internetConnectionChecker;
-  late NetworkInfoImpl networkInfoImpl;
+  late NetworkInfoServiceImpl networkInfoImpl;
 
   setUp(() {
     internetConnectionChecker = MockInternetConnectionChecker();
-    networkInfoImpl =
-        NetworkInfoImpl(internetConnectionChecker: internetConnectionChecker);
+    networkInfoImpl = NetworkInfoServiceImpl(
+        internetConnectionChecker: internetConnectionChecker);
   });
 
   group('Connection available', () {
@@ -23,7 +23,7 @@ void main() {
           .thenAnswer((_) async => true);
     });
     test('Network info should return connection', () async {
-      final result = await networkInfoImpl.hasConection;
+      final result = await networkInfoImpl.hasConnection;
       verify(internetConnectionChecker.hasConnection);
       expect(result, true);
     });

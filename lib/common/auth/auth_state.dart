@@ -2,7 +2,7 @@
 
 import 'package:equatable/equatable.dart';
 
-abstract class AuthState extends Equatable {}
+sealed class AuthState extends Equatable {}
 
 class UnAuthenticated extends AuthState {
   @override

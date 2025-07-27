@@ -6,12 +6,12 @@ import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../../core/network/network_info.dart';
 import '../../../data/habits/repository/habits_repository_impl.dart';
 import '../../../data/habits/source/habits_firebase_service.dart';
 import '../../../data/habits/source/habits_hive_service.dart';
+import '../../../service_locator.dart';
 import '../bloc/selected_frequency_cubit.dart';
 import '../widget/details_app_bar.dart';
 import '../widget/habit_calendar_widget.dart';
@@ -25,8 +25,7 @@ class HabitDetailsPage extends StatelessWidget {
 
   final hiveService = HabitsHiveServiceImpl();
   final firebaseService = HabitsFirebaseServiceImpl();
-  final networkInfo = NetworkInfoImpl(
-      internetConnectionChecker: InternetConnectionChecker.instance);
+  final networkInfo = sl.get<NetworkInfoService>();
 
   @override
   Widget build(BuildContext context) {

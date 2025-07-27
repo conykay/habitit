@@ -6,14 +6,15 @@ import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
-import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
 import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
-import '../../../domain/auth/usecases/signin_google.dart';
 
-class SigninPage extends StatelessWidget {
-  const SigninPage({super.key});
+import '../../../domain/auth/usecases/signin_google.dart';
+import '../../../service_locator.dart';
+
+class SignInPage extends StatelessWidget {
+  const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +147,7 @@ class SignInWidget extends StatelessWidget {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 context.read<ButtonStateCubit>().call(
-                    usecase: SigninEmailPasswordUseCase(
-                        context.read<AuthenticationRepository>()),
+                    usecase: sl.get<SignInEmailPasswordUseCase>(),
                     params: AuthUserReqEntity(
                       email: _emailTextController.text,
                       password: _emailTextController.text,
@@ -162,8 +162,8 @@ class SignInWidget extends StatelessWidget {
           ReactiveElevatedButton(
             onPressed: () {
               context.read<ButtonStateCubit>().call(
-                  usecase: SigninGoogleUseCase(
-                      context.read<AuthenticationRepository>()));
+                    usecase: sl.get<SignInGoogleUseCase>(),
+                  );
             },
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,

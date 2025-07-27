@@ -65,7 +65,7 @@ class MockAuthFirebaseService extends _i1.Mock
       ) as _i4.Future<_i2.UserCredential>);
 
   @override
-  _i4.Future<_i2.UserCredential> signinUserEmailPassword(
+  _i4.Future<_i2.UserCredential> signInUserEmailPassword(
           {required _i5.AuthUserReqEntity? authData}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -84,7 +84,7 @@ class MockAuthFirebaseService extends _i1.Mock
       ) as _i4.Future<_i2.UserCredential>);
 
   @override
-  _i4.Future<_i2.UserCredential> googleSignin() => (super.noSuchMethod(
+  _i4.Future<_i2.UserCredential> googleSignIn() => (super.noSuchMethod(
         Invocation.method(
           #googleSignin,
           [],
@@ -121,13 +121,13 @@ class MockAuthFirebaseService extends _i1.Mock
 /// A class which mocks [NetworkInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkInfo extends _i1.Mock implements _i6.NetworkInfo {
+class MockNetworkInfo extends _i1.Mock implements _i6.NetworkInfoService {
   MockNetworkInfo() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<bool> get hasConection => (super.noSuchMethod(
+  _i4.Future<bool> get hasConnection => (super.noSuchMethod(
         Invocation.getter(#hasConection),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);

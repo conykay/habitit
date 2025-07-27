@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-abstract class PlatformInfo {
+abstract class PlatformInfoService {
   bool get isWeb;
 }
 
-class PlatformInfoImpl extends PlatformInfo {
-  PlatformInfoImpl();
+class PlatformInfoImpl extends PlatformInfoService {
   @override
   bool get isWeb => kIsWeb;
 }
