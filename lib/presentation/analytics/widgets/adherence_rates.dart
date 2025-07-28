@@ -6,7 +6,7 @@ import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 
 class AdherenceRatesWidget extends StatelessWidget {
-  final List<HabitEnity> habits;
+  final List<HabitEntity> habits;
   const AdherenceRatesWidget({
     super.key,
     required this.habits,

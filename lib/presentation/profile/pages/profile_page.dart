@@ -2,25 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
-import 'package:habitit/domain/auth/usecases/logout_user.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
-import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
-import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_state.dart';
 import 'package:habitit/presentation/profile/widgets/badge.dart';
-
-import '../../../domain/auth/repository/authentication_repository.dart';
-import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
 
 // ignore: must_be_immutable
 class ProfilePage extends StatelessWidget {
@@ -35,22 +27,20 @@ class ProfilePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: context.read<UserRewardsCubit>()
-            ..getUserRewards(
-                usecase: GetUserRewardsUsecase(
-                    repository: context.read<RewardsRepository>())),
+          value: context.read<UserRewardsCubit>()..getUserRewards(),
         ),
         BlocProvider.value(
-          value: context.read<HabitStateCubit>()
-            ..getHabits(
-                usecase: GetAllHabitsUsecase(
-                    repository: context.read<HabitRepository>())),
+          value: context.read<HabitStateCubit>()..getHabits(),
         ),
       ],
       child: BlocListener<AuthStateCubit, AuthState>(
         listener: (context, state) {
-          if (state is UnAuthenticated) {
-            AppNavigator.pushAndRemove(context, SigninPage());
+          switch (state) {
+            case UnAuthenticated():
+              AppNavigator.pushAndRemove(context, SignInPage());
+              break;
+            default:
+              break;
           }
         },
         child: LayoutBuilder(builder: (context, constrains) {
@@ -59,14 +49,18 @@ class ProfilePage extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: 700),
               child: BlocBuilder<UserRewardsCubit, UserRewardsState>(
                 builder: (context, state) {
-                  if (state is UserRewardsError) {
-                    return Center(
-                      child: Text(state.error.toString()),
-                    );
+                  switch (state) {
+                    case UserRewardsError():
+                      return Center(
+                        child: Text(state.error.toString()),
+                      );
+                    case UserRewardsLoaded():
+                      userReward = state.rewards;
+                      break;
+                    default:
+                      break;
                   }
-                  if (state is UserRewardsLoaded) {
-                    userReward = state.rewards;
-                  }
+
                   var isLoading = state is UserRewardsLoading;
                   if (userReward != null) {
                     return Padding(
@@ -83,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                           _pointsDisplay(context, userReward!),
                           SizedBox(height: 20),
-                          _acheivementsList(
+                          _achievementsList(
                               badgesEarned: userReward!.earnedBadges),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,10 +117,7 @@ class ProfilePage extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () {
                                       if (state is UserRewardsLoaded) {
-                                        context.read<AuthStateCubit>().logout(
-                                            usecase: LogoutUserUseCase(
-                                                repository: context.read<
-                                                    AuthenticationRepository>()));
+                                        context.read<AuthStateCubit>().logout();
                                       }
                                     },
                                     child: Container(
@@ -171,8 +162,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Column _acheivementsList({required List<String> badgesEarned}) {
-    var userbadge =
+  Column _achievementsList({required List<String> badgesEarned}) {
+    var userBadge =
         badges.where((badge) => badgesEarned.contains(badge.id)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,13 +182,13 @@ class ProfilePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return AchievementBadge(
-                      colors: userbadge[index].colors,
-                      icon: userbadge[index].icon,
-                      name: userbadge[index].name,
+                      colors: userBadge[index].colors,
+                      icon: userBadge[index].icon,
+                      name: userBadge[index].name,
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(width: 10),
-                  itemCount: userbadge.length),
+                  itemCount: userBadge.length),
         ),
       ],
     );

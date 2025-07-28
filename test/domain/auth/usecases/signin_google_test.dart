@@ -8,18 +8,18 @@ import 'authenticate_user_email_password_usecase_test.mocks.dart';
 
 void main() {
   late MockAuthenticationRepository repository;
-  late SigninGoogleUseCase googleUseCase;
+  late SignInGoogleUseCase googleUseCase;
   setUp(() {
     repository = MockAuthenticationRepository();
-    googleUseCase = SigninGoogleUseCase(repository);
+    googleUseCase = SignInGoogleUseCase(repository);
   });
   final userCred = MockUserCredential();
 
   test('When google signin request success', () async {
-    when(repository.googleSignin()).thenAnswer((_) async => Right(userCred));
+    when(repository.googleSignIn()).thenAnswer((_) async => Right(userCred));
     var cred = await googleUseCase.call();
     expect(cred, Right(userCred));
-    verify(repository.googleSignin()).called(1);
+    verify(repository.googleSignIn()).called(1);
     verifyNoMoreInteractions(repository);
   });
 }

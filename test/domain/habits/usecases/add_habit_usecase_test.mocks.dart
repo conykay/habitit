@@ -38,7 +38,7 @@ class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
 /// A class which mocks [HabitRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
+class MockHabitRepository extends _i1.Mock implements _i3.HabitsRepository {
   MockHabitRepository() {
     _i1.throwOnMissingStub(this);
   }
@@ -101,7 +101,7 @@ class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> editHabit(
-          {required _i6.HabitEnity? habit}) =>
+          {required _i6.HabitEntity? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editHabit,
@@ -121,7 +121,7 @@ class MockHabitRepository extends _i1.Mock implements _i3.HabitRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> deleteHabit(
-          {required _i6.HabitEnity? habit}) =>
+          {required _i6.HabitEntity? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteHabit,

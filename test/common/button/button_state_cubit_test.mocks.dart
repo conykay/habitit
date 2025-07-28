@@ -52,7 +52,7 @@ class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSigninGoogleUseCase extends _i1.Mock
-    implements _i4.SigninGoogleUseCase {
+    implements _i4.SignInGoogleUseCase {
   MockSigninGoogleUseCase() {
     _i1.throwOnMissingStub(this);
   }

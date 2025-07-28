@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../data/habits/models/habit_frequency.dart';
 
-class HabitEnity extends Equatable {
+class HabitEntity extends Equatable {
   final String id;
   final String name;
   final String? description;
@@ -12,7 +12,7 @@ class HabitEnity extends Equatable {
   final Timestamp startDate;
   final List<DateTime>? completedDates;
   final bool synced;
-  const HabitEnity({
+  const HabitEntity({
     required this.id,
     required this.name,
     this.description,

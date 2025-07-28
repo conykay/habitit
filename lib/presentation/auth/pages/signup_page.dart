@@ -7,11 +7,12 @@ import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
 import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
-import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
+
+import '../../../service_locator.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -22,10 +23,10 @@ class SignupPage extends StatelessWidget {
       create: (context) => ButtonStateCubit(),
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state.state == Buttonstate.loaded) {
+          if (state.state == ButtonStates.loaded) {
             AppNavigator.pushAndRemove(context, NavigationBasePage());
           }
-          if (state.state == Buttonstate.failed) {
+          if (state.state == ButtonStates.failed) {
             OtherFailure failure = state.error;
             var snackbar = SnackBar(
               content: Text(failure.error.toString()),
@@ -38,47 +39,43 @@ class SignupPage extends StatelessWidget {
           resizeToAvoidBottomInset:
               true, // Allows resizing when keyboard appears
           body: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 600, // Limit width for better web design
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 60),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
-                              ),
-                            ),
-                            child: _buildIntro(context),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).canvasColor,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(25),
-                                topRight: Radius.circular(25),
-                              ),
-                            ),
-                            child: SignupWidget(),
-                          ),
-                        ],
-                      ),
-                    ),
+            child: SingleChildScrollView(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: 600, // Limit width for better web design
                   ),
-                );
-              },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 60),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: _buildIntro(context),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(25),
+                            topRight: Radius.circular(25),
+                          ),
+                        ),
+                        child: SignupView(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -114,8 +111,8 @@ class SignupPage extends StatelessWidget {
   }
 }
 
-class SignupWidget extends StatelessWidget {
-  SignupWidget({super.key});
+class SignupView extends StatelessWidget {
+  SignupView({super.key});
 
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
@@ -138,7 +135,7 @@ class SignupWidget extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _nameTextController,
             validator: (value) {
@@ -185,8 +182,7 @@ class SignupWidget extends StatelessWidget {
             onPressed: () {
               if (_formState.currentState!.validate()) {
                 context.read<ButtonStateCubit>().call(
-                    usecase: CreateUserEmailPasswordUseCase(
-                        context.read<AuthenticationRepository>()),
+                    usecase: sl.get<CreateUserEmailPasswordUseCase>(),
                     params: AuthUserReqEntity(
                       email: _emailTextController.text,
                       password: _emailTextController.text,
@@ -203,8 +199,8 @@ class SignupWidget extends StatelessWidget {
             return ReactiveElevatedButton(
               onPressed: () {
                 context.read<ButtonStateCubit>().call(
-                    usecase: SigninGoogleUseCase(
-                        context.read<AuthenticationRepository>()));
+                      usecase: sl.get<SignInGoogleUseCase>(),
+                    );
               },
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -221,7 +217,7 @@ class SignupWidget extends StatelessWidget {
           const SizedBox(height: 25),
           GestureDetector(
             onTap: () {
-              AppNavigator.pushReplacement(context, SigninPage());
+              AppNavigator.pushReplacement(context, SignInPage());
             },
             child: Text.rich(TextSpan(
                 text: 'Already have an account ?',

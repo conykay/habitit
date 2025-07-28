@@ -59,7 +59,7 @@ int calculateLongestStreak(List<DateTime> completedDates) {
   return longestStreak;
 }
 
-int longestStreakInAllHabits(List<HabitEnity> habits) {
+int longestStreakInAllHabits(List<HabitEntity> habits) {
   var longestStreak = 0;
   var highestStreak = 0;
   for (var habit in habits) {
@@ -71,7 +71,7 @@ int longestStreakInAllHabits(List<HabitEnity> habits) {
   return highestStreak;
 }
 
-double calculateAdherenceRate(HabitEnity habit) {
+double calculateAdherenceRate(HabitEntity habit) {
   final normalizedStart = DateTime(habit.startDate.toDate().year,
       habit.startDate.toDate().month, habit.startDate.toDate().day);
   final today = DateTime.now();
@@ -88,7 +88,7 @@ double calculateAdherenceRate(HabitEnity habit) {
 }
 
 Map<DateTime, int> getDailyCompletionData(
-  List<HabitEnity> habits, {
+  List<HabitEntity> habits, {
   DateTime? start,
   DateTime? end,
 }) {

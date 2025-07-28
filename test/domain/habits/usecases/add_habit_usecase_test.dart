@@ -11,17 +11,17 @@ import 'package:mockito/mockito.dart';
 
 import 'add_habit_usecase_test.mocks.dart';
 
-@GenerateMocks([HabitRepository])
+@GenerateMocks([HabitsRepository])
 void main() {
   late MockHabitRepository repository;
-  late AddHabitUsecase usecase;
+  late AddHabitUseCase usecase;
 
   setUp(() {
     repository = MockHabitRepository();
-    usecase = AddHabitUsecase(habitRepository: repository);
+    usecase = AddHabitUseCase(habitRepository: repository);
   });
 
-  final tHabitEntity = HabitEnity(
+  final tHabitEntity = HabitEntity(
       id: 'id',
       name: 'name',
       frequency: HabitFrequency.daily,

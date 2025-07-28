@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -73,6 +67,27 @@ class DefaultFirebaseOptions {
     androidClientId: '447620558965-lun6omgfel93rjp9ohmbcl2tufqdhalh.apps.googleusercontent.com',
     iosClientId: '447620558965-4chho0g6faoq6a1cqcj85s39hr97u2bd.apps.googleusercontent.com',
     iosBundleId: 'com.example.habitit',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDjnGPYT5jDzODSUoasfwpnzZ3FbNy1lqQ',
+    appId: '1:447620558965:ios:ba7a1c001a74de6fef483c',
+    messagingSenderId: '447620558965',
+    projectId: 'habitit-ef892',
+    storageBucket: 'habitit-ef892.firebasestorage.app',
+    androidClientId: '447620558965-lun6omgfel93rjp9ohmbcl2tufqdhalh.apps.googleusercontent.com',
+    iosClientId: '447620558965-4chho0g6faoq6a1cqcj85s39hr97u2bd.apps.googleusercontent.com',
+    iosBundleId: 'com.example.habitit',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAeL6_7zZrr_KjKgq9pxV8xcGtNOJiSYV8',
+    appId: '1:447620558965:web:a6654f937453e953ef483c',
+    messagingSenderId: '447620558965',
+    projectId: 'habitit-ef892',
+    authDomain: 'habitit-ef892.firebaseapp.com',
+    storageBucket: 'habitit-ef892.firebasestorage.app',
+    measurementId: 'G-2P5QV9HVF3',
   );
 
 }

@@ -6,9 +6,9 @@ import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 abstract class AuthenticationRepository {
   Future<Either<Failures, UserCredential>> createUserEmailPassword(
       {required AuthUserReqEntity authData});
-  Future<Either<Failures, UserCredential>> signinUserEmailPassword(
+  Future<Either<Failures, UserCredential>> signInUserEmailPassword(
       {required AuthUserReqEntity authData});
-  Future<Either<Failures, UserCredential>> googleSignin();
+  Future<Either<Failures, UserCredential>> googleSignIn();
   Future<Either<Failures, dynamic>> logout();
   Future<bool> isLoggedIn();
 }

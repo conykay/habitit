@@ -5,15 +5,18 @@ import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-class CreateUserEmailPasswordUseCase
-    extends UseCase<Either<Failures, UserCredential>, AuthUserReqEntity> {
-  final AuthenticationRepository repository;
+import '../../../service_locator.dart';
 
-  CreateUserEmailPasswordUseCase(this.repository);
+typedef CreateUserEmailPasswordData = Either<Failures, UserCredential>;
+
+class CreateUserEmailPasswordUseCase
+    extends UseCase<CreateUserEmailPasswordData, AuthUserReqEntity> {
+  CreateUserEmailPasswordUseCase();
 
   @override
-  Future<Either<Failures, UserCredential>> call(
-      {AuthUserReqEntity? params}) async {
-    return await repository.createUserEmailPassword(authData: params!);
+  Future<CreateUserEmailPasswordData> call({AuthUserReqEntity? params}) async {
+    return await sl
+        .get<AuthenticationRepository>()
+        .createUserEmailPassword(authData: params!);
   }
 }

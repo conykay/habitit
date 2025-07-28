@@ -13,7 +13,7 @@ import 'authentication_repository_impl_test.mocks.dart';
 
 @GenerateMocks([
   AuthFirebaseService,
-  NetworkInfo,
+  NetworkInfoService,
   UserCredential,
 ])
 void main() {
@@ -34,17 +34,17 @@ void main() {
   group('Create user with email and password', () {
     test('Should check for internet connection', () async {
       //arrange
-      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       //act
       await authenticationRepositoryImpl.createUserEmailPassword(
           authData: tAuthUserReq);
       //assert
-      verify(mockNetworkInfo.hasConection);
+      verify(mockNetworkInfo.hasConnection);
     });
 
     group('Device is online', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       });
 
       test(
@@ -59,7 +59,7 @@ void main() {
         var result = await authenticationRepositoryImpl.createUserEmailPassword(
             authData: tAuthUserReq);
         //assert
-        verify(mockNetworkInfo.hasConection).called(1);
+        verify(mockNetworkInfo.hasConnection).called(1);
         verify(mockAuthFirebaseService.createUserEmailPassword(
                 authData: tAuthUserReq))
             .called(1);
@@ -86,13 +86,13 @@ void main() {
 
     group('Device is offline', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => false);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => false);
       });
 
       test('return offline error', () async {
         await authenticationRepositoryImpl.createUserEmailPassword(
             authData: tAuthUserReq);
-        verify(mockNetworkInfo.hasConection).called(1);
+        verify(mockNetworkInfo.hasConnection).called(1);
         verifyZeroInteractions(mockAuthFirebaseService);
       });
     });
@@ -101,17 +101,17 @@ void main() {
   group('Signin user with email and password', () {
     test('Checking for internet connection', () async {
       //arrange
-      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       //act
-      await authenticationRepositoryImpl.signinUserEmailPassword(
+      await authenticationRepositoryImpl.signInUserEmailPassword(
           authData: tAuthUserReq);
       //assert
-      verify(mockNetworkInfo.hasConection);
+      verify(mockNetworkInfo.hasConnection);
     });
 
     group('Device is online', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       });
 
       test(
@@ -119,15 +119,15 @@ void main() {
           () async {
         final tUsercred = MockUserCredential();
         //arrange
-        when(mockAuthFirebaseService.signinUserEmailPassword(
+        when(mockAuthFirebaseService.signInUserEmailPassword(
                 authData: tAuthUserReq))
             .thenAnswer((_) async => tUsercred);
         //act
-        var result = await authenticationRepositoryImpl.signinUserEmailPassword(
+        var result = await authenticationRepositoryImpl.signInUserEmailPassword(
             authData: tAuthUserReq);
         //assert
-        verify(mockNetworkInfo.hasConection).called(1);
-        verify(mockAuthFirebaseService.signinUserEmailPassword(
+        verify(mockNetworkInfo.hasConnection).called(1);
+        verify(mockAuthFirebaseService.signInUserEmailPassword(
                 authData: tAuthUserReq))
             .called(1);
         expect(result, Right(tUsercred));
@@ -135,16 +135,16 @@ void main() {
       });
 
       test('error Sigin throws exception', () async {
-        when(mockAuthFirebaseService.signinUserEmailPassword(
+        when(mockAuthFirebaseService.signInUserEmailPassword(
                 authData: tAuthUserReq))
             .thenThrow(Exception());
 
-        var result = await authenticationRepositoryImpl.signinUserEmailPassword(
+        var result = await authenticationRepositoryImpl.signInUserEmailPassword(
             authData: tAuthUserReq);
 
         expect(result, Left(OtherFailure(Exception().toString())));
 
-        verify(mockAuthFirebaseService.signinUserEmailPassword(
+        verify(mockAuthFirebaseService.signInUserEmailPassword(
                 authData: tAuthUserReq))
             .called(1);
         verifyNoMoreInteractions(mockAuthFirebaseService);
@@ -153,13 +153,13 @@ void main() {
 
     group('Device is offline', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => false);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => false);
       });
 
       test('return offline error', () async {
         await authenticationRepositoryImpl.createUserEmailPassword(
             authData: tAuthUserReq);
-        verify(mockNetworkInfo.hasConection).called(1);
+        verify(mockNetworkInfo.hasConnection).called(1);
         verifyZeroInteractions(mockAuthFirebaseService);
       });
     });
@@ -167,16 +167,16 @@ void main() {
   group('Google user with email and password', () {
     test('Checking for internet connection', () async {
       //arrange
-      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       //act
-      await authenticationRepositoryImpl.googleSignin();
+      await authenticationRepositoryImpl.googleSignIn();
       //assert
-      verify(mockNetworkInfo.hasConection);
+      verify(mockNetworkInfo.hasConnection);
     });
 
     group('Device is online', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
       });
 
       test(
@@ -184,37 +184,37 @@ void main() {
           () async {
         final tUsercred = MockUserCredential();
         //arrange
-        when(mockAuthFirebaseService.googleSignin())
+        when(mockAuthFirebaseService.googleSignIn())
             .thenAnswer((_) async => tUsercred);
         //act
-        var result = await authenticationRepositoryImpl.googleSignin();
+        var result = await authenticationRepositoryImpl.googleSignIn();
         //assert
-        verify(mockNetworkInfo.hasConection).called(1);
-        verify(mockAuthFirebaseService.googleSignin()).called(1);
+        verify(mockNetworkInfo.hasConnection).called(1);
+        verify(mockAuthFirebaseService.googleSignIn()).called(1);
         expect(result, Right(tUsercred));
         verifyNoMoreInteractions(mockAuthFirebaseService);
       });
 
       test('error Sigin throws exception', () async {
-        when(mockAuthFirebaseService.googleSignin()).thenThrow(Exception());
+        when(mockAuthFirebaseService.googleSignIn()).thenThrow(Exception());
 
-        var result = await authenticationRepositoryImpl.googleSignin();
+        var result = await authenticationRepositoryImpl.googleSignIn();
 
         expect(result, Left(OtherFailure(Exception().toString())));
 
-        verify(mockAuthFirebaseService.googleSignin()).called(1);
+        verify(mockAuthFirebaseService.googleSignIn()).called(1);
         verifyNoMoreInteractions(mockAuthFirebaseService);
       });
     });
 
     group('Device is offline', () {
       setUp(() {
-        when(mockNetworkInfo.hasConection).thenAnswer((_) async => false);
+        when(mockNetworkInfo.hasConnection).thenAnswer((_) async => false);
       });
 
       test('return offline error', () async {
-        await authenticationRepositoryImpl.googleSignin();
-        verify(mockNetworkInfo.hasConection).called(1);
+        await authenticationRepositoryImpl.googleSignIn();
+        verify(mockNetworkInfo.hasConnection).called(1);
         verifyZeroInteractions(mockAuthFirebaseService);
       });
     });
@@ -222,7 +222,7 @@ void main() {
 
   group('check if user is logged in', () {
     setUp(() {
-      when(mockNetworkInfo.hasConection).thenAnswer((_) async => true);
+      when(mockNetworkInfo.hasConnection).thenAnswer((_) async => true);
     });
     test('user is logged in', () async {
       when(mockAuthFirebaseService.isLoggedIn()).thenAnswer((_) async => true);

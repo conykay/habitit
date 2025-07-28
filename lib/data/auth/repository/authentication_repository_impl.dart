@@ -6,20 +6,17 @@ import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-class AuthenticationRepositoryImpl implements AuthenticationRepository {
-  final AuthFirebaseService firebaseService;
-  final NetworkInfo networkInfo;
+import '../../../service_locator.dart';
 
-  AuthenticationRepositoryImpl(
-      {required this.firebaseService, required this.networkInfo});
-
+class AuthenticationRepositoryImpl extends AuthenticationRepository {
   @override
   Future<Either<Failures, UserCredential>> createUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
-    if (await networkInfo.hasConection) {
+    if (await sl.get<NetworkInfoService>().hasConnection) {
       try {
-        var cred =
-            await firebaseService.createUserEmailPassword(authData: authData);
+        var cred = await sl
+            .get<AuthFirebaseService>()
+            .createUserEmailPassword(authData: authData);
 
         return Right(cred);
       } catch (e) {
@@ -31,12 +28,13 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failures, UserCredential>> signinUserEmailPassword(
+  Future<Either<Failures, UserCredential>> signInUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
-    if (await networkInfo.hasConection) {
+    if (await sl.get<NetworkInfoService>().hasConnection) {
       try {
-        var cred =
-            await firebaseService.signinUserEmailPassword(authData: authData);
+        var cred = await sl
+            .get<AuthFirebaseService>()
+            .signInUserEmailPassword(authData: authData);
         return Right(cred);
       } catch (e) {
         return Left(OtherFailure(e.toString()));
@@ -47,10 +45,10 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failures, UserCredential>> googleSignin() async {
-    if (await networkInfo.hasConection) {
+  Future<Either<Failures, UserCredential>> googleSignIn() async {
+    if (await sl.get<NetworkInfoService>().hasConnection) {
       try {
-        var cred = await firebaseService.googleSignin();
+        var cred = await sl.get<AuthFirebaseService>().googleSignIn();
         return Right(cred);
       } catch (e) {
         return Left(OtherFailure(e.toString()));
@@ -63,7 +61,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   @override
   Future<Either<Failures, dynamic>> logout() async {
     try {
-      await firebaseService.logout();
+      await sl.get<AuthFirebaseService>().logout();
       return Right('done');
     } catch (e) {
       return Left(OtherFailure('error'));
@@ -72,6 +70,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   Future<bool> isLoggedIn() async {
-    return await firebaseService.isLoggedIn();
+    return await sl.get<AuthFirebaseService>().isLoggedIn();
   }
 }

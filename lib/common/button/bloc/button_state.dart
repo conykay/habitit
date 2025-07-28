@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
-enum Buttonstate { inital, loading, loaded, failed }
+enum ButtonStates { initial, loading, loaded, failed }
 
 class ButtonState extends Equatable {
-  final Buttonstate state;
+  final ButtonStates state;
   final dynamic error;
   final dynamic data;
-  ButtonState({
+  const ButtonState({
     required this.state,
     this.error,
     this.data,
