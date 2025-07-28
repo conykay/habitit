@@ -29,7 +29,7 @@ void main() {
         when(userLoggedInUseCase.call()).thenAnswer((_) async => true);
       },
       build: () => AuthStateCubit(),
-      act: (bloc) => bloc.isAutheniticated(usecase: userLoggedInUseCase),
+      act: (bloc) => bloc.isAuthenticated(usecase: userLoggedInUseCase),
       expect: () => [Authenticated()],
       verify: (_) {
         verify(userLoggedInUseCase.call()).called(1);

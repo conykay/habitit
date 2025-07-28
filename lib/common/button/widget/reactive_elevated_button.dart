@@ -21,11 +21,11 @@ class ReactiveElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ButtonStateCubit, ButtonState>(
       builder: (context, state) {
-        if (state.state == Buttonstate.loading) {
+        if (state.state == ButtonStates.loading) {
           return _loading();
         }
 
-        if (state.state == Buttonstate.loaded) {
+        if (state.state == ButtonStates.loaded) {
           return _loaded();
         }
 

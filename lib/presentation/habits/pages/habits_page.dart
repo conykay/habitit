@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
-import 'package:habitit/domain/habits/repository/habit_repository.dart';
-import 'package:habitit/domain/habits/usecases/get_all_habits_usecase.dart';
-import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/habits/bloc/selected_frequency_cubit.dart';
@@ -19,15 +16,12 @@ import '../widget/new_habit_modal.dart';
 class HabitsPage extends StatelessWidget {
   HabitsPage({super.key});
 
-  List<HabitEnity>? allHabits;
+  List<HabitEntity>? allHabits;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<HabitStateCubit>()
-        ..getHabits(
-            usecase: GetAllHabitsUsecase(
-                repository: context.read<HabitRepository>())),
+      value: context.read<HabitStateCubit>()..getHabits(),
       child: Center(
         child: SizedBox(
           width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
@@ -99,10 +93,8 @@ class HabitsPage extends StatelessWidget {
   }
 
   Future<void> _createNewHabit(BuildContext context) async {
-    final habitRepo = context.read<HabitRepository>();
-    final rewardRepo = context.read<RewardsRepository>();
     final selectedCubit = context.read<SelectedFrequencyCubit>();
-    final habitstate = context.read<HabitStateCubit>();
+    final habitState = context.read<HabitStateCubit>();
     final rewardState = context.read<UserRewardsCubit>();
 
     late bool result;
@@ -110,52 +102,10 @@ class HabitsPage extends StatelessWidget {
       result = await showDialog(
           context: context,
           builder: (context) {
-            return MultiRepositoryProvider(
-              providers: [
-                RepositoryProvider.value(
-                  value: habitRepo,
-                ),
-                RepositoryProvider.value(
-                  value: rewardRepo,
-                ),
-              ],
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(
-                    value: habitstate,
-                  ),
-                  BlocProvider.value(
-                    value: selectedCubit,
-                  ),
-                  BlocProvider.value(
-                    value: rewardState,
-                  ),
-                ],
-                child: Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: NewHabitCustomModal()),
-              ),
-            );
-          });
-    } else {
-      result = await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return MultiRepositoryProvider(
-            providers: [
-              RepositoryProvider.value(
-                value: habitRepo,
-              ),
-              RepositoryProvider.value(
-                value: rewardRepo,
-              ),
-            ],
-            child: MultiBlocProvider(
+            return MultiBlocProvider(
               providers: [
                 BlocProvider.value(
-                  value: habitstate,
+                  value: habitState,
                 ),
                 BlocProvider.value(
                   value: selectedCubit,
@@ -164,8 +114,30 @@ class HabitsPage extends StatelessWidget {
                   value: rewardState,
                 ),
               ],
-              child: NewHabitCustomModal(),
-            ),
+              child: Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: NewHabitCustomModal()),
+            );
+          });
+    } else {
+      result = await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                value: habitState,
+              ),
+              BlocProvider.value(
+                value: selectedCubit,
+              ),
+              BlocProvider.value(
+                value: rewardState,
+              ),
+            ],
+            child: NewHabitCustomModal(),
           );
         },
       );
@@ -173,9 +145,7 @@ class HabitsPage extends StatelessWidget {
 
     if (result == true) {
       if (context.mounted) {
-        context.read<HabitStateCubit>().getHabits(
-            usecase: GetAllHabitsUsecase(
-                repository: context.read<HabitRepository>()));
+        context.read<HabitStateCubit>().getHabits();
       }
     }
   }

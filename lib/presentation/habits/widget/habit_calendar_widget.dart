@@ -9,7 +9,7 @@ class HabitCalendarWidget extends StatelessWidget {
     required this.habit,
   });
 
-  final HabitEnity habit;
+  final HabitEntity habit;
 
   DateTime normalizeDate(DateTime date) {
     return DateTime(date.year, date.month, date.day);

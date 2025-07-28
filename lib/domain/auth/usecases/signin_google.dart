@@ -4,13 +4,15 @@ import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-class SigninGoogleUseCase
-    extends UseCase<Either<Failures, UserCredential>, dynamic> {
-  final AuthenticationRepository repository;
-  SigninGoogleUseCase(this.repository);
+import '../../../service_locator.dart';
+
+typedef SignInGoogleData = Either<Failures, UserCredential>;
+
+class SignInGoogleUseCase extends UseCase<SignInGoogleData, dynamic> {
+  SignInGoogleUseCase();
 
   @override
-  Future<Either<Failures, UserCredential>> call({params}) {
-    return repository.googleSignin();
+  Future<SignInGoogleData> call({params}) {
+    return sl.get<AuthenticationRepository>().googleSignIn();
   }
 }

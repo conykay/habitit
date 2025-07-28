@@ -4,13 +4,11 @@ import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-class EditHabitUsecase extends UseCase<Either, HabitEnity> {
-  final HabitRepository repository;
-  EditHabitUsecase({
-    required this.repository,
-  });
+import '../../../service_locator.dart';
+
+class EditHabitUseCase extends UseCase<Either, HabitEntity> {
   @override
-  Future<Either> call({HabitEnity? params}) async {
-    return await repository.editHabit(habit: params!);
+  Future<Either> call({HabitEntity? params}) async {
+    return await sl.get<HabitsRepository>().editHabit(habit: params!);
   }
 }
