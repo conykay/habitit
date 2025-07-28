@@ -8,16 +8,11 @@ import 'package:habitit/common/rewards/reward_badges.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
-import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
-import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_state.dart';
 import 'package:habitit/presentation/profile/widgets/badge.dart';
-
-import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
-import '../../../service_locator.dart';
 
 // ignore: must_be_immutable
 class ProfilePage extends StatelessWidget {
@@ -32,22 +27,20 @@ class ProfilePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: context.read<UserRewardsCubit>()
-            ..getUserRewards(
-                usecase: GetUserRewardsUsecase(
-                    repository: context.read<RewardsRepository>())),
+          value: context.read<UserRewardsCubit>()..getUserRewards(),
         ),
         BlocProvider.value(
-          value: context.read<HabitStateCubit>()
-            ..getHabits(
-              usecase: sl.get<GetAllHabitsUseCase>(),
-            ),
+          value: context.read<HabitStateCubit>()..getHabits(),
         ),
       ],
       child: BlocListener<AuthStateCubit, AuthState>(
         listener: (context, state) {
-          if (state is UnAuthenticated) {
-            AppNavigator.pushAndRemove(context, SignInPage());
+          switch (state) {
+            case UnAuthenticated():
+              AppNavigator.pushAndRemove(context, SignInPage());
+              break;
+            default:
+              break;
           }
         },
         child: LayoutBuilder(builder: (context, constrains) {
@@ -56,14 +49,18 @@ class ProfilePage extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: 700),
               child: BlocBuilder<UserRewardsCubit, UserRewardsState>(
                 builder: (context, state) {
-                  if (state is UserRewardsError) {
-                    return Center(
-                      child: Text(state.error.toString()),
-                    );
+                  switch (state) {
+                    case UserRewardsError():
+                      return Center(
+                        child: Text(state.error.toString()),
+                      );
+                    case UserRewardsLoaded():
+                      userReward = state.rewards;
+                      break;
+                    default:
+                      break;
                   }
-                  if (state is UserRewardsLoaded) {
-                    userReward = state.rewards;
-                  }
+
                   var isLoading = state is UserRewardsLoading;
                   if (userReward != null) {
                     return Padding(

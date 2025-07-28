@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
-import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,7 +34,7 @@ class _NewHabitCustomModalState extends State<NewHabitCustomModal> {
       create: (context) => ButtonStateCubit(),
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state.state == Buttonstate.failed) {
+          if (state.state == ButtonStates.failed) {
             var snack = SnackBar(
               content: Text(state.error.toString()),
               behavior: SnackBarBehavior.floating,
@@ -155,11 +153,7 @@ class _NewHabitCustomModalState extends State<NewHabitCustomModal> {
                                 if (context.mounted) {
                                   context
                                       .read<UserRewardsCubit>()
-                                      .updateUserRewards(
-                                          usecase: AddUserXpUsecase(
-                                              repository: context
-                                                  .read<RewardsRepository>()),
-                                          xp: 10);
+                                      .updateUserRewards(xp: 10);
                                 }
                               });
                               if (context.mounted) {

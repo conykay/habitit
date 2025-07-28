@@ -32,8 +32,8 @@ void main() {
       build: () => ButtonStateCubit(),
       act: (cubit) => cubit.call(params: tParams, usecase: mockUseCase),
       expect: () => [
-        ButtonState(state: Buttonstate.loading),
-        ButtonState(state: Buttonstate.loaded, data: tCred),
+        ButtonState(state: ButtonStates.loading),
+        ButtonState(state: ButtonStates.loaded, data: tCred),
       ],
       verify: (_) {
         verify(mockUseCase.call(params: tParams)).called(1);
@@ -49,8 +49,8 @@ void main() {
       build: () => ButtonStateCubit(),
       act: (cubit) => cubit.call(params: tParams, usecase: mockUseCase),
       expect: () => [
-        ButtonState(state: Buttonstate.loading),
-        ButtonState(state: Buttonstate.failed, error: OtherFailure('error')),
+        ButtonState(state: ButtonStates.loading),
+        ButtonState(state: ButtonStates.failed, error: OtherFailure('error')),
       ],
       verify: (_) {
         verify(mockUseCase.call(params: tParams)).called(1);

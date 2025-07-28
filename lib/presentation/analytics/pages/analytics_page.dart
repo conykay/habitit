@@ -8,8 +8,6 @@ import 'package:habitit/presentation/analytics/widgets/adherence_rates.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 
-import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
-import '../../../service_locator.dart';
 import '../widgets/daily_data_chart.dart';
 
 // ignore: must_be_immutable
@@ -21,10 +19,7 @@ class AnalyticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<HabitStateCubit>()
-        ..getHabits(
-          usecase: sl.get<GetAllHabitsUseCase>(),
-        ),
+      value: context.read<HabitStateCubit>()..getHabits(),
       child: LayoutBuilder(builder: (context, constraints) {
         return Center(
           child: ConstrainedBox(
@@ -38,7 +33,7 @@ class AnalyticsPage extends StatelessWidget {
 
                   if (state is HabitError) {
                     return Center(
-                      child: Text('Error retreiving data'),
+                      child: Text('Error retrieving data'),
                     );
                   }
                   if (state is HabitLoaded) {

@@ -23,10 +23,10 @@ class SignupPage extends StatelessWidget {
       create: (context) => ButtonStateCubit(),
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state.state == Buttonstate.loaded) {
+          if (state.state == ButtonStates.loaded) {
             AppNavigator.pushAndRemove(context, NavigationBasePage());
           }
-          if (state.state == Buttonstate.failed) {
+          if (state.state == ButtonStates.failed) {
             OtherFailure failure = state.error;
             var snackbar = SnackBar(
               content: Text(failure.error.toString()),

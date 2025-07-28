@@ -22,10 +22,10 @@ class SignInPage extends StatelessWidget {
       create: (context) => ButtonStateCubit(),
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state.state == Buttonstate.loaded) {
+          if (state.state == ButtonStates.loaded) {
             AppNavigator.pushAndRemove(context, NavigationBasePage());
           }
-          if (state.state == Buttonstate.failed) {
+          if (state.state == ButtonStates.failed) {
             var snackBar = SnackBar(
               content: Text(state.error.toString()),
               behavior: SnackBarBehavior.floating,

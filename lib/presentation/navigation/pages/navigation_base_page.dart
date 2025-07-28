@@ -8,12 +8,7 @@ import 'package:habitit/common/navigation/navigation_state.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/navigation/navigation.dart';
-import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
-import 'package:habitit/data/rewards/repository/rewards_repository.dart';
-import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
-import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
-import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
@@ -44,54 +39,46 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
     ProfilePage(),
   ];
 
-  final rewardsHiveService = RewardsHiveServiceImpl();
-
-  final rewardsFirebaseService = RewardsFirebaseServiceImpl();
-
-  final networkInfo = sl.get<NetworkInfoService>();
-  Future<void> getPermisions() async {
-    await NotificationService().grantAppPermission();
+  Future<void> getPermissions() async {
+    await sl.get<NotificationService>().grantAppPermission();
   }
 
   @override
   void initState() {
-    getPermisions();
+    getPermissions();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
+    return MultiBlocProvider(
       providers: [
-        RepositoryProvider<RewardsRepository>(
-          create: (context) => RewardsRepositoryImpl(
-              hiveService: rewardsHiveService,
-              firebaseService: rewardsFirebaseService,
-              networkInfo: networkInfo),
-        ),
+        BlocProvider(create: (context) => NavigationStateCubit()),
+        BlocProvider(create: (context) => SelectedFrequencyCubit()),
+        BlocProvider(create: (context) => HabitStateCubit()),
+        BlocProvider(create: (context) => UserRewardsCubit()),
+        BlocProvider(create: (context) => NotificationCubit())
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => NavigationStateCubit()),
-          BlocProvider(create: (context) => SelectedFrequencyCubit()),
-          BlocProvider(create: (context) => HabitStateCubit()),
-          BlocProvider(create: (context) => UserRewardsCubit()),
-          BlocProvider(create: (context) => NotificationCubit())
-        ],
-        child: BlocListener<AuthStateCubit, AuthState>(
-          listener: (context, state) {
-            if (state is UnAuthenticated) {
+      child: BlocListener<AuthStateCubit, AuthState>(
+        listenWhen: (prev, current) {
+          return current is UnAuthenticated;
+        },
+        listener: (context, state) {
+          switch (state) {
+            case UnAuthenticated():
               AppNavigator.pushAndRemove(context, SignInPage());
-            }
-          },
-          child: LayoutBuilder(builder: (context, constraints) {
-            if (constraints.maxWidth >= 600) {
-              return _largeDeviceLayout();
-            } else {
-              return _smallDeviceLayout();
-            }
-          }),
-        ),
+              break;
+            default:
+              break;
+          }
+        },
+        child: LayoutBuilder(builder: (context, constraints) {
+          if (constraints.maxWidth >= 600) {
+            return _largeDeviceLayout();
+          } else {
+            return _smallDeviceLayout();
+          }
+        }),
       ),
     );
   }

@@ -30,7 +30,7 @@ class EditHabitWidget extends StatelessWidget {
       create: (context) => ButtonStateCubit(),
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state.state == Buttonstate.failed) {
+          if (state.state == ButtonStates.failed) {
             var snack = SnackBar(
               content: Text(state.error.toString()),
               behavior: SnackBarBehavior.floating,

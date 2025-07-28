@@ -5,8 +5,6 @@ import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/home/bloc/mark_habit_complete_cubit.dart';
 
-import '../../../domain/habits/usecases/get_all_habits_usecase.dart';
-import '../../../service_locator.dart';
 import '../widgets/home_table_calendar.dart';
 import '../widgets/today_habits_grid.dart';
 
@@ -21,10 +19,7 @@ class HomePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: context.read<HabitStateCubit>()
-            ..getHabits(
-              usecase: sl.get<GetAllHabitsUseCase>(),
-            ),
+          value: context.read<HabitStateCubit>()..getHabits(),
         ),
         BlocProvider(
           create: (context) => MarkHabitCompleteCubit(),
