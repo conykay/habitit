@@ -40,7 +40,7 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
   ];
 
   Future<void> getPermissions() async {
-    await sl.get<NotificationService>().grantAppPermission();
+    await sl.get<NotificationServiceImpl>().grantAppPermission();
   }
 
   @override

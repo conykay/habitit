@@ -5,11 +5,22 @@ import 'package:flutter/foundation.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:http/http.dart' as http;
 
-class NotificationService {
+abstract class NotificationService {
+  Future<void> grantAppPermission();
+  Future<String?> getToken();
+  Future<void> sendNewBadgeNotification(
+      {required String uid,
+      required String badgeName,
+      required String badgeDescription});
+  void listenToTokenRefresh(void Function(String) onNewToken);
+}
+
+class NotificationServiceImpl extends NotificationService {
   final FirebaseMessaging messagingInstance = FirebaseMessaging.instance;
   static const vapidKey =
       "BGUpq07QOgLng69S4tb38gruFJMIfz522Py0GcIEe4JYyWUeOrtGd2pbr28gg3gNQNmW0fnkcPLQd7fAItgw6AE";
 // permissions
+  @override
   Future<void> grantAppPermission() async {
     NotificationSettings notificationSettings =
         await messagingInstance.requestPermission(
@@ -31,13 +42,14 @@ class NotificationService {
       }
     } else {
       if (kDebugMode) {
-        print('user did not grant permisions');
+        print('user did not grant permissions');
       }
     }
   }
 
   // get token
 
+  @override
   Future<String?> getToken() async {
     String? token;
     if (DefaultFirebaseOptions.currentPlatform == DefaultFirebaseOptions.web) {
@@ -51,14 +63,16 @@ class NotificationService {
     return token;
   }
 
+  @override
   void listenToTokenRefresh(void Function(String) onNewToken) {
     messagingInstance.onTokenRefresh.listen((newToken) {
       onNewToken(newToken);
     });
   }
-// send notification request
 
-  static Future<void> sendNewBadgeNotification(
+// send notification request
+  @override
+  Future<void> sendNewBadgeNotification(
       {required String uid,
       required String badgeName,
       required String badgeDescription}) async {

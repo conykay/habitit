@@ -26,7 +26,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   await initializeGetItDependencies();
   await LocalNotificationService.initialize();
-  await NotificationService().getToken();
+  await NotificationServiceImpl().getToken();
   Hive.registerAdapter(HabitModelAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardsModelAdapter());

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/data/rewards/models/badge_model.dart';
 
+import '../../../service_locator.dart';
 import '../models/user_rewards_model.dart';
 
 abstract class RewardsFirebaseService {
@@ -44,7 +45,7 @@ class RewardsFirebaseServiceImpl implements RewardsFirebaseService {
 
   @override
   Future<void> sendNewBadgeNotification({required BadgeModel badge}) async {
-    await NotificationService.sendNewBadgeNotification(
+    await sl.get<NotificationService>().sendNewBadgeNotification(
         uid: user!.uid,
         badgeName: badge.name,
         badgeDescription: badge.description);
