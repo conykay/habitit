@@ -10,24 +10,43 @@ import '../../../common/button/widget/reactive_elevated_button.dart';
 import '../../../service_locator.dart';
 import '../bloc/selected_frequency_cubit.dart';
 
-class EditHabitWidget extends StatelessWidget {
-  EditHabitWidget({
+class EditHabitWidget extends StatefulWidget {
+  const EditHabitWidget({
     super.key,
     required this.habit,
   });
 
   final HabitEntity habit;
 
+  @override
+  State<EditHabitWidget> createState() => _EditHabitWidgetState();
+}
+
+class _EditHabitWidgetState extends State<EditHabitWidget> {
   final _formKey = GlobalKey<FormState>();
+
   final _habitNameController = TextEditingController();
+
   final _habitDescriptionController = TextEditingController();
 
   @override
+  void initState() {
+    _habitNameController.text = widget.habit.name;
+    _habitDescriptionController.text = widget.habit.description ?? '';
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _habitNameController.text = habit.name;
-    _habitDescriptionController.text = habit.description ?? '';
-    return BlocProvider(
-      create: (context) => ButtonStateCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ButtonStateCubit(),
+        ),
+        BlocProvider(
+          create: (context) => SelectedFrequencyCubit(),
+        ),
+      ],
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
           if (state.state == ButtonStates.failed) {
@@ -94,7 +113,7 @@ class EditHabitWidget extends StatelessWidget {
                     builder: (context, state) {
                       context
                           .read<SelectedFrequencyCubit>()
-                          .setInitial(initState: habit.frequency);
+                          .setInitial(initState: widget.habit.frequency);
                       return Row(
                         children: [
                           Expanded(
@@ -136,14 +155,14 @@ class EditHabitWidget extends StatelessWidget {
                                 .call(
                                     usecase: sl.get<EditHabitUseCase>(),
                                     params: HabitEntity(
-                                        id: habit.id,
+                                        id: widget.habit.id,
                                         name: _habitNameController.text,
                                         description:
                                             _habitDescriptionController.text,
                                         frequency: context
                                             .read<SelectedFrequencyCubit>()
                                             .state,
-                                        startDate: habit.startDate,
+                                        startDate: widget.habit.startDate,
                                         synced: false))
                                 .then((_) {
                               if (context.mounted) {
