@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
-import 'package:habitit/core/navigation/app_navigator.dart';
+import 'package:habitit/core/navigation/app_router.dart';
 import 'package:habitit/core/sync/sync_coordinator.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
@@ -13,8 +12,6 @@ import 'package:habitit/data/notifications/source/firebase_messaging_service.dar
 import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 import 'package:habitit/firebase_options.dart';
-import 'package:habitit/presentation/auth/pages/signup_page.dart';
-import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
 import 'package:habitit/service_locator.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -55,21 +52,18 @@ class MainApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
-          return MaterialApp(
+          return MaterialApp.router(
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: state.themeMode,
-            home: BlocListener<AuthStateCubit, AuthState>(
-              listener: (context, state) {
-                if (state is Authenticated) {
-                  AppNavigator.pushReplacement(context, NavigationBasePage());
-                }
-                if (state is UnAuthenticated) {
-                  AppNavigator.pushReplacement(context, SignupPage());
-                }
-              },
-              child: Scaffold(body: Center(child: CircularProgressIndicator())),
-            ),
+            routeInformationProvider:
+                AppRouter.getRouter(context.read<AuthStateCubit>())
+                    .routeInformationProvider,
+            routerDelegate: AppRouter.getRouter(context.read<AuthStateCubit>())
+                .routerDelegate,
+            routeInformationParser:
+                AppRouter.getRouter(context.read<AuthStateCubit>())
+                    .routeInformationParser,
           );
         },
       ),

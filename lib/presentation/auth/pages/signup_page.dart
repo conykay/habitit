@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/common/button/bloc/button_state.dart';
 import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
@@ -10,7 +11,6 @@ import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
 import 'package:habitit/domain/auth/usecases/signin_google.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
-import 'package:habitit/presentation/navigation/pages/navigation_base_page.dart';
 
 import '../../../service_locator.dart';
 
@@ -24,7 +24,11 @@ class SignupPage extends StatelessWidget {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
           if (state.state == ButtonStates.loaded) {
+/*
             AppNavigator.pushAndRemove(context, NavigationBasePage());
+
+*/
+            BlocProvider.of<AuthStateCubit>(context).isAuthenticated();
           }
           if (state.state == ButtonStates.failed) {
             OtherFailure failure = state.error;
