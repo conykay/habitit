@@ -47,11 +47,7 @@ class AnalyticsPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            loading
-                                ? Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: LinearProgressIndicator())
-                                : SizedBox(),
+                            loading ? LinearProgressIndicator() : SizedBox(),
                             _streakBox(context, highestStreak),
                             SizedBox(height: 15),
                             AdherenceRatesWidget(habits: allHabits!),

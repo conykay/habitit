@@ -46,7 +46,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
   sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
   //Notifications
-  sl.registerSingleton<NotificationService>(NotificationService());
+  sl.registerSingleton<NotificationService>(NotificationServiceImpl());
   //Auth
   sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
   //Habit Module

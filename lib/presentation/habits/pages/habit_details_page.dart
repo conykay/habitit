@@ -5,8 +5,8 @@ import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 
-import '../widget/details_app_bar.dart';
 import '../widget/habit_calendar_widget.dart';
+import '../widget/habit_details_app_bar.dart';
 
 class HabitDetailsPage extends StatelessWidget {
   final HabitEntity habit;
@@ -21,7 +21,7 @@ class HabitDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: CustomAppBar(habit: habit)),
+          child: HabitDetailsAppBar(habit: habit)),
       body: LayoutBuilder(builder: (context, constraints) {
         return ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 700),

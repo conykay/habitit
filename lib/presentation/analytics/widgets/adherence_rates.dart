@@ -46,7 +46,6 @@ class AdherenceRatesWidget extends StatelessWidget {
                         aspectRatio: 1,
                         child: PieChart(
                           duration: Duration(milliseconds: 150),
-                          curve: Curves.linear,
                           PieChartData(centerSpaceRadius: 40, sections: [
                             PieChartSectionData(
                                 value: adherenceRate,

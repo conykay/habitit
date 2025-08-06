@@ -121,7 +121,7 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
 
 // store token for notifications
   void onUserLoggedIn(User user) async {
-    final notificationService = NotificationService();
+    final notificationService = NotificationServiceImpl();
     final token = await notificationService.getToken();
     if (token != null) {
       await userCollectionRef.doc(user.uid).update({'token': token});
