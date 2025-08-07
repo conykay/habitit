@@ -46,9 +46,6 @@ enum AppRoute {
 
 class AppRouter {
   static GoRouter getRouter(AuthStateCubit authBloc) {
-    final rootNavigatorKey = GlobalKey<NavigatorState>();
-    final shellNavigatorKey = GlobalKey<NavigatorState>();
-
     return GoRouter(
       routes: [
         GoRoute(
@@ -93,9 +90,12 @@ class AppRouter {
                           path: AppRoute.habitDetails.path,
                           name: AppRoutes.habitDetails,
                           builder: (context, state) {
-                            final HabitEntity habit =
-                                state.extra! as HabitEntity;
-                            return HabitDetailsPage(habit: habit);
+                            if (state.extra != null) {
+                              final HabitEntity habit =
+                                  state.extra as HabitEntity;
+                              return HabitDetailsPage(habit: habit);
+                            }
+                            return ErrorWidget('could not retrieve habit');
                           })
                     ]),
               ],
