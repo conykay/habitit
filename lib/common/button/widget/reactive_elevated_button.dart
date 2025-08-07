@@ -29,13 +29,19 @@ class ReactiveElevatedButton extends StatelessWidget {
           return _loaded();
         }
 
-        return _inital();
+        return _initial();
       },
     );
   }
 
-  Widget _inital() {
-    return ElevatedButton(onPressed: onPressed, child: content ?? Text(title));
+  Widget _initial() {
+    return ElevatedButton(
+        onPressed: onPressed,
+        child: content ??
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ));
   }
 
   Widget _loading() {
