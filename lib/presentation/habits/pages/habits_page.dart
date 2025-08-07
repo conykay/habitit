@@ -55,11 +55,7 @@ class HabitsPage extends StatelessWidget {
                       }
                       return Column(
                         children: [
-                          loading
-                              ? Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: LinearProgressIndicator())
-                              : SizedBox(),
+                          if (loading) LinearProgressIndicator(),
                           Expanded(child: HabitsListView(habits: allHabits!)),
                         ],
                       );
