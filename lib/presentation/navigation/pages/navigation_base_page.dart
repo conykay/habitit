@@ -3,25 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habitit/common/navigation/navigation_state.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
-import 'package:habitit/core/navigation/app_navigator.dart';
 import 'package:habitit/core/navigation/navigation.dart';
 import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
-import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
-import 'package:habitit/presentation/notifications/pages/notification_page.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 
-import '../../../core/navigation/app_router.dart';
 import '../../../service_locator.dart';
-import '../../analytics/pages/analytics_page.dart';
 import '../../habits/bloc/habit_state_cubit.dart';
 import '../../habits/bloc/selected_frequency_cubit.dart';
-import '../../habits/pages/habits_page.dart';
-import '../../home/pages/home_page.dart';
-import '../../profile/pages/profile_page.dart';
-import '../widgets/custom_top_navigator.dart';
+import '../widgets/notification_Icon.dart';
 
 class NavigationBasePage extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -32,13 +23,6 @@ class NavigationBasePage extends StatefulWidget {
 }
 
 class _NavigationBasePageState extends State<NavigationBasePage> {
-  late final List<Widget> _pages = [
-    HomePage(),
-    HabitsPage(),
-    AnalyticsPage(),
-    ProfilePage(),
-  ];
-
   Future<void> getPermissions() async {
     await sl.get<NotificationServiceImpl>().grantAppPermission();
   }
@@ -92,32 +76,123 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
     widget.navigationShell.goBranch(index,
         initialLocation: index == widget.navigationShell.currentIndex);
   }
+}
 
-  Scaffold _smallDeviceLayout() {
-    return Scaffold(
+//Todo: Re-integrate support for different screen sizes.
+/*
+Scaffold _smallDeviceLayout() {
+  return Scaffold(
+    appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: BlocBuilder<NavigationStateCubit, NavigationState>(
+            builder: (context, state) {
+              var title = navData[state.index].appBarTitle;
+              return AppBar(
+                title: Text(title),
+                actions: [
+                  BlocBuilder<NotificationCubit, NotificationState>(
+                    builder: (context, state) {
+                      return Stack(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                AppNavigator.push(
+                                    context,
+                                    BlocProvider.value(
+                                        value: context.read<NotificationCubit>(),
+                                        child: NotificationPage()));
+                              },
+                              icon: FaIcon(FontAwesomeIcons.bell)),
+                          state.notifications.isNotEmpty
+                              ? Positioned(
+                            right: 11,
+                            top: 11,
+                            child: Container(
+                              padding: EdgeInsets.all(3),
+                              constraints: BoxConstraints(
+                                  minWidth: 10, minHeight: 10),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary),
+                              child: Text(
+                                state.notifications.length.toString(),
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          )
+                              : Container(),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              );
+            })),
+    body: BlocBuilder<NavigationStateCubit, NavigationState>(
+      builder: (context, state) {
+        return _pages[state.index];
+      },
+    ),
+    bottomNavigationBar: BlocBuilder<NavigationStateCubit, NavigationState>(
+        builder: (context, state) {
+          return NavigationBar(
+            selectedIndex: state.index,
+            destinations: navData
+                .map((e) => NavigationDestination(
+              icon: FaIcon(
+                e.icon,
+                color: Colors.grey,
+              ),
+              label: e.label,
+              selectedIcon: FaIcon(
+                e.icon,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ))
+                .toList(),
+            onDestinationSelected: (index) {
+              context
+                  .read<NavigationStateCubit>()
+                  .getNavBarItem(NavItem.values[index]);
+            },
+          );
+        }),
+  );
+}
+
+Scaffold _largeDeviceLayout() {
+  return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: BlocBuilder<NavigationStateCubit, NavigationState>(
               builder: (context, state) {
-            var title = navData[state.index].appBarTitle;
-            return AppBar(
-              title: Text(title),
-              actions: [
-                BlocBuilder<NotificationCubit, NotificationState>(
-                  builder: (context, state) {
-                    return Stack(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              AppNavigator.push(
-                                  context,
-                                  BlocProvider.value(
-                                      value: context.read<NotificationCubit>(),
-                                      child: NotificationPage()));
-                            },
-                            icon: FaIcon(FontAwesomeIcons.bell)),
-                        state.notifications.isNotEmpty
-                            ? Positioned(
+                var title = navData[state.index].appBarTitle;
+                return AppBar(
+                  title: Text(title),
+                  actions: [
+                    ...navData.map(
+                          (e) => CustomTopNavigator(navdata: e, index: state.index),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30.0),
+                      child: BlocBuilder<NotificationCubit, NotificationState>(
+                        builder: (context, state) {
+                          return Stack(
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    AppNavigator.push(
+                                        context,
+                                        BlocProvider.value(
+                                            value:
+                                            context.read<NotificationCubit>(),
+                                            child: NotificationPage()));
+                                  },
+                                  icon: FaIcon(FontAwesomeIcons.bell)),
+                              state.notifications.isNotEmpty
+                                  ? Positioned(
                                 right: 11,
                                 top: 11,
                                 child: Container(
@@ -135,147 +210,18 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
                                   ),
                                 ),
                               )
-                            : Container(),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            );
-          })),
+                                  : Container(),
+                            ],
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                );
+              })),
       body: BlocBuilder<NavigationStateCubit, NavigationState>(
         builder: (context, state) {
           return _pages[state.index];
         },
-      ),
-      bottomNavigationBar: BlocBuilder<NavigationStateCubit, NavigationState>(
-          builder: (context, state) {
-        return NavigationBar(
-          selectedIndex: state.index,
-          destinations: navData
-              .map((e) => NavigationDestination(
-                    icon: FaIcon(
-                      e.icon,
-                      color: Colors.grey,
-                    ),
-                    label: e.label,
-                    selectedIcon: FaIcon(
-                      e.icon,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ))
-              .toList(),
-          onDestinationSelected: (index) {
-            context
-                .read<NavigationStateCubit>()
-                .getNavBarItem(NavItem.values[index]);
-          },
-        );
-      }),
-    );
-  }
-
-  Scaffold _largeDeviceLayout() {
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: BlocBuilder<NavigationStateCubit, NavigationState>(
-                builder: (context, state) {
-              var title = navData[state.index].appBarTitle;
-              return AppBar(
-                title: Text(title),
-                actions: [
-                  ...navData.map(
-                    (e) => CustomTopNavigator(navdata: e, index: state.index),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 30.0),
-                    child: BlocBuilder<NotificationCubit, NotificationState>(
-                      builder: (context, state) {
-                        return Stack(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  AppNavigator.push(
-                                      context,
-                                      BlocProvider.value(
-                                          value:
-                                              context.read<NotificationCubit>(),
-                                          child: NotificationPage()));
-                                },
-                                icon: FaIcon(FontAwesomeIcons.bell)),
-                            state.notifications.isNotEmpty
-                                ? Positioned(
-                                    right: 11,
-                                    top: 11,
-                                    child: Container(
-                                      padding: EdgeInsets.all(3),
-                                      constraints: BoxConstraints(
-                                          minWidth: 10, minHeight: 10),
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary),
-                                      child: Text(
-                                        state.notifications.length.toString(),
-                                        style: TextStyle(fontSize: 10),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        );
-                      },
-                    ),
-                  )
-                ],
-              );
-            })),
-        body: BlocBuilder<NavigationStateCubit, NavigationState>(
-          builder: (context, state) {
-            return _pages[state.index];
-          },
-        ));
-  }
-}
-
-class NotificationIcon extends StatelessWidget {
-  const NotificationIcon({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<NotificationCubit, NotificationState>(
-      builder: (context, state) {
-        return Stack(
-          children: [
-            IconButton(
-                onPressed: () {
-                  context.pushNamed(AppRoutes.notifications);
-                },
-                icon: FaIcon(FontAwesomeIcons.bell)),
-            state.notifications.isNotEmpty
-                ? Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      constraints: BoxConstraints(minWidth: 10, minHeight: 10),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.secondary),
-                      child: Text(
-                        state.notifications.length.toString(),
-                        style: TextStyle(fontSize: 10),
-                      ),
-                    ),
-                  )
-                : Container(),
-          ],
-        );
-      },
-    );
-  }
-}
+      ));
+}*/
