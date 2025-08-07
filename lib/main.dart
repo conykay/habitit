@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/core/navigation/app_router.dart';
 import 'package:habitit/core/sync/sync_coordinator.dart';
@@ -40,15 +41,29 @@ Future<void> main() async {
   runApp(MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  late final AuthStateCubit _authCubit;
+  late final GoRouter _route;
+  @override
+  void initState() {
+    super.initState();
+    _authCubit = AuthStateCubit()..isAuthenticated();
+    _route = AppRouter.getRouter(_authCubit);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit()..getCurrentTheme()),
-        BlocProvider(create: (context) => AuthStateCubit()..isAuthenticated()),
+        BlocProvider(create: (context) => _authCubit),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
@@ -56,14 +71,9 @@ class MainApp extends StatelessWidget {
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: state.themeMode,
-            routeInformationProvider:
-                AppRouter.getRouter(context.read<AuthStateCubit>())
-                    .routeInformationProvider,
-            routerDelegate: AppRouter.getRouter(context.read<AuthStateCubit>())
-                .routerDelegate,
-            routeInformationParser:
-                AppRouter.getRouter(context.read<AuthStateCubit>())
-                    .routeInformationParser,
+            routeInformationProvider: _route.routeInformationProvider,
+            routerDelegate: _route.routerDelegate,
+            routeInformationParser: _route.routeInformationParser,
           );
         },
       ),

@@ -50,7 +50,6 @@ class AppRouter {
     final shellNavigatorKey = GlobalKey<NavigatorState>();
 
     return GoRouter(
-      navigatorKey: rootNavigatorKey,
       routes: [
         GoRoute(
             path: AppRoute.signIn.path,
@@ -60,12 +59,19 @@ class AppRouter {
             path: AppRoute.signUp.path,
             name: AppRoutes.signUp,
             builder: (context, state) => SignupPage()),
+        //notifications
+        GoRoute(
+            path: AppRoute.notifications.path,
+            name: AppRoutes.notifications,
+            builder: (context, state) => NotificationPage()),
         StatefulShellRoute.indexedStack(
-          parentNavigatorKey: rootNavigatorKey,
-          builder: (context, state, navigationShell) =>
-              NavigationBasePage(navigationShell),
+          builder: (context, state, navigationShell) {
+            return NavigationBasePage(navigationShell);
+          },
           branches: [
+            //home
             StatefulShellBranch(
+              initialLocation: AppRoute.home.path,
               routes: [
                 GoRoute(
                   path: AppRoute.home.path,
@@ -74,8 +80,9 @@ class AppRouter {
                 ),
               ],
             ),
+            //habits
             StatefulShellBranch(
-              navigatorKey: shellNavigatorKey,
+              initialLocation: AppRoute.habits.path,
               routes: [
                 GoRoute(
                     path: AppRoute.habits.path,
@@ -93,24 +100,26 @@ class AppRouter {
                     ]),
               ],
             ),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoute.analytics.path,
-                  name: AppRoutes.analytics,
-                  builder: (context, state) => AnalyticsPage())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoute.profile.path,
-                  name: AppRoutes.profile,
-                  builder: (context, state) => ProfilePage())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoute.notifications.path,
-                  name: AppRoutes.notifications,
-                  builder: (context, state) => NotificationPage())
-            ]),
+            //analytics
+            StatefulShellBranch(
+              initialLocation: AppRoute.analytics.path,
+              routes: [
+                GoRoute(
+                    path: AppRoute.analytics.path,
+                    name: AppRoutes.analytics,
+                    builder: (context, state) => AnalyticsPage())
+              ],
+            ),
+            //profile
+            StatefulShellBranch(
+              initialLocation: AppRoute.profile.path,
+              routes: [
+                GoRoute(
+                    path: AppRoute.profile.path,
+                    name: AppRoutes.profile,
+                    builder: (context, state) => ProfilePage())
+              ],
+            ),
           ],
         )
       ],

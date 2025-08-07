@@ -8,66 +8,71 @@ class NotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Notifications'),
-          actions: [
-            TextButton(
-              onPressed: () =>
-                  context.read<NotificationCubit>().clearNotifications(),
-              child: Text('Clear'),
-            )
-          ],
-        ),
-        body: LayoutBuilder(builder: (context, constrains) {
-          return ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 700),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: BlocBuilder<NotificationCubit, NotificationState>(
-                  builder: (context, state) {
-                if (state.notifications.isEmpty) {
-                  return Center(
-                    child: Text('No notifications'),
-                  );
-                }
-                var reversedNotifications =
-                    state.notifications.reversed.toList();
-                return ListView.separated(
-                    itemBuilder: (context, index) {
-                      var notification = reversedNotifications[index];
-                      return Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        decoration: BoxDecoration(
-                            color: Colors.blue.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(notification.title!,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
-                            Text(notification.body!),
-                            Text(
-                              DateTime(
-                                      notification.sentAt!.month,
-                                      notification.sentAt!.day,
-                                      notification.sentAt!.hour,
-                                      notification.sentAt!.minute)
-                                  .toString(),
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: state.notifications.length);
-              }),
-            ),
-          );
-        }));
+    return BlocProvider(
+      create: (context) => NotificationCubit(),
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('Notifications'),
+            actions: [
+              TextButton(
+                onPressed: () =>
+                    context.read<NotificationCubit>().clearNotifications(),
+                child: Text('Clear'),
+              )
+            ],
+          ),
+          body: LayoutBuilder(builder: (context, constrains) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 700),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: BlocBuilder<NotificationCubit, NotificationState>(
+                    builder: (context, state) {
+                  if (state.notifications.isEmpty) {
+                    return Center(
+                      child: Text('No notifications'),
+                    );
+                  }
+                  var reversedNotifications =
+                      state.notifications.reversed.toList();
+                  return ListView.separated(
+                      itemBuilder: (context, index) {
+                        var notification = reversedNotifications[index];
+                        return Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                          decoration: BoxDecoration(
+                              color: Colors.blue.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(notification.title!,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                              Text(notification.body!),
+                              Text(
+                                DateTime(
+                                        notification.sentAt!.month,
+                                        notification.sentAt!.day,
+                                        notification.sentAt!.hour,
+                                        notification.sentAt!.minute)
+                                    .toString(),
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: state.notifications.length);
+                }),
+              ),
+            );
+          })),
+    );
   }
 }

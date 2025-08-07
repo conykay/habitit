@@ -82,14 +82,15 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
                     ),
                   ))
               .toList(),
-          onDestinationSelected: (index) {
-            print(index);
-            widget.navigationShell.goBranch(index);
-            //todo: Get page changes to work.
-          },
+          onDestinationSelected: _onTap,
         ),
       ),
     );
+  }
+
+  void _onTap(index) async {
+    widget.navigationShell.goBranch(index,
+        initialLocation: index == widget.navigationShell.currentIndex);
   }
 
   Scaffold _smallDeviceLayout() {
@@ -252,7 +253,7 @@ class NotificationIcon extends StatelessWidget {
           children: [
             IconButton(
                 onPressed: () {
-                  context.goNamed(AppRoutes.notifications);
+                  context.pushNamed(AppRoutes.notifications);
                 },
                 icon: FaIcon(FontAwesomeIcons.bell)),
             state.notifications.isNotEmpty
