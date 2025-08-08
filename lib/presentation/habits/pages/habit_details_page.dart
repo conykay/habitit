@@ -10,7 +10,7 @@ import '../widget/habit_details_app_bar.dart';
 
 class HabitDetailsPage extends StatelessWidget {
   final HabitEntity habit;
-  HabitDetailsPage({
+  const HabitDetailsPage({
     super.key,
     required this.habit,
   });

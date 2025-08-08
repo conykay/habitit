@@ -16,7 +16,7 @@ import '../widgets/notification_Icon.dart';
 
 class NavigationBasePage extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
-  NavigationBasePage(this.navigationShell, {super.key});
+  const NavigationBasePage(this.navigationShell, {super.key});
 
   @override
   State<NavigationBasePage> createState() => _NavigationBasePageState();
