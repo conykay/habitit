@@ -16,6 +16,7 @@ import '../widgets/notification_Icon.dart';
 
 class NavigationBasePage extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
+
   const NavigationBasePage(this.navigationShell, {super.key});
 
   @override
@@ -24,7 +25,7 @@ class NavigationBasePage extends StatefulWidget {
 
 class _NavigationBasePageState extends State<NavigationBasePage> {
   Future<void> getPermissions() async {
-    await sl.get<NotificationServiceImpl>().grantAppPermission();
+    await sl.get<NotificationService>().grantAppPermission();
   }
 
   @override

@@ -7,20 +7,21 @@ import 'package:habitit/domain/auth/usecases/user_logged_in.dart';
 import '../../service_locator.dart';
 
 class AuthStateCubit extends Cubit<AuthState> {
-  AuthStateCubit() : super(CheckingAuth());
+  AuthStateCubit() : super(CheckingAuth()) {
+    isAuthenticated();
+  }
 
   void isAuthenticated() async {
-    var isLoggedIn = await sl.get<UserLoggedInUseCase>().call();
-    if (isLoggedIn) {
-      emit(Authenticated());
-    } else {
-      emit(UnAuthenticated());
-    }
+    sl.get<UserLoggedInUseCase>().isLoggedIn().listen((isLoggedIn) {
+      if (isLoggedIn) {
+        emit(Authenticated());
+      } else {
+        emit(UnAuthenticated());
+      }
+    });
   }
 
   void logout() async {
-    emit(CheckingAuth());
     await sl.get<LogoutUserUseCase>().call();
-    emit(UnAuthenticated());
   }
 }

@@ -69,7 +69,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   }
 
   @override
-  Future<bool> isLoggedIn() async {
-    return await sl.get<AuthFirebaseService>().isLoggedIn();
+  Stream<bool> isLoggedIn() {
+    return sl.get<AuthFirebaseService>().isLoggedIn();
   }
 }

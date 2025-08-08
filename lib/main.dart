@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
-import 'package:habitit/core/navigation/app_router.dart';
 import 'package:habitit/core/sync/sync_coordinator.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
@@ -16,6 +15,7 @@ import 'package:habitit/firebase_options.dart';
 import 'package:habitit/service_locator.dart';
 import 'package:hive_flutter/adapters.dart';
 
+import 'core/navigation/app_router.dart';
 import 'data/habits/models/habit_frequency.dart';
 
 Future<void> main() async {
@@ -41,42 +41,33 @@ Future<void> main() async {
   runApp(MainApp());
 }
 
-class MainApp extends StatefulWidget {
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
-  late final AuthStateCubit _authCubit;
-  late final GoRouter _route;
-  @override
-  void initState() {
-    super.initState();
-    _authCubit = AuthStateCubit()..isAuthenticated();
-    _route = AppRouter.getRouter(_authCubit);
-  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit()..getCurrentTheme()),
-        BlocProvider(create: (context) => _authCubit),
+        BlocProvider(create: (context) => AuthStateCubit()),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeState>(
-        builder: (context, state) {
-          return MaterialApp.router(
-            theme: AppTheme.lightTheme(),
-            darkTheme: AppTheme.darkTheme(),
-            themeMode: state.themeMode,
-            routeInformationProvider: _route.routeInformationProvider,
-            routerDelegate: _route.routerDelegate,
-            routeInformationParser: _route.routeInformationParser,
-          );
-        },
-      ),
+      child: Builder(builder: (context) {
+        final GoRouter _route =
+            AppRouter.getRouter(context.read<AuthStateCubit>());
+
+        return BlocBuilder<ThemeCubit, ThemeState>(
+          builder: (context, state) {
+            return MaterialApp.router(
+              theme: AppTheme.lightTheme(),
+              darkTheme: AppTheme.darkTheme(),
+              themeMode: state.themeMode,
+              routeInformationProvider: _route.routeInformationProvider,
+              routerDelegate: _route.routerDelegate,
+              routeInformationParser: _route.routeInformationParser,
+            );
+          },
+        );
+      }),
     );
   }
 }

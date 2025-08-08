@@ -8,6 +8,10 @@ class UserLoggedInUseCase extends UseCase<bool, dynamic> {
 
   @override
   Future<bool> call({params}) async {
-    return await sl.get<AuthenticationRepository>().isLoggedIn();
+    return true;
+  }
+
+  Stream<bool> isLoggedIn() {
+    return sl.get<AuthenticationRepository>().isLoggedIn();
   }
 }
