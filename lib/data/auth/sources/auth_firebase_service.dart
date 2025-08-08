@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,17 +14,23 @@ import '../models/user_creation_req.dart';
 abstract class AuthFirebaseService {
   Future<UserCredential> createUserEmailPassword(
       {required AuthUserReqEntity authData});
+
   Future<UserCredential> signInUserEmailPassword(
       {required AuthUserReqEntity authData});
+
   Future<UserCredential> googleSignIn();
+
   Future<void> logout();
-  Future<bool> isLoggedIn();
+
+  Stream<bool> isLoggedIn();
 }
 
 class AuthFirebaseServiceImpl extends AuthFirebaseService {
   final userCollectionRef = FirebaseFirestore.instance.collection('Users');
   final auth = FirebaseAuth.instance;
+
   GoogleSignIn get _googleSignIn => GoogleSignIn.standard();
+
   @override
   Future<UserCredential> createUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
@@ -111,12 +119,16 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   }
 
   @override
-  Future<bool> isLoggedIn() async {
-    if (auth.currentUser != null) {
-      return true;
-    } else {
-      return false;
-    }
+  Stream<bool> isLoggedIn() {
+    var controller = StreamController<bool>();
+    auth.authStateChanges().listen((User? user) {
+      if (user == null) {
+        controller.add(false);
+      } else {
+        controller.add(true);
+      }
+    });
+    return controller.stream;
   }
 
 // store token for notifications
