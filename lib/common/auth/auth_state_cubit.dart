@@ -14,10 +14,8 @@ class AuthStateCubit extends Cubit<AuthState> {
   void isAuthenticated() async {
     sl.get<UserLoggedInUseCase>().isLoggedIn().listen((isLoggedIn) {
       if (isLoggedIn) {
-        print('Authenticated was emitted');
         emit(Authenticated());
       } else {
-        print('Not Authenticated was emitted');
         emit(UnAuthenticated());
       }
     });
