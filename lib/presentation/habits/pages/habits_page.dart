@@ -14,81 +14,88 @@ import '../widget/new_habit_modal.dart';
 
 // ignore: must_be_immutable
 class HabitsPage extends StatelessWidget {
-  HabitsPage({super.key});
-
-  List<HabitEntity>? allHabits;
+  const HabitsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: context.read<HabitStateCubit>()..getHabits(),
-      child: Center(
-        child: SizedBox(
-          width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
-          child: Stack(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: BlocBuilder<HabitStateCubit, HabitState>(
-                  builder: (context, state) {
-                    var loading = state is HabitLoading;
-
-                    if (state is HabitError) {
-                      return Center(
-                        child: Text(state.message),
-                      );
-                    }
-
-                    if (state is HabitLoaded) {
-                      allHabits = state.habits;
-                    }
-                    if (allHabits != null) {
-                      if (allHabits!.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'Create a Habit to Get Going',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        );
-                      }
-                      return Column(
-                        children: [
-                          if (loading) LinearProgressIndicator(),
-                          Expanded(child: HabitsListView(habits: allHabits!)),
-                        ],
-                      );
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0, right: 20),
-                  child: Builder(builder: (context) {
-                    return FloatingActionButton(
-                      onPressed: () async {
-                        await _createNewHabit(context);
-                      },
-                      child: FaIcon(FontAwesomeIcons.plus),
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
+        child: Stack(
+          children: [
+            HabitsView(),
+            CreateHabitFloatingButton(),
+          ],
         ),
       ),
     );
   }
+}
 
-  Future<void> _createNewHabit(BuildContext context) async {
+class HabitsView extends StatelessWidget {
+  HabitsView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<HabitEntity>? allHabits;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: BlocBuilder<HabitStateCubit, HabitState>(
+        builder: (context, state) {
+          var loading = state is HabitLoading;
+
+          if (state is HabitError) return Center(child: Text(state.message));
+
+          if (state is HabitLoaded) allHabits = state.habits;
+
+          if (allHabits == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (allHabits!.isEmpty) {
+            return const Center(
+                child: Text(
+              'Create a Habit to Get Going',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ));
+          }
+          return Column(
+            children: [
+              AnimatedContainer(
+                  duration: Duration(seconds: 1),
+                  child: loading ? LinearProgressIndicator() : SizedBox()),
+              Expanded(child: HabitsListView(habits: allHabits!)),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CreateHabitFloatingButton extends StatelessWidget {
+  const CreateHabitFloatingButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0, right: 20),
+          child: FloatingActionButton(
+            onPressed: () {
+              _createNewHabit(context);
+            },
+            child: FaIcon(FontAwesomeIcons.plus),
+          )),
+    );
+  }
+
+  void _createNewHabit(BuildContext context) async {
     final selectedCubit = context.read<SelectedFrequencyCubit>();
     final habitState = context.read<HabitStateCubit>();
     final rewardState = context.read<UserRewardsCubit>();
