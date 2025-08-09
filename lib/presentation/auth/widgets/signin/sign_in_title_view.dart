@@ -7,6 +7,7 @@ class SignInTitleView extends StatelessWidget {
   });
 
   final BuildContext context;
+
 //todo: Incorporate dynamic quotes from API (Home Page too ?)
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class SignInTitleView extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 35,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 15),
