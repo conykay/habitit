@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
                   SizedBox(height: 15),
                   const HabitsSectionTitle(),
                   SizedBox(height: 15),
-                  HabitsGridSectionView()
+                  const HabitsGridSectionView()
                 ],
               ),
             ),
@@ -50,14 +50,14 @@ class HomePage extends StatelessWidget {
 
 // ignore: must_be_immutable
 class HabitsGridSectionView extends StatelessWidget {
-  HabitsGridSectionView({
+  const HabitsGridSectionView({
     super.key,
   });
 
-  List<HabitEntity>? _allHabits;
-
   @override
   Widget build(BuildContext context) {
+    List<HabitEntity>? allHabits;
+
     return Expanded(
       child: BlocBuilder<HabitStateCubit, HabitState>(
         builder: (context, state) {
@@ -65,20 +65,20 @@ class HabitsGridSectionView extends StatelessWidget {
 
           if (state is HabitError) return Center(child: Text(state.message));
 
-          if (state is HabitLoaded) _allHabits = state.habits;
+          if (state is HabitLoaded) allHabits = state.habits;
 
-          if (_allHabits == null) {
+          if (allHabits == null) {
             return Center(child: CircularProgressIndicator());
           }
 
-          if (_allHabits!.isEmpty) {
+          if (allHabits!.isEmpty) {
             return Center(child: Text('Create some habits to see them here'));
           }
 
           return Column(
             children: [
               if (loading) LinearProgressIndicator(),
-              Expanded(child: TodayHabitsView(habits: _allHabits!)),
+              Expanded(child: TodayHabitsView(habits: allHabits!)),
             ],
           );
         },
