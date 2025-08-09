@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeTableCalendarWidget extends StatelessWidget {
-  const HomeTableCalendarWidget({
-    super.key,
-    required this.context,
-  });
-
-  final BuildContext context;
+  const HomeTableCalendarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final date = DateTime.now();
+    final lastDay = date.add(Duration(days: 7));
     return TableCalendar(
-      focusedDay: DateTime.now(),
-      firstDay: DateTime.now(),
-      lastDay: DateTime.now().add(Duration(days: 7)),
+      focusedDay: date,
+      firstDay: date,
+      lastDay: lastDay,
       calendarFormat: CalendarFormat.week,
       headerVisible: false,
       rowHeight: 70,
