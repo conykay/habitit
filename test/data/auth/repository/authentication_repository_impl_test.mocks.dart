@@ -69,14 +69,14 @@ class MockAuthFirebaseService extends _i1.Mock
           {required _i5.AuthUserReqEntity? authData}) =>
       (super.noSuchMethod(
         Invocation.method(
-          #signinUserEmailPassword,
+          #signInUserEmailPassword,
           [],
           {#authData: authData},
         ),
         returnValue: _i4.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
           this,
           Invocation.method(
-            #signinUserEmailPassword,
+            #signInUserEmailPassword,
             [],
             {#authData: authData},
           ),
@@ -86,13 +86,13 @@ class MockAuthFirebaseService extends _i1.Mock
   @override
   _i4.Future<_i2.UserCredential> googleSignIn() => (super.noSuchMethod(
         Invocation.method(
-          #googleSignin,
+          #googleSignIn,
           [],
         ),
         returnValue: _i4.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
           this,
           Invocation.method(
-            #googleSignin,
+            #googleSignIn,
             [],
           ),
         )),
@@ -109,26 +109,27 @@ class MockAuthFirebaseService extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<bool> isLoggedIn() => (super.noSuchMethod(
+  _i4.Stream<bool> isLoggedIn() => (super.noSuchMethod(
         Invocation.method(
           #isLoggedIn,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i4.Stream<bool>.empty(),
+      ) as _i4.Stream<bool>);
 }
 
-/// A class which mocks [NetworkInfo].
+/// A class which mocks [NetworkInfoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkInfo extends _i1.Mock implements _i6.NetworkInfoService {
-  MockNetworkInfo() {
+class MockNetworkInfoService extends _i1.Mock
+    implements _i6.NetworkInfoService {
+  MockNetworkInfoService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
   _i4.Future<bool> get hasConnection => (super.noSuchMethod(
-        Invocation.getter(#hasConection),
+        Invocation.getter(#hasConnection),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
 }

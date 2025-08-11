@@ -3,11 +3,9 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
-import 'package:habitit/domain/auth/repository/authentication_repository.dart'
-    as _i2;
-import 'package:habitit/domain/auth/usecases/user_logged_in.dart' as _i3;
+import 'package:habitit/domain/auth/usecases/user_logged_in.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -24,42 +22,31 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeAuthenticationRepository_0 extends _i1.SmartFake
-    implements _i2.AuthenticationRepository {
-  _FakeAuthenticationRepository_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [UserLoggedInUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockUserLoggedInUseCase extends _i1.Mock
-    implements _i3.UserLoggedInUseCase {
+    implements _i2.UserLoggedInUseCase {
   MockUserLoggedInUseCase() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.AuthenticationRepository get repository => (super.noSuchMethod(
-        Invocation.getter(#repository),
-        returnValue: _FakeAuthenticationRepository_0(
-          this,
-          Invocation.getter(#repository),
-        ),
-      ) as _i2.AuthenticationRepository);
-
-  @override
-  _i4.Future<bool> call({dynamic params}) => (super.noSuchMethod(
+  _i3.Future<bool> call({dynamic params}) => (super.noSuchMethod(
         Invocation.method(
           #call,
           [],
           {#params: params},
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Stream<bool> isLoggedIn() => (super.noSuchMethod(
+        Invocation.method(
+          #isLoggedIn,
+          [],
+        ),
+        returnValue: _i3.Stream<bool>.empty(),
+      ) as _i3.Stream<bool>);
 }

@@ -3,14 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i4;
 
-import 'package:dartz/dartz.dart' as _i3;
-import 'package:firebase_auth/firebase_auth.dart' as _i7;
-import 'package:habitit/core/error/failures.dart' as _i6;
-import 'package:habitit/domain/auth/repository/authentication_repository.dart'
-    as _i2;
-import 'package:habitit/domain/auth/usecases/signin_google.dart' as _i4;
+import 'package:dartz/dartz.dart' as _i2;
+import 'package:firebase_auth/firebase_auth.dart' as _i6;
+import 'package:habitit/core/error/failures.dart' as _i5;
+import 'package:habitit/domain/auth/usecases/signin_google.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -27,9 +25,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeAuthenticationRepository_0 extends _i1.SmartFake
-    implements _i2.AuthenticationRepository {
-  _FakeAuthenticationRepository_0(
+class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
+  _FakeEither_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -38,36 +35,17 @@ class _FakeAuthenticationRepository_0 extends _i1.SmartFake
         );
 }
 
-class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
-  _FakeEither_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-/// A class which mocks [SigninGoogleUseCase].
+/// A class which mocks [SignInGoogleUseCase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSigninGoogleUseCase extends _i1.Mock
-    implements _i4.SignInGoogleUseCase {
-  MockSigninGoogleUseCase() {
+class MockSignInGoogleUseCase extends _i1.Mock
+    implements _i3.SignInGoogleUseCase {
+  MockSignInGoogleUseCase() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.AuthenticationRepository get repository => (super.noSuchMethod(
-        Invocation.getter(#repository),
-        returnValue: _FakeAuthenticationRepository_0(
-          this,
-          Invocation.getter(#repository),
-        ),
-      ) as _i2.AuthenticationRepository);
-
-  @override
-  _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>> call(
+  _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>> call(
           {dynamic params}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -76,8 +54,8 @@ class MockSigninGoogleUseCase extends _i1.Mock
           {#params: params},
         ),
         returnValue:
-            _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>.value(
-                _FakeEither_1<_i6.Failures, _i7.UserCredential>(
+            _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>.value(
+                _FakeEither_0<_i5.Failures, _i6.UserCredential>(
           this,
           Invocation.method(
             #call,
@@ -85,5 +63,5 @@ class MockSigninGoogleUseCase extends _i1.Mock
             {#params: params},
           ),
         )),
-      ) as _i5.Future<_i3.Either<_i6.Failures, _i7.UserCredential>>);
+      ) as _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>>);
 }
