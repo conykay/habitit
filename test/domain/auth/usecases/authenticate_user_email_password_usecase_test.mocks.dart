@@ -72,7 +72,7 @@ class MockAuthenticationRepository extends _i1.Mock
       signInUserEmailPassword({required _i7.AuthUserReqEntity? authData}) =>
           (super.noSuchMethod(
             Invocation.method(
-              #signinUserEmailPassword,
+              #signInUserEmailPassword,
               [],
               {#authData: authData},
             ),
@@ -81,7 +81,7 @@ class MockAuthenticationRepository extends _i1.Mock
                     _FakeEither_0<_i5.Failures, _i6.UserCredential>(
               this,
               Invocation.method(
-                #signinUserEmailPassword,
+                #signInUserEmailPassword,
                 [],
                 {#authData: authData},
               ),
@@ -92,7 +92,7 @@ class MockAuthenticationRepository extends _i1.Mock
   _i4.Future<_i2.Either<_i5.Failures, _i6.UserCredential>> googleSignIn() =>
       (super.noSuchMethod(
         Invocation.method(
-          #googleSignin,
+          #googleSignIn,
           [],
         ),
         returnValue:
@@ -100,7 +100,7 @@ class MockAuthenticationRepository extends _i1.Mock
                 _FakeEither_0<_i5.Failures, _i6.UserCredential>(
           this,
           Invocation.method(
-            #googleSignin,
+            #googleSignIn,
             [],
           ),
         )),
@@ -123,11 +123,11 @@ class MockAuthenticationRepository extends _i1.Mock
       ) as _i4.Future<_i2.Either<_i5.Failures, dynamic>>);
 
   @override
-  _i4.Future<bool> isLoggedIn() => (super.noSuchMethod(
+  _i4.Stream<bool> isLoggedIn() => (super.noSuchMethod(
         Invocation.method(
           #isLoggedIn,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i4.Stream<bool>.empty(),
+      ) as _i4.Stream<bool>);
 }
