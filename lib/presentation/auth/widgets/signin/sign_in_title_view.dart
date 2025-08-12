@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habitit/common/quotes/bloc/quotes_cubit.dart';
 
 class SignInTitleView extends StatelessWidget {
   const SignInTitleView({
@@ -24,10 +26,30 @@ class SignInTitleView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          Text(
-            "Men's natures are alike, it is their habits that carry them far apart",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+          BlocBuilder<QuotesCubit, QuotesState>(
+            builder: (context, state) {
+              switch (state) {
+                case QuotesLoaded():
+                  return Column(
+                    children: [
+                      Text(state.quote!.quote,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 18)),
+                      Text('- ${state.quote!.author}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 16)),
+                    ],
+                  );
+                default:
+                  return Text(
+                    "Men's natures are alike, it is their habits that carry them far apart",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                  );
+              }
+            },
           ),
         ],
       ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../common/quotes/bloc/quotes_cubit.dart';
 
 class SignUpTitleView extends StatelessWidget {
   const SignUpTitleView({
@@ -23,10 +26,30 @@ class SignUpTitleView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Text(
-            'Habits are the compound interest of self-improvement',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+          BlocBuilder<QuotesCubit, QuotesState>(
+            builder: (context, state) {
+              switch (state) {
+                case QuotesLoaded():
+                  return Column(
+                    children: [
+                      Text(state.quote!.quote,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 18)),
+                      Text('- ${state.quote!.author}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 16)),
+                    ],
+                  );
+                default:
+                  return Text(
+                    'Habits are the compound interest of self-improvement',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+                  );
+              }
+            },
           ),
         ],
       ),

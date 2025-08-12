@@ -6,6 +6,8 @@ import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
 import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
 import 'package:habitit/data/habits/source/habits_firebase_service.dart';
 import 'package:habitit/data/habits/source/habits_hive_service.dart';
+import 'package:habitit/data/quotes/repository/quotes_repository.dart';
+import 'package:habitit/data/quotes/source/quotes_api_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_hive_service.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
@@ -19,6 +21,8 @@ import 'package:habitit/domain/habits/usecases/delete_habit_usecase.dart';
 import 'package:habitit/domain/habits/usecases/edit_habit_usecase.dart';
 import 'package:habitit/domain/habits/usecases/get_all_habits_usecase.dart';
 import 'package:habitit/domain/habits/usecases/get_habit_usecase.dart';
+import 'package:habitit/domain/quotes/repository/quotes.dart';
+import 'package:habitit/domain/quotes/usecases/get_all_quotes_usecase.dart';
 import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
 import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 
@@ -26,6 +30,7 @@ import 'data/auth/repository/authentication_repository_impl.dart';
 import 'data/notifications/source/firebase_messaging_service.dart';
 import 'data/rewards/repository/rewards_repository.dart';
 import 'domain/auth/repository/authentication_repository.dart';
+import 'domain/quotes/usecases/get_quote_usecase.dart';
 import 'domain/rewards/repository/rewards_repository.dart';
 
 final sl = GetIt.instance;
@@ -41,6 +46,8 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<HabitsRepository>(HabitsRepositoryImpl());
   //Rewards
   sl.registerSingleton<RewardsRepository>(RewardsRepositoryImpl());
+  //quotes
+  sl.registerSingleton<QuotesRepository>(QuotesRepositoryImp());
   //SERVICES
   //core
   sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
@@ -55,6 +62,8 @@ Future<void> initializeGetItDependencies() async {
   //Rewards Module
   sl.registerSingleton<RewardsHiveService>(RewardsHiveServiceImpl());
   sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
+  //quotes
+  sl.registerSingleton<QuotesApiService>(QuotesApiServiceImpl());
   //USECASES
   //auth
   sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
@@ -74,4 +83,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerLazySingleton<GetUserRewardsUseCase>(
       () => GetUserRewardsUseCase());
   sl.registerLazySingleton<AddUserXpUseCase>(() => AddUserXpUseCase());
+  //quotesModule
+  sl.registerSingleton<GetAllQuotesUseCase>(GetAllQuotesUseCase());
+  sl.registerSingleton<GetQuoteUseCase>(GetQuoteUseCase());
 }
