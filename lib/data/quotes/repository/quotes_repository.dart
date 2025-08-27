@@ -26,3 +26,5 @@ class QuotesRepositoryImp extends QuotesRepository {
     }
   }
 }
+
+//todo: Save quotes to local memory and only make API call if the quotes are saved or are more than a week old.
