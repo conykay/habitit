@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
+import 'package:habitit/core/helper/validator/auth_inputs_validator.dart';
 import 'package:habitit/core/navigation/app_router.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
@@ -11,13 +12,28 @@ import 'package:habitit/domain/auth/usecases/signin_email_password.dart';
 import '../../../../domain/auth/usecases/signin_google.dart';
 import '../../../../service_locator.dart';
 
-class SignInFormView extends StatelessWidget {
-  SignInFormView({super.key});
+class SignInFormView extends StatefulWidget {
+  const SignInFormView({super.key});
 
+  @override
+  State<SignInFormView> createState() => _SignInFormViewState();
+}
+
+class _SignInFormViewState extends State<SignInFormView> {
   final _emailTextController = TextEditingController();
+
   final _passwordTextController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
-//todo: (add email and password validators), (password visibility toggle)
+
+  late bool isVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    isVisible = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,16 +49,37 @@ class SignInFormView extends StatelessWidget {
                 children: [
                   TextFormField(
                     controller: _emailTextController,
-                    validator: (value) =>
-                        value!.isEmpty ? 'This field cannot be empty' : null,
+                    validator: (value) {
+                      if (!InputValidator.isEmailValid(value!)) {
+                        return 'Invalid Email';
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(hintText: 'Email'),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordTextController,
-                    validator: (value) =>
-                        value!.isEmpty ? 'Password cannot be empty' : null,
-                    decoration: const InputDecoration(hintText: 'Password'),
+                    obscureText: isVisible,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isVisible = !isVisible;
+                            });
+                          },
+                          icon: isVisible
+                              ? const Icon(Icons.visibility_off, size: 25)
+                              : const Icon(Icons.visibility, size: 25)),
+                    ),
+                    validator: (value) {
+                      if (!InputValidator.passwordValidator(value!) ||
+                          value.isEmpty) {
+                        return 'Password must be at least 8 characters long';
+                      }
+                      return null;
+                    },
                   ),
                 ],
               ),
@@ -65,9 +102,9 @@ class SignInFormView extends StatelessWidget {
                 const SizedBox(height: 20),
                 ReactiveElevatedButton(
                   onPressed: () {
-                    context.read<ButtonStateCubit>().call(
-                          usecase: sl.get<SignInGoogleUseCase>(),
-                        );
+                    context
+                        .read<ButtonStateCubit>()
+                        .call(usecase: sl.get<SignInGoogleUseCase>());
                   },
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

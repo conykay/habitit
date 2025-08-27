@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/button/bloc/button_state_cubit.dart';
 import 'package:habitit/common/button/widget/reactive_elevated_button.dart';
+import 'package:habitit/core/helper/validator/auth_inputs_validator.dart';
 import 'package:habitit/core/navigation/app_router.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.dart';
@@ -11,13 +12,29 @@ import 'package:habitit/domain/auth/usecases/create_user_email_password_usecase.
 import '../../../../domain/auth/usecases/signin_google.dart';
 import '../../../../service_locator.dart';
 
-class SignupFormView extends StatelessWidget {
+class SignupFormView extends StatefulWidget {
   SignupFormView({super.key});
 
+  @override
+  State<SignupFormView> createState() => _SignupFormViewState();
+}
+
+class _SignupFormViewState extends State<SignupFormView> {
   final _emailTextController = TextEditingController();
+
   final _passwordTextController = TextEditingController();
+
   final _nameTextController = TextEditingController();
+
   final _formState = GlobalKey<FormState>();
+
+  late bool isVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    isVisible = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,44 +49,52 @@ class SignupFormView extends StatelessWidget {
               children: [
                 TextFormField(
                   controller: _nameTextController,
+                  decoration: const InputDecoration(
+                    hintText: 'Username',
+                  ),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'This field cannot be empty mr.nobody :)';
                     }
                     return null;
                   },
-                  decoration: const InputDecoration(
-                    hintText: 'Name',
-                  ),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _emailTextController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide a valid email';
-                    }
-                    return null;
-                  },
                   decoration: const InputDecoration(
                     hintText: 'Email',
                   ),
+                  validator: (value) {
+                    if (!InputValidator.isEmailValid(value!)) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordTextController,
+                  obscureText: isVisible,
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isVisible = !isVisible;
+                          });
+                        },
+                        icon: isVisible
+                            ? const Icon(Icons.visibility_off)
+                            : const Icon(Icons.visibility)),
+                  ),
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide a valid password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password cannot be less than six characters';
+                    if (!InputValidator.passwordValidator(value!) ||
+                        value.isEmpty) {
+                      return 'Password cannot be less than 8 characters';
                     }
                     return null;
                   },
-                  decoration: const InputDecoration(
-                    hintText: 'Password',
-                  ),
                 ),
                 const SizedBox(height: 25),
               ],
