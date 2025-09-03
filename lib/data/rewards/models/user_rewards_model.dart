@@ -2,8 +2,6 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-
-import 'package:habitit/core/sync/syncable.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:hive/hive.dart';
 
@@ -11,7 +9,7 @@ part 'user_rewards_model.g.dart';
 
 @HiveType(typeId: 3)
 // ignore: must_be_immutable
-class UserRewardsModel extends HiveSyncable with EquatableMixin {
+class UserRewardsModel extends Equatable {
   @HiveField(0)
   int xp;
 

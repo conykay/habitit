@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
-import 'package:habitit/core/sync/sync_coordinator.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
 import 'package:habitit/data/habits/models/habit_model.dart';
-import 'package:habitit/data/habits/source/habits_firebase_service.dart';
 import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
@@ -28,15 +26,6 @@ Future<void> main() async {
   Hive.registerAdapter(HabitModelAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardsModelAdapter());
-  //open hive boxes
-  final habitBox = await Hive.openBox<HabitModel>('Habits');
-
-  final habitsFirebaseService = HabitsFirebaseServiceImpl();
-  final habitSyncCoordinator = SyncCoordinator(
-    firebaseService: habitsFirebaseService,
-    habitBox: habitBox,
-  );
-  habitSyncCoordinator.initialize();
 
   runApp(MainApp());
 }
@@ -72,7 +61,7 @@ class MainApp extends StatelessWidget {
   }
 }
 
-/*todo: 1. remove excess dependency injection using get it.
+/*
 *  todo: 2. remove sync manager and find better way to implement offline first.
 *   todo: 3. refactor bloc classes.
 * */

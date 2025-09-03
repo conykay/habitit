@@ -50,9 +50,7 @@ class RewardsRepositoryImpl implements RewardsRepository {
         var localReward = await sl.get<RewardsHiveService>().getUserRewards();
         var remoteReward =
             await sl.get<RewardsFirebaseService>().getUserRewards();
-        if (!localReward.synced ||
-            !localReward.isInBox ||
-            localReward != remoteReward) {
+        if (!localReward.synced || localReward != remoteReward) {
           await sl
               .get<RewardsHiveService>()
               .updateUserRewards(rewardModel: remoteReward);
