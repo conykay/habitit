@@ -9,6 +9,7 @@ import 'package:habitit/data/notifications/source/firebase_messaging_service.dar
 import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 import 'package:habitit/domain/habits/entities/habit_entity.dart';
+import 'package:habitit/domain/quotes/entities/quotes_entity.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/service_locator.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -26,6 +27,7 @@ Future<void> main() async {
   Hive.registerAdapter(HabitEntityImplAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardsModelAdapter());
+  Hive.registerAdapter(QuotesEntityImplAdapter());
 
   runApp(MainApp());
 }

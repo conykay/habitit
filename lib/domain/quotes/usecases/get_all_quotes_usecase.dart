@@ -7,6 +7,6 @@ import '../../../service_locator.dart';
 class GetAllQuotesUseCase extends UseCase<Either, dynamic> {
   @override
   Future<Either> call({params}) async {
-    return await sl.get<QuotesRepository>().getQuotes();
+    return await sl.get<QuotesRepository>().getAllQuotes();
   }
 }

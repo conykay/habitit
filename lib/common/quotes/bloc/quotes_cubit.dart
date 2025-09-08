@@ -19,7 +19,6 @@ class QuotesCubit extends Cubit<QuotesState> {
 
   void _getQuote() async {
     emit(QuotesLoading());
-    _getQuotes();
     var quote = await sl.get<GetQuoteUseCase>().call();
     quote.fold(
       (e) => emit(QuotesError(error: e)),

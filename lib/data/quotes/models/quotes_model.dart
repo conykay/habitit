@@ -1,27 +1,19 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../../domain/quotes/entities/quotes_entity.dart';
 
-class QuotesModel {
-  final String quote;
-  final String author;
+part 'quotes_model.freezed.dart';
+part 'quotes_model.g.dart';
 
-  QuotesModel({
-    required this.quote,
-    required this.author,
-  });
+@freezed
+class QuotesModel with _$QuotesModel {
+  factory QuotesModel({
+    required String quote,
+    required String author,
+  }) = _QuotesModel;
 
-  Map<String, dynamic> toMap() {
-    return {
-      'q': quote,
-      'a': author,
-    };
-  }
-
-  factory QuotesModel.fromJson(Map<String, dynamic> json) {
-    return QuotesModel(
-      quote: json['q']!,
-      author: json['a']!,
-    );
-  }
+  factory QuotesModel.fromJson(Map<String, Object?> json) =>
+      _$QuotesModelFromJson(json);
 }
 
 extension QuotesModelX on QuotesModel {

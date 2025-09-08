@@ -28,6 +28,7 @@ import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 
 import 'data/auth/repository/authentication_repository_impl.dart';
 import 'data/notifications/source/firebase_messaging_service.dart';
+import 'data/quotes/source/quotes_hive_service.dart';
 import 'data/rewards/repository/rewards_repository.dart';
 import 'domain/auth/repository/authentication_repository.dart';
 import 'domain/quotes/usecases/get_quote_usecase.dart';
@@ -64,6 +65,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
   //quotes
   sl.registerSingleton<QuotesApiService>(QuotesApiServiceImpl());
+  sl.registerSingleton<QuotesHiveService>(QuotesHiveServiceImpl());
   //USECASES
   //auth
   sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
