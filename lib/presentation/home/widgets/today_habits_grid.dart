@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/home/bloc/mark_habit_complete_cubit.dart';
 
+import '../../../domain/habits/entities/habit_entity.dart';
 import '../../profile/bloc/user_rewards_cubit.dart';
 
 class TodayHabitsView extends StatelessWidget {

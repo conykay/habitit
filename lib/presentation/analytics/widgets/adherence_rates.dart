@@ -3,10 +3,11 @@ import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 
 class AdherenceRatesWidget extends StatelessWidget {
   final List<HabitEntity> habits;
+
   const AdherenceRatesWidget({
     super.key,
     required this.habits,

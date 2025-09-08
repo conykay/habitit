@@ -1,18 +1,22 @@
-import 'package:habitit/data/habits/models/habit_model.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 import 'package:hive/hive.dart';
 
 abstract class HabitsHiveService {
-  Future<void> addHabit({required HabitModel habit});
-  Future<List<HabitModel>> getAllHabits();
-  Future<HabitModel> getHabit({required String id});
-  Future<void> editHabit({required HabitModel edited});
-  Future<void> deleteHabit({required HabitModel habit});
+  Future<void> addHabit({required HabitEntity habit});
+
+  Future<List<HabitEntity>> getAllHabits();
+
+  Future<HabitEntity> getHabit({required String id});
+
+  Future<void> editHabit({required HabitEntity edited});
+
+  Future<void> deleteHabit({required HabitEntity habit});
 }
 
 class HabitsHiveServiceImpl implements HabitsHiveService {
   @override
-  Future<void> addHabit({required HabitModel habit}) async {
-    final habitBox = await Hive.openBox<HabitModel>('Habits');
+  Future<void> addHabit({required HabitEntity habit}) async {
+    final habitBox = await Hive.openBox<HabitEntity>('Habits');
     try {
       await habitBox.put(habit.id, habit);
     } catch (e) {
@@ -21,8 +25,8 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
   }
 
   @override
-  Future<List<HabitModel>> getAllHabits() async {
-    final habitBox = await Hive.openBox<HabitModel>('Habits');
+  Future<List<HabitEntity>> getAllHabits() async {
+    final habitBox = await Hive.openBox<HabitEntity>('Habits');
     try {
       return habitBox.values.toList();
     } catch (e) {
@@ -31,8 +35,8 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
   }
 
   @override
-  Future<HabitModel> getHabit({required String id}) async {
-    final habitBox = await Hive.openBox<HabitModel>('Habits');
+  Future<HabitEntity> getHabit({required String id}) async {
+    final habitBox = await Hive.openBox<HabitEntity>('Habits');
     try {
       return habitBox.get(id)!;
     } catch (e) {
@@ -41,8 +45,8 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
   }
 
   @override
-  Future<void> editHabit({required HabitModel edited}) async {
-    final habitBox = await Hive.openBox<HabitModel>('Habits');
+  Future<void> editHabit({required HabitEntity edited}) async {
+    final habitBox = await Hive.openBox<HabitEntity>('Habits');
     try {
       habitBox.put(edited.id, edited);
     } catch (e) {
@@ -51,8 +55,8 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
   }
 
   @override
-  Future<void> deleteHabit({required HabitModel habit}) async {
-    final habitBox = await Hive.openBox<HabitModel>('Habits');
+  Future<void> deleteHabit({required HabitEntity habit}) async {
+    final habitBox = await Hive.openBox<HabitEntity>('Habits');
     try {
       await habitBox.delete(habit.id);
     } catch (e) {

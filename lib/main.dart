@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
-import 'package:habitit/data/habits/models/habit_model.dart';
 import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:habitit/service_locator.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -23,7 +23,7 @@ Future<void> main() async {
   await initializeGetItDependencies();
   await LocalNotificationService.initialize();
   await NotificationServiceImpl().getToken();
-  Hive.registerAdapter(HabitModelAdapter());
+  Hive.registerAdapter(HabitEntityImplAdapter());
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardsModelAdapter());
 

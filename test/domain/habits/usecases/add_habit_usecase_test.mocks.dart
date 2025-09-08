@@ -6,8 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
-import 'package:habitit/data/habits/models/habit_model.dart' as _i5;
-import 'package:habitit/domain/habits/entities/habit_enity.dart' as _i6;
+import 'package:habitit/domain/habits/entities/habit_entity.dart' as _i5;
 import 'package:habitit/domain/habits/repository/habit_repository.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -45,7 +44,7 @@ class MockHabitsRepository extends _i1.Mock implements _i3.HabitsRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> addHabit(
-          {required _i5.HabitModel? habit}) =>
+          {required _i5.HabitEntity? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #addHabit,
@@ -101,7 +100,7 @@ class MockHabitsRepository extends _i1.Mock implements _i3.HabitsRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> editHabit(
-          {required _i6.HabitEntity? habit}) =>
+          {required _i5.HabitEntity? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editHabit,
@@ -121,7 +120,7 @@ class MockHabitsRepository extends _i1.Mock implements _i3.HabitsRepository {
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> deleteHabit(
-          {required _i6.HabitEntity? habit}) =>
+          {required _i5.HabitEntity? habit}) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteHabit,

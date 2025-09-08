@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 import 'package:habitit/presentation/habits/bloc/selected_frequency_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 
+import '../../../domain/habits/entities/habit_entity.dart';
 import '../widget/habits_list_widget.dart';
 import '../widget/new_habit_modal.dart';
 

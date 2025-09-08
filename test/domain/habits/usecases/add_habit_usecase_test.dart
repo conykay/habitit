@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
-import 'package:habitit/data/habits/models/habit_model.dart';
+import 'package:habitit/data/habits/models/habit_server_model.dart';
 import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/domain/habits/usecases/add_habit_usecase.dart';

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 
 import '../widget/habit_calendar_widget.dart';
 import '../widget/habit_details_app_bar.dart';
 
 class HabitDetailsPage extends StatelessWidget {
   final HabitEntity habit;
+
   const HabitDetailsPage({
     super.key,
     required this.habit,

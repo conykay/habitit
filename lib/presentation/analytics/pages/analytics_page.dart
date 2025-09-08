@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:habitit/common/habit/analytics_calculator.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 import 'package:habitit/presentation/analytics/widgets/adherence_rates.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state.dart';
 import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
