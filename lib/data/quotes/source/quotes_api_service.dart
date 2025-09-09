@@ -12,12 +12,13 @@ class QuotesApiServiceImpl extends QuotesApiService {
   @override
   Future<List<QuotesModel>> getAllQuotes() async {
     try {
-      print('The API was made again');
       var response =
           await http.get(Uri.parse('https://zenquotes.io/api/quotes'));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        return data.map((e) => QuotesModel.fromJson(e)).toList();
+        List<QuotesModel> quotes =
+            data.map((e) => QuotesModel.fromJson(e)).toList();
+        return quotes;
       } else {
         throw Exception('Failed to load quotes');
       }

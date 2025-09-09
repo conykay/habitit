@@ -21,7 +21,6 @@ class QuotesHiveServiceImpl extends QuotesHiveService {
   @override
   Future<void> addQuotes({required List<QuotesEntity> quotes}) async {
     final hiveBox = await Hive.openBox<QuotesEntity>('Quotes');
-
     try {
       for (var quote in quotes) {
         await hiveBox.put(quote.quote, quote);

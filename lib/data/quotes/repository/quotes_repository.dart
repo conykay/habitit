@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:habitit/data/quotes/models/quotes_model.dart';
 import 'package:habitit/data/quotes/source/quotes_api_service.dart';
 import 'package:habitit/data/quotes/source/quotes_hive_service.dart';
+import 'package:habitit/domain/quotes/entities/quotes_entity.dart';
 import 'package:habitit/domain/quotes/repository/quotes.dart';
 
 import '../../../service_locator.dart';
@@ -16,14 +17,19 @@ class QuotesRepositoryImp extends QuotesRepository {
     final oneWeek = DateTime.now().subtract(const Duration(days: 7));
     try {
       //get from local db
-      var quotes = await sl.get<QuotesHiveService>().getAllQuotes();
+      List<QuotesEntity> quotes =
+          await sl.get<QuotesHiveService>().getAllQuotes();
       //if local empty or older than a week, get from API and sync to local
       if (quotes.isEmpty || quotes.last.receivedAt!.isBefore(oneWeek)) {
-        var apiQuotes = await sl.get<QuotesApiService>().getAllQuotes();
+        //get from API
+        List<QuotesModel> apiQuotes =
+            await sl.get<QuotesApiService>().getAllQuotes();
+        //sync to local
         await sl.get<QuotesHiveService>().addQuotes(
             quotes: apiQuotes
                 .map((e) => e.toEntity().copyWith(receivedAt: time))
                 .toList());
+        //get from local
         quotes = await sl.get<QuotesHiveService>().getAllQuotes();
       }
 
@@ -44,7 +50,6 @@ class QuotesRepositoryImp extends QuotesRepository {
         (quotes) {
           // return random quote from list
           var random = rand.nextInt(quotes.length);
-
           return Right(quotes[random]);
         },
       );
@@ -53,5 +58,3 @@ class QuotesRepositoryImp extends QuotesRepository {
     }
   }
 }
-
-//todo:(quotes not retrieved)
