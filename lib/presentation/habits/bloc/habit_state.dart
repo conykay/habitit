@@ -5,7 +5,11 @@ sealed class HabitState {}
 
 class HabitInitial extends HabitState {}
 
-class HabitLoading extends HabitState {}
+class HabitLoading extends HabitState {
+  List<HabitEntity>? oldHabits;
+
+  HabitLoading({this.oldHabits});
+}
 
 class HabitLoaded extends HabitState {
   final List<HabitEntity> habits;

@@ -16,29 +16,40 @@ class HomePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: context.read<HabitStateCubit>()..getHabits(),
+          value: context.read<HabitStateCubit>(),
         ),
         BlocProvider(
           create: (context) => MarkHabitCompleteCubit(),
         ),
       ],
       child: LayoutBuilder(builder: (context, constraints) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 700),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const GreetingTitleView(),
-                  SizedBox(height: 15),
-                  HomeTableCalendarWidget(),
-                  SizedBox(height: 15),
-                  const HabitsSectionTitle(),
-                  SizedBox(height: 15),
-                  const HabitsGridSectionView()
-                ],
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HabitStateCubit>().getHabits();
+          },
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 700,
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const GreetingTitleView(),
+                      SizedBox(height: 15),
+                      HomeTableCalendarWidget(),
+                      SizedBox(height: 15),
+                      const HabitsSectionTitle(),
+                      SizedBox(height: 15),
+                      const HabitsGridSectionView()
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -56,33 +67,41 @@ class HabitsGridSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<HabitEntity>? allHabits;
-
-    return Expanded(
-      child: BlocBuilder<HabitStateCubit, HabitState>(
-        builder: (context, state) {
-          var loading = state is HabitLoading;
-
-          if (state is HabitError) return Center(child: Text(state.message));
-
-          if (state is HabitLoaded) allHabits = state.habits;
-
-          if (allHabits == null) {
+    return BlocBuilder<HabitStateCubit, HabitState>(
+      builder: (context, state) {
+        switch (state) {
+          case HabitLoading():
+            final bool hasData = context.read<HabitStateCubit>().hasData;
+            if (hasData && state.oldHabits != null) {
+              return _buildTodayHabitsView(
+                  allHabits: state.oldHabits!, loading: true);
+            }
             return Center(child: CircularProgressIndicator());
-          }
+          case HabitLoaded():
+            return _buildTodayHabitsView(allHabits: state.habits);
+          case HabitError():
+            return Center(child: Text(state.message));
+          default:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        }
+      },
+    );
+  }
 
-          if (allHabits!.isEmpty) {
-            return Center(child: Text('Create some habits to see them here'));
-          }
-
-          return Column(
-            children: [
-              if (loading) LinearProgressIndicator(),
-              Expanded(child: TodayHabitsView(habits: allHabits!)),
-            ],
-          );
-        },
-      ),
+  Column _buildTodayHabitsView({
+    required List<HabitEntity> allHabits,
+    bool loading = false,
+  }) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (loading) LinearProgressIndicator(),
+        allHabits.isNotEmpty
+            ? TodayHabitsView(habits: allHabits)
+            : Center(child: Text('You haven\'t set any goals yet')),
+      ],
     );
   }
 }

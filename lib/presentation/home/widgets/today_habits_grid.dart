@@ -128,20 +128,24 @@ class NothingToDisplayView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FaIcon(
-          FontAwesomeIcons.flagCheckered,
-          color: Theme.of(context).colorScheme.secondary,
-          size: 50,
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          'You seem to be done for the day. Do something fun',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.flagCheckered,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 50,
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'You seem to be done for the day.\nDo something fun',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }
