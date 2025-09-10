@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,20 +11,24 @@ import '../../../domain/habits/entities/habit_entity.dart';
 import '../widget/habits_list_widget.dart';
 import '../widget/new_habit_modal.dart';
 
-// ignore: must_be_immutable
 class HabitsPage extends StatelessWidget {
   const HabitsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
-        child: Stack(
-          children: [
-            HabitsView(),
-            CreateHabitFloatingButton(),
-          ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<HabitStateCubit>().getHabits();
+      },
+      child: Center(
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width >= 600 ? 400 : null,
+          child: Stack(
+            children: [
+              HabitsView(),
+              CreateHabitFloatingButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -33,44 +36,60 @@ class HabitsPage extends StatelessWidget {
 }
 
 class HabitsView extends StatelessWidget {
-  HabitsView({
+  const HabitsView({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<HabitEntity>? allHabits;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: BlocBuilder<HabitStateCubit, HabitState>(
         builder: (context, state) {
-          var loading = state is HabitLoading;
-
-          if (state is HabitError) return Center(child: Text(state.message));
-
-          if (state is HabitLoaded) allHabits = state.habits;
-
-          if (allHabits == null) {
-            return const Center(child: CircularProgressIndicator());
+          switch (state) {
+            case HabitLoading():
+              final bool hasData = context.read<HabitStateCubit>().hasData;
+              if (hasData && state.oldHabits != null) {
+                return _buildHabitsView(
+                    allHabits: state.oldHabits!, loading: true);
+              }
+              return const Center(child: CircularProgressIndicator());
+            case HabitLoaded():
+              return _buildHabitsView(allHabits: state.habits);
+            case HabitError():
+              return Center(
+                child: Text(state.message),
+              );
+            default:
+              return const Center(child: CircularProgressIndicator());
           }
-          if (allHabits!.isEmpty) {
-            return const Center(
-                child: Text(
-              'Create a Habit to Get Going',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ));
-          }
-          return Column(
-            children: [
-              AnimatedContainer(
-                  duration: Duration(seconds: 1),
-                  child: loading ? LinearProgressIndicator() : SizedBox()),
-              Expanded(child: HabitsListView(habits: allHabits!)),
-            ],
-          );
         },
       ),
+    );
+  }
+
+  Column _buildHabitsView(
+      {required List<HabitEntity> allHabits, bool loading = false}) {
+    return Column(
+      children: [
+        AnimatedContainer(
+            duration: Duration(seconds: 1),
+            child: loading ? LinearProgressIndicator() : SizedBox()),
+        allHabits.isNotEmpty
+            ? Expanded(child: HabitsListView(habits: allHabits))
+            : Expanded(
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: const Center(
+                    child: Text(
+                      'Add a Habit to Get Going',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                  ),
+                ),
+              ),
+      ],
     );
   }
 }
@@ -90,7 +109,10 @@ class CreateHabitFloatingButton extends StatelessWidget {
             onPressed: () {
               _createNewHabit(context);
             },
-            child: FaIcon(FontAwesomeIcons.plus),
+            child: FaIcon(
+              FontAwesomeIcons.plus,
+              color: Theme.of(context).primaryColor,
+            ),
           )),
     );
   }

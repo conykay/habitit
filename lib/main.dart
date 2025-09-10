@@ -33,7 +33,9 @@ Future<void> main() async {
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  MainApp({super.key});
+
+  final GoRouter _route = AppRouter.getRouter(AuthStateCubit());
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +45,6 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (context) => AuthStateCubit()),
       ],
       child: Builder(builder: (context) {
-        final GoRouter _route =
-            AppRouter.getRouter(context.read<AuthStateCubit>());
-
         return BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, state) {
             return MaterialApp.router(
