@@ -1,21 +1,21 @@
-import 'package:habitit/data/rewards/models/user_rewards_model.dart';
+import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:hive_flutter/adapters.dart';
 
 abstract class RewardsHiveService {
-  Future<UserRewardsModel> getUserRewards();
-  Future<void> updateUserRewards({required UserRewardsModel rewardModel});
+  Future<UserRewardEntity> getUserRewards();
+
+  Future<void> updateUserRewards({required UserRewardEntity rewardModel});
 }
 
 class RewardsHiveServiceImpl implements RewardsHiveService {
   @override
-  Future<UserRewardsModel> getUserRewards() async {
-    final rewardBox = await Hive.openBox<UserRewardsModel>('Rewards');
+  Future<UserRewardEntity> getUserRewards() async {
+    final rewardBox = await Hive.openBox<UserRewardEntity>('Rewards');
     try {
       if (rewardBox.values.isNotEmpty) {
         return rewardBox.values.first;
       } else {
-        return UserRewardsModel(
-            xp: 0, level: 1, earnedBadges: [], synced: false);
+        return UserRewardEntity();
       }
     } catch (e) {
       rethrow;
@@ -24,8 +24,8 @@ class RewardsHiveServiceImpl implements RewardsHiveService {
 
   @override
   Future<void> updateUserRewards(
-      {required UserRewardsModel rewardModel}) async {
-    final rewardBox = await Hive.openBox<UserRewardsModel>('Rewards');
+      {required UserRewardEntity rewardModel}) async {
+    final rewardBox = await Hive.openBox<UserRewardEntity>('Rewards');
     try {
       await rewardBox.put(0, rewardModel);
     } catch (e) {

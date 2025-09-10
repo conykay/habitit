@@ -1,18 +1,18 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive/hive.dart';
 
-// ignore: must_be_immutable
-class UserRewardEntity extends Equatable {
-  int xp;
-  int level;
-  List<String> earnedBadges;
-  bool synced;
+part 'user_reward_entity.freezed.dart';
+part 'user_reward_entity.g.dart';
 
-  UserRewardEntity({
-    this.xp = 0,
-    this.level = 1,
-    this.earnedBadges = const [],
-    this.synced = false,
-  });
-  @override
-  List<Object?> get props => [xp, level, earnedBadges, synced];
+@unfreezed
+class UserRewardEntity extends HiveObject with _$UserRewardEntity {
+  UserRewardEntity._();
+
+  @HiveType(typeId: 3)
+  factory UserRewardEntity({
+    @HiveField(0) @Default(0) int xp,
+    @HiveField(1) @Default(1) int level,
+    @HiveField(2) @Default([]) List<String> earnedBadges,
+    @HiveField(3) @Default(false) bool synced,
+  }) = _UserRewardEntity;
 }

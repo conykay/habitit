@@ -1,26 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class BadgeModel extends Equatable {
-  final String id;
-  final String name;
-  final String description;
-  final int requiredXp;
-  final String criteria;
-  final IconData icon;
-  final List<Color> colors;
-  const BadgeModel({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.colors,
-    this.requiredXp = 0,
-    this.criteria = '',
-    this.icon = Icons.star,
-  });
+part 'badge_model.freezed.dart';
 
-  @override
-  List<Object?> get props =>
-      [id, name, description, requiredXp, criteria, icon];
+@freezed
+class BadgeModel with _$BadgeModel {
+  factory BadgeModel({
+    required String id,
+    required String name,
+    required String description,
+    required List<Color> colors,
+    @Default(0) int requiredXp,
+    @Default('') String criteria,
+    @Default(Icons.star) IconData icon,
+  }) = _BadgeModel;
 }

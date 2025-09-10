@@ -5,10 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/navigation.dart';
-import 'package:habitit/data/notifications/source/firebase_messaging_service.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 
+import '../../../data/notifications/source/notification_service.dart';
 import '../../../service_locator.dart';
 import '../../habits/bloc/habit_state_cubit.dart';
 import '../../habits/bloc/selected_frequency_cubit.dart';
