@@ -24,56 +24,64 @@ class AdherenceRatesWidget extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SizedBox(
-          height: 200,
-          child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                var habit = habits[index];
-                var adherenceRate = calculateAdherenceRate(habit);
-                var color =
-                    Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
+          height: 150,
+          child: Expanded(
+            child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  var habit = habits[index];
+                  var adherenceRate = calculateAdherenceRate(habit);
+                  var color =
+                      Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
 
-                return SizedBox(
-                  width: 150,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        habit.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8),
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: PieChart(
-                          duration: Duration(milliseconds: 150),
-                          PieChartData(centerSpaceRadius: 40, sections: [
-                            PieChartSectionData(
-                                value: adherenceRate,
-                                showTitle: false,
-                                badgeWidget: Text(
-                                  '${adherenceRate.toStringAsFixed(1)} %',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                ),
-                                color: color.withValues(alpha: 0.6)),
-                            PieChartSectionData(
-                              value: 100 - adherenceRate,
-                              showTitle: false,
-                              color: Colors.grey.withValues(alpha: 0.3),
-                            ),
-                          ]),
+                  return SizedBox(
+                    width: 120,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          habit.name,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return SizedBox(width: 20);
-              },
-              itemCount: habits.length),
+                        AspectRatio(
+                          aspectRatio: 1,
+                          child: PieChart(
+                            duration: Duration(seconds: 1),
+                            PieChartData(
+                              centerSpaceRadius: 30,
+                              titleSunbeamLayout: true,
+                              startDegreeOffset: 10,
+                              sections: [
+                                PieChartSectionData(
+                                    value: adherenceRate,
+                                    radius: 30,
+                                    showTitle: true,
+                                    title:
+                                        '${adherenceRate.toStringAsFixed(0)}%',
+                                    titleStyle: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                    color: color.withValues(alpha: 0.6)),
+                                PieChartSectionData(
+                                  value: 100 - adherenceRate,
+                                  radius: 25,
+                                  showTitle: false,
+                                  color: Colors.grey.withValues(alpha: 0.3),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(width: 20);
+                },
+                itemCount: habits.length),
+          ),
         ),
       ],
     );

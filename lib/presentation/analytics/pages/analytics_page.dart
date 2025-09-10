@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,64 +9,47 @@ import 'package:habitit/presentation/habits/bloc/habit_state_cubit.dart';
 
 import '../widgets/daily_data_chart.dart';
 
-// ignore: must_be_immutable
 class AnalyticsPage extends StatelessWidget {
-  AnalyticsPage({super.key});
-
-  List<HabitEntity>? allHabits;
+  const AnalyticsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<HabitStateCubit>()..getHabits(),
+      value: context.read<HabitStateCubit>(),
       child: LayoutBuilder(builder: (context, constraints) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 700),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-              child: BlocBuilder<HabitStateCubit, HabitState>(
-                builder: (context, state) {
-                  var loading = state is HabitLoading;
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HabitStateCubit>().getHabits();
+          },
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 700),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+                child: BlocBuilder<HabitStateCubit, HabitState>(
+                  builder: (context, state) {
+                    switch (state) {
+                      case HabitLoading():
+                        final bool hasData =
+                            context.read<HabitStateCubit>().hasData;
+                        if (hasData && state.oldHabits != null) {
+                          return _buildAnalytics(
+                              allHabits: state.oldHabits!, loading: true);
+                        }
+                        return Center(child: CircularProgressIndicator());
+                      case HabitLoaded():
+                        return _buildAnalytics(allHabits: state.habits);
+                      case HabitError():
+                        return Center(
+                          child: Text('Error retrieving data'),
+                        );
 
-                  if (state is HabitError) {
-                    return Center(
-                      child: Text('Error retrieving data'),
-                    );
-                  }
-                  if (state is HabitLoaded) {
-                    allHabits = state.habits;
-                  }
-                  if (allHabits != null) {
-                    if (allHabits!.isNotEmpty) {
-                      var highestStreak = longestStreakInAllHabits(allHabits!);
-                      var dailyData = getDailyCompletionData(allHabits!);
-                      return SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            loading ? LinearProgressIndicator() : SizedBox(),
-                            _streakBox(context, highestStreak),
-                            SizedBox(height: 15),
-                            AdherenceRatesWidget(habits: allHabits!),
-                            SizedBox(height: 15),
-                            DailyDataLineChart(dailyData: dailyData)
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Center(
-                        child:
-                            Text('Create some habits to track your progress'),
-                      );
+                      default:
+                        return Center(child: CircularProgressIndicator());
                     }
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
+                  },
+                ),
               ),
             ),
           ),
@@ -76,7 +58,42 @@ class AnalyticsPage extends StatelessWidget {
     );
   }
 
-  Container _streakBox(BuildContext context, int highestStreak) {
+  SingleChildScrollView _buildAnalytics(
+      {required List<HabitEntity> allHabits, bool loading = false}) {
+    final highestStreak = longestStreakInAllHabits(allHabits);
+    final dailyData = getDailyCompletionData(allHabits);
+
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: allHabits.isNotEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (loading) LinearProgressIndicator(),
+                StreakBoxView(highestStreak: highestStreak),
+                SizedBox(height: 15),
+                AdherenceRatesWidget(habits: allHabits),
+                SizedBox(height: 15),
+                DailyDataLineChart(dailyData: dailyData)
+              ],
+            )
+          : Center(
+              child: Text('Add some habits to see your progress here'),
+            ),
+    );
+  }
+}
+
+class StreakBoxView extends StatelessWidget {
+  const StreakBoxView({
+    super.key,
+    required this.highestStreak,
+  });
+
+  final int highestStreak;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -94,9 +111,9 @@ class AnalyticsPage extends StatelessWidget {
                   Text(
                     'Highest Streak',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24),
                   ),
                   Text(
                     '$highestStreak days',
