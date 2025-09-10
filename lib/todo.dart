@@ -5,4 +5,7 @@ todo: Authentication flow
 
 todo: Pull to refresh.
 1. Implement pull to refresh for all screens that require updated state.
+
+todo: Dynamic app bar using bloc
+1. change the app bar contents depending on the screen
 * */

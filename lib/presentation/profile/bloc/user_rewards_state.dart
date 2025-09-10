@@ -5,7 +5,10 @@ sealed class UserRewardsState {}
 
 class UserRewardsInitial extends UserRewardsState {}
 
-class UserRewardsLoading extends UserRewardsState {}
+class UserRewardsLoading extends UserRewardsState {
+  final UserRewardEntity? oldRewards;
+  UserRewardsLoading(this.oldRewards);
+}
 
 class UserRewardsLoaded extends UserRewardsState {
   final UserRewardEntity rewards;
