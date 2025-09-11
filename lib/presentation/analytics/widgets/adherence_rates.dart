@@ -35,47 +35,7 @@ class AdherenceRatesWidget extends StatelessWidget {
                   var color =
                       Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
 
-                  return SizedBox(
-                    width: 120,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          habit.name,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: PieChart(
-                            duration: Duration(seconds: 1),
-                            PieChartData(
-                              centerSpaceRadius: 30,
-                              titleSunbeamLayout: true,
-                              startDegreeOffset: 10,
-                              sections: [
-                                PieChartSectionData(
-                                    value: adherenceRate,
-                                    radius: 30,
-                                    showTitle: true,
-                                    title:
-                                        '${adherenceRate.toStringAsFixed(0)}%',
-                                    titleStyle: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                    color: color.withValues(alpha: 0.6)),
-                                PieChartSectionData(
-                                  value: 100 - adherenceRate,
-                                  radius: 25,
-                                  showTitle: false,
-                                  color: Colors.grey.withValues(alpha: 0.3),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return _buildChartData(habit, adherenceRate, color);
                 },
                 separatorBuilder: (context, index) {
                   return SizedBox(width: 20);
@@ -84,6 +44,49 @@ class AdherenceRatesWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  SizedBox _buildChartData(
+      HabitEntity habit, double adherenceRate, Color color) {
+    return SizedBox(
+      width: 120,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            habit.name,
+            overflow: TextOverflow.ellipsis,
+          ),
+          AspectRatio(
+            aspectRatio: 1,
+            child: PieChart(
+              duration: Duration(seconds: 1),
+              PieChartData(
+                centerSpaceRadius: 30,
+                titleSunbeamLayout: true,
+                startDegreeOffset: 10,
+                sections: [
+                  PieChartSectionData(
+                      value: adherenceRate,
+                      radius: 30,
+                      showTitle: true,
+                      title: '${adherenceRate.toStringAsFixed(0)}%',
+                      titleStyle:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      color: color.withValues(alpha: 0.6)),
+                  PieChartSectionData(
+                    value: 100 - adherenceRate,
+                    radius: 25,
+                    showTitle: false,
+                    color: Colors.grey.withValues(alpha: 0.3),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
