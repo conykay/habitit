@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/navigation/navigation_state_cubit.dart';
 import 'package:habitit/core/navigation/navigation.dart';
+import 'package:habitit/data/habits/source/habits_hive_service.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_cubit.dart';
 import 'package:habitit/presentation/profile/bloc/user_rewards_cubit.dart';
 
@@ -36,8 +37,13 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
 
   @override
   void dispose() {
-    HabitStateCubit().habitsSubscription.cancel();
+    _disposables();
     super.dispose();
+  }
+
+  void _disposables() async {
+    HabitStateCubit().habitsSubscription.cancel();
+    await HabitsHiveServiceImpl().close();
   }
 
   @override

@@ -59,7 +59,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
   //Habit Module
   sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
-  sl.registerSingleton<HabitsHiveService>(HabitsHiveServiceImpl());
+  sl.registerLazySingleton<HabitsHiveService>(() => HabitsHiveServiceImpl());
   //Rewards Module
   sl.registerSingleton<RewardsHiveService>(RewardsHiveServiceImpl());
   sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());

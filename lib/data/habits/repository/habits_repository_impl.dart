@@ -92,12 +92,25 @@ class HabitsRepositoryImpl implements HabitsRepository {
 
     try {
       //get from local db
-      HabitEntity localHabit = await hiveService.getHabit(id: id);
+      HabitEntity? localHabit = await hiveService.getHabit(id: id);
+      //get from network if null
+      if (localHabit == null && isOnline) {
+        try {
+          final HabitNetworkModel networkHabit =
+              await firebaseService.getHabit(id: id);
+          await hiveService.addHabit(
+              habit: networkHabit.toEntity().copyWith(synced: true));
+          localHabit = await hiveService.getHabit(id: id);
+        } catch (e) {
+          print(
+              'Failed to retrieve habit from network id: $id. Error: ${e.toString()}');
+        }
+      }
       //check if is synced and try to if not
-      if (!localHabit.synced && isOnline) {
+      if (!localHabit!.synced && isOnline) {
         try {
           final HabitNetworkModel syncedHabit = await firebaseService.editHabit(
-              edited: localHabit.toNetworkModel());
+              edited: localHabit!.toNetworkModel());
           await hiveService.editHabit(
               edited: syncedHabit.toEntity().copyWith(synced: true));
           //updated habit
