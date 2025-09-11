@@ -4,7 +4,7 @@ import 'package:habitit/domain/habits/entities/habit_entity.dart';
 abstract class HabitsRepository {
   Future<Either> addHabit({required HabitEntity habit});
 
-  Future<Either> getAllHabits();
+  Stream<Either> getAllHabits();
 
   Future<Either> getHabit({required String id});
 

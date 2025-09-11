@@ -35,6 +35,12 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
   }
 
   @override
+  void dispose() {
+    HabitStateCubit().habitsSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
