@@ -25,7 +25,7 @@ class DailyDataLineChart extends StatelessWidget {
       }).toList();
       final maxX = sortedDates.last.difference(startDate).inDays.toDouble();
       final maxY =
-          (dailyData.values.reduce((a, b) => a > b ? b : a)).toDouble() + 1;
+          (dailyData.values.reduce((a, b) => a > b ? a : b)).toDouble() + 1;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -34,46 +34,90 @@ class DailyDataLineChart extends StatelessWidget {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(),
-            clipBehavior: Clip.hardEdge,
-            child: AspectRatio(
-                aspectRatio: 1.5,
-                child: LineChart(LineChartData(
+          AspectRatio(
+              aspectRatio: 1.25,
+              child: LineChart(
+                duration: Duration(seconds: 2),
+                LineChartData(
                   minX: 0,
                   maxX: maxX,
                   minY: 0,
                   maxY: maxY,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
-                    topTitles: AxisTitles(
+                    bottomTitles: AxisTitles(
+                      axisNameWidget: Text(
+                        'Date',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: maxX == 0 ? 1 : maxX,
+                        reservedSize: 25,
+                        interval: 1,
                         getTitlesWidget: (value, meta) {
                           final date =
                               startDate.add(Duration(days: value.toInt()));
-                          return Text("${date.month}/${date.day}",
-                              style: TextStyle(fontSize: 10));
+                          return SideTitleWidget(
+                              meta: meta,
+                              space: 10,
+                              fitInside:
+                                  SideTitleFitInsideData.fromTitleMeta(meta),
+                              child: Text(
+                                "${date.month}/${date.day}",
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ));
                         },
                       ),
                     ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                          interval: 1,
+                          minIncluded: false,
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            return SideTitleWidget(
+                              meta: meta,
+                              space: 10,
+                              fitInside:
+                                  SideTitleFitInsideData.fromTitleMeta(meta),
+                              child: Text(
+                                '${value.toInt()}',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            );
+                          }),
+                      axisNameWidget: Text(
+                        'Completion',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      axisNameSize: 25,
+                    ),
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, interval: 1),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
                     ),
                   ),
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
                   lineBarsData: [
                     LineChartBarData(
                       spots: spots,
-                      isCurved: false,
+                      isCurved: true,
+                      preventCurveOverShooting: false,
                       color: Colors.amber,
                       barWidth: 3,
-                      dotData: FlDotData(show: true),
+                      dotData: FlDotData(),
                     ),
                   ],
-                ))),
-          )
+                ),
+              )),
         ],
       );
     }
