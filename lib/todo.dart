@@ -8,4 +8,8 @@ todo: Pull to refresh.
 
 todo: Dynamic app bar using bloc
 1. change the app bar contents depending on the screen
+
+todo: Testing and Code design
+1. Use dependency injection instead of get_it
+2.Use get it for instances of mock classes.
 * */

@@ -43,7 +43,9 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
 
   void _disposables() async {
     HabitStateCubit().habitsSubscription.cancel();
-    await HabitsHiveServiceImpl().close();
+    UserRewardsCubit().rewardSubscription.cancel();
+    await NotificationCubit().close();
+    await sl.get<HabitsHiveService>().close();
   }
 
   @override

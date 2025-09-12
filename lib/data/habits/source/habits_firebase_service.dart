@@ -15,15 +15,24 @@ abstract class HabitsFirebaseService {
 }
 
 class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
-  final User? user = FirebaseAuth.instance.currentUser;
+  User? _user = FirebaseAuth.instance.currentUser;
   final CollectionReference ref =
       FirebaseFirestore.instance.collection('Users');
+
+  HabitsFirebaseServiceImpl() {
+    _initUser();
+  }
+
+  void _initUser() {
+    _user = FirebaseAuth.instance.currentUser;
+  }
 
   @override
   Future<HabitNetworkModel> addHabit({required HabitNetworkModel habit}) async {
     try {
+      if (_user == null) _initUser();
       return await ref
-          .doc(user!.uid)
+          .doc(_user!.uid)
           .collection('Habits')
           .doc(habit.id)
           .set(habit.toJson())
@@ -36,8 +45,9 @@ class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
   @override
   Future<List<HabitNetworkModel>> getAllHabits() async {
     try {
+      if (_user == null) _initUser();
       return await ref
-          .doc(user!.uid)
+          .doc(_user!.uid)
           .collection('Habits')
           .get()
           .then((onValue) => onValue.docs
@@ -46,15 +56,19 @@ class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
               )
               .toList());
     } catch (e) {
-      throw (e.toString());
+      throw Exception(
+        'From Network Service: ${e.toString()}\n',
+      );
     }
   }
 
   @override
   Future<HabitNetworkModel> getHabit({required String id}) async {
     try {
+      if (_user == null) _initUser();
+
       var habitData = await ref
-          .doc(user!.uid)
+          .doc(_user!.uid)
           .collection('Habits')
           .where('id', isEqualTo: id)
           .get()
@@ -71,8 +85,10 @@ class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
   Future<HabitNetworkModel> editHabit(
       {required HabitNetworkModel edited}) async {
     try {
+      if (_user == null) _initUser();
+
       return await ref
-          .doc(user!.uid)
+          .doc(_user!.uid)
           .collection('Habits')
           .doc(edited.id)
           .set(edited.toJson())
@@ -85,7 +101,9 @@ class HabitsFirebaseServiceImpl implements HabitsFirebaseService {
   @override
   Future<void> deleteHabit({required HabitNetworkModel habit}) async {
     try {
-      await ref.doc(user!.uid).collection('Habits').doc(habit.id).delete();
+      if (_user == null) _initUser();
+
+      await ref.doc(_user!.uid).collection('Habits').doc(habit.id).delete();
     } catch (e) {
       rethrow;
     }

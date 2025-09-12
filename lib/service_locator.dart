@@ -37,18 +37,6 @@ import 'domain/rewards/repository/rewards_repository.dart';
 final sl = GetIt.instance;
 
 Future<void> initializeGetItDependencies() async {
-  // REPOSITORIES
-  //core
-  sl.registerSingleton<ThemeRepository>(ThemeRepository());
-  //Auth
-  sl.registerSingleton<AuthenticationRepository>(
-      AuthenticationRepositoryImpl());
-  //Habits
-  sl.registerSingleton<HabitsRepository>(HabitsRepositoryImpl());
-  //Rewards
-  sl.registerSingleton<RewardsRepository>(RewardsRepositoryImpl());
-  //quotes
-  sl.registerSingleton<QuotesRepository>(QuotesRepositoryImp());
   //SERVICES
   //core
   sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
@@ -61,11 +49,28 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
   sl.registerLazySingleton<HabitsHiveService>(() => HabitsHiveServiceImpl());
   //Rewards Module
-  sl.registerSingleton<RewardsHiveService>(RewardsHiveServiceImpl());
   sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
+  //Async
+  sl.registerFactoryAsync<RewardsHiveService>(() async {
+    final service = await RewardsHiveServiceImpl.getInstance();
+    return service;
+  });
   //quotes
   sl.registerSingleton<QuotesApiService>(QuotesApiServiceImpl());
   sl.registerSingleton<QuotesHiveService>(QuotesHiveServiceImpl());
+  // REPOSITORIES
+  //core
+  sl.registerSingleton<ThemeRepository>(ThemeRepository());
+  //Auth
+  sl.registerSingleton<AuthenticationRepository>(
+      AuthenticationRepositoryImpl());
+  //Habits
+  sl.registerSingleton<HabitsRepository>(HabitsRepositoryImpl());
+  //Rewards
+  sl.registerSingleton<RewardsRepository>(RewardsRepositoryImpl());
+  //quotes
+  sl.registerSingleton<QuotesRepository>(QuotesRepositoryImp());
+
   //USECASES
   //auth
   sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
@@ -88,4 +93,21 @@ Future<void> initializeGetItDependencies() async {
   //quotesModule
   sl.registerSingleton<GetAllQuotesUseCase>(GetAllQuotesUseCase());
   sl.registerSingleton<GetQuoteUseCase>(GetQuoteUseCase());
+}
+
+// re-initialize service
+Future<void> reinitializeLocator() async {
+  if (sl.isRegistered<RewardsHiveService>()) {
+    try {
+      final oldService = await sl.getAsync<RewardsHiveService>();
+      oldService.close();
+    } catch (e) {
+      print('error closing old service: ${e.toString()}');
+    }
+    sl.unregister<RewardsHiveService>();
+  }
+  sl.registerFactoryAsync<RewardsHiveService>(() async {
+    final service = await RewardsHiveServiceImpl.getInstance();
+    return service;
+  });
 }

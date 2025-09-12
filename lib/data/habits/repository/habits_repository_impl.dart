@@ -107,10 +107,10 @@ class HabitsRepositoryImpl implements HabitsRepository {
         }
       }
       //check if is synced and try to if not
-      if (!localHabit!.synced && isOnline) {
+      if (localHabit != null && !localHabit.synced && isOnline) {
         try {
           final HabitNetworkModel syncedHabit = await firebaseService.editHabit(
-              edited: localHabit!.toNetworkModel());
+              edited: localHabit.toNetworkModel());
           await hiveService.editHabit(
               edited: syncedHabit.toEntity().copyWith(synced: true));
           //updated habit

@@ -18,6 +18,7 @@ class AuthStateCubit extends Cubit<AuthState> {
   void isAuthenticated() async {
     _authSubscription =
         sl.get<UserLoggedInUseCase>().isLoggedIn().listen((isLoggedIn) {
+      reinitializeLocator();
       if (isLoggedIn) {
         emit(Authenticated());
       } else {

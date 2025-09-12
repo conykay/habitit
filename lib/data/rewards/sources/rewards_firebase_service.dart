@@ -16,15 +16,24 @@ abstract class RewardsFirebaseService {
 }
 
 class RewardsFirebaseServiceImpl implements RewardsFirebaseService {
-  final User? user = FirebaseAuth.instance.currentUser;
+  User? _user = FirebaseAuth.instance.currentUser;
   final CollectionReference ref =
       FirebaseFirestore.instance.collection('Users');
+
+  RewardsFirebaseServiceImpl() {
+    _initUser();
+  }
+
+  void _initUser() {
+    _user = FirebaseAuth.instance.currentUser;
+  }
 
   @override
   Future<UserRewardsNetworkModel> getUserRewards() async {
     try {
+      if (_user == null) _initUser();
       var doc = await ref
-          .doc(user!.uid)
+          .doc(_user!.uid)
           .collection('Rewards')
           .doc('user_rewards')
           .get();
@@ -38,7 +47,9 @@ class RewardsFirebaseServiceImpl implements RewardsFirebaseService {
   Future<void> updateUserRewards(
       {required UserRewardsNetworkModel rewardModel}) async {
     try {
-      var docRef = ref.doc(user!.uid).collection('Rewards').doc('user_rewards');
+      if (_user == null) _initUser();
+      var docRef =
+          ref.doc(_user!.uid).collection('Rewards').doc('user_rewards');
       await docRef.set(rewardModel.toJson()).then((_) => rewardModel);
     } catch (e) {
       rethrow;
@@ -48,8 +59,9 @@ class RewardsFirebaseServiceImpl implements RewardsFirebaseService {
   @override
   Future<void> sendNewBadgeNotification({required BadgeModel badge}) async {
     try {
+      if (_user == null) _initUser();
       await sl.get<NotificationService>().sendNewBadgeNotification(
-          uid: user!.uid,
+          uid: _user!.uid,
           badgeName: badge.name,
           badgeDescription: badge.description);
     } catch (e) {

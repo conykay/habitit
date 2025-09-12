@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
@@ -12,25 +14,30 @@ class UserRewardsCubit extends Cubit<UserRewardsState> {
     getUserRewards();
   }
 
+  StreamSubscription? _rewardSubscription;
   UserRewardEntity? _rewardEntity;
+  bool _hasData = false;
+
+  bool get hasData => _hasData;
+
+  UserRewardEntity? get rewardEntity => _rewardEntity;
+
+  StreamSubscription get rewardSubscription => _rewardSubscription!;
 
   void getUserRewards() async {
     emit(UserRewardsLoading(_rewardEntity));
-    var userRewards = await sl.get<GetUserRewardsUseCase>().call();
-    userRewards.fold(
-      (l) => emit(UserRewardsError(error: l)),
-      (r) {
-        _rewardEntity = r;
-        emit(UserRewardsLoaded(rewards: r));
-      },
-    );
+    _rewardSubscription = sl.get<GetUserRewardsUseCase>().call().listen((data) {
+      data.fold(
+        (l) => emit(UserRewardsError(error: l)),
+        (r) {
+          _hasData = true;
+          emit(UserRewardsLoaded(rewards: r));
+        },
+      );
+    });
   }
 
   void updateUserRewards({required int xp}) async {
     await sl.get<AddUserXpUseCase>().call(params: xp);
   }
-
-  bool get hasData => _rewardEntity != null;
-
-  UserRewardEntity? get rewardEntity => _rewardEntity;
 }
