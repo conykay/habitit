@@ -15,15 +15,20 @@ class QuotesRepositoryImp extends QuotesRepository {
     final time = DateTime.now();
     //time a week ago
     final oneWeek = DateTime.now().subtract(const Duration(days: 7));
+
     try {
+      print('Try block opened');
       //get from local db
       List<QuotesEntity> quotes =
           await sl.get<QuotesHiveService>().getAllQuotes();
+
       //if local empty or older than a week, get from API and sync to local
       if (quotes.isEmpty || quotes.last.receivedAt!.isBefore(oneWeek)) {
         //get from API
         List<QuotesModel> apiQuotes =
             await sl.get<QuotesApiService>().getAllQuotes();
+        print('db data:${apiQuotes.isEmpty} ');
+
         //sync to local
         await sl.get<QuotesHiveService>().addQuotes(
             quotes: apiQuotes

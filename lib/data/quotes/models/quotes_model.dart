@@ -8,8 +8,8 @@ part 'quotes_model.g.dart';
 @freezed
 class QuotesModel with _$QuotesModel {
   factory QuotesModel({
-    required String quote,
-    required String author,
+    required String q,
+    required String a,
   }) = _QuotesModel;
 
   factory QuotesModel.fromJson(Map<String, Object?> json) =>
@@ -18,14 +18,14 @@ class QuotesModel with _$QuotesModel {
 
 extension QuotesModelX on QuotesModel {
   QuotesEntity toEntity() => QuotesEntity(
-        author: author,
-        quote: quote,
+        author: a,
+        quote: q,
       );
 }
 
 extension QuotesEntityX on QuotesEntity {
   QuotesModel toModel() => QuotesModel(
-        author: author,
-        quote: quote,
+        q: quote,
+        a: author,
       );
 }

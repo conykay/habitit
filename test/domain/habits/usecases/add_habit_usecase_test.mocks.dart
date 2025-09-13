@@ -62,21 +62,14 @@ class MockHabitsRepository extends _i1.Mock implements _i3.HabitsRepository {
       ) as _i4.Future<_i2.Either<dynamic, dynamic>>);
 
   @override
-  _i4.Future<_i2.Either<dynamic, dynamic>> getAllHabits() =>
+  _i4.Stream<_i2.Either<dynamic, dynamic>> getAllHabits() =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllHabits,
           [],
         ),
-        returnValue: _i4.Future<_i2.Either<dynamic, dynamic>>.value(
-            _FakeEither_0<dynamic, dynamic>(
-          this,
-          Invocation.method(
-            #getAllHabits,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<dynamic, dynamic>>);
+        returnValue: _i4.Stream<_i2.Either<dynamic, dynamic>>.empty(),
+      ) as _i4.Stream<_i2.Either<dynamic, dynamic>>);
 
   @override
   _i4.Future<_i2.Either<dynamic, dynamic>> getHabit({required String? id}) =>
