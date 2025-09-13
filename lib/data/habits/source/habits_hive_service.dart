@@ -16,31 +16,30 @@ abstract class HabitsHiveService extends HiveCore {
 }
 
 class HabitsHiveServiceImpl implements HabitsHiveService {
-  late Box<HabitEntity> _habitBox;
-  final User? _user = FirebaseAuth.instance.currentUser;
-  static const String _habitBoxName = 'Habits';
+  late final Box<HabitEntity> _habitBox;
 
-  HabitsHiveServiceImpl() {
-    init();
-  }
+  HabitsHiveServiceImpl._(this._habitBox);
 
-  @override
-  Future<void> init() async {
-    if (!Hive.isBoxOpen(_habitBoxName + _user!.uid)) {
-      _habitBox = await Hive.openBox<HabitEntity>(_habitBoxName + _user.uid);
+  static Future<HabitsHiveServiceImpl> getInstance() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final boxName = 'habits_${user?.uid}'.toLowerCase();
+    Box<HabitEntity> box;
+
+    if (Hive.isBoxOpen(boxName)) {
+      box = Hive.box<HabitEntity>(boxName);
+    } else {
+      box = await Hive.openBox<HabitEntity>(boxName);
     }
-  }
-
-  @override
-  Future<void> ensureBoxOpen() async {
-    if (!_habitBox.isOpen) {
-      await init();
-    }
+    print(
+        'instance of habit service complete,${box.name} box is open: ${box.isOpen}');
+    return HabitsHiveServiceImpl._(box);
   }
 
   @override
   Future<void> addHabit({required HabitEntity habit}) async {
-    await ensureBoxOpen();
+    if (!_habitBox.isOpen) {
+      throw Exception('Habit box not open when addHabit() called ');
+    }
     try {
       await _habitBox.put(habit.id, habit);
     } catch (e) {
@@ -50,7 +49,10 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   @override
   Future<List<HabitEntity>> getAllHabits() async {
-    await ensureBoxOpen();
+    if (!_habitBox.isOpen) {
+      print('is ${_habitBox.name} open: ${_habitBox.isOpen}');
+      throw Exception('Habit box not open when getAllHabits() called ');
+    }
     try {
       return _habitBox.values.toList();
     } catch (e) {
@@ -60,7 +62,9 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   @override
   Future<HabitEntity?> getHabit({required String id}) async {
-    await ensureBoxOpen();
+    if (!_habitBox.isOpen) {
+      throw Exception('Habit box not open when getHabit() called ');
+    }
     try {
       return _habitBox.get(id);
     } catch (e) {
@@ -70,7 +74,9 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   @override
   Future<void> editHabit({required HabitEntity edited}) async {
-    await ensureBoxOpen();
+    if (!_habitBox.isOpen) {
+      throw Exception('Habit box not open when editHabit() called ');
+    }
     try {
       _habitBox.put(edited.id, edited);
     } catch (e) {
@@ -80,7 +86,9 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   @override
   Future<void> deleteHabit({required HabitEntity habit}) async {
-    await ensureBoxOpen();
+    if (!_habitBox.isOpen) {
+      throw Exception('Habit box not open when deleteHabit() called ');
+    }
     try {
       if (_habitBox.containsKey(habit.id)) {
         await _habitBox.delete(habit.id);
@@ -92,6 +100,8 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   @override
   Future<void> close() async {
-    await _habitBox.close();
+    if (_habitBox.isOpen) {
+      await _habitBox.close();
+    }
   }
 }

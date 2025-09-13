@@ -47,7 +47,10 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
   //Habit Module
   sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
-  sl.registerLazySingleton<HabitsHiveService>(() => HabitsHiveServiceImpl());
+  sl.registerFactoryAsync<HabitsHiveService>(() async {
+    final service = await HabitsHiveServiceImpl.getInstance();
+    return service;
+  });
   //Rewards Module
   sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
   //Async
@@ -97,17 +100,25 @@ Future<void> initializeGetItDependencies() async {
 
 // re-initialize service
 Future<void> reinitializeLocator() async {
-  if (sl.isRegistered<RewardsHiveService>()) {
+  if (sl.isRegistered<RewardsHiveService>() &&
+      sl.isRegistered<HabitsHiveService>()) {
     try {
-      final oldService = await sl.getAsync<RewardsHiveService>();
-      oldService.close();
+      final oldRewardService = await sl.getAsync<RewardsHiveService>();
+      final oldHiveService = await sl.getAsync<HabitsHiveService>();
+      oldHiveService.close();
+      oldRewardService.close();
     } catch (e) {
-      print('error closing old service: ${e.toString()}');
+      print('Error closing old services: ${e.toString()}');
     }
     sl.unregister<RewardsHiveService>();
+    sl.unregister<HabitsHiveService>();
   }
   sl.registerFactoryAsync<RewardsHiveService>(() async {
     final service = await RewardsHiveServiceImpl.getInstance();
+    return service;
+  });
+  sl.registerFactoryAsync<HabitsHiveService>(() async {
+    final service = await HabitsHiveServiceImpl.getInstance();
     return service;
   });
 }

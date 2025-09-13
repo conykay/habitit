@@ -9,12 +9,14 @@ import '../source/habits_firebase_service.dart';
 import '../source/habits_hive_service.dart';
 
 class HabitsRepositoryImpl implements HabitsRepository {
+  final _networkService = sl.get<NetworkInfoService>();
+
+  final _firebaseService = sl.get<HabitsFirebaseService>();
+
   @override
   Future<Either> addHabit({required HabitEntity habit}) async {
-    final hiveService = sl.get<HabitsHiveService>();
-    final firebaseService = sl.get<HabitsFirebaseService>();
-    var isOnline = await sl.get<NetworkInfoService>().hasConnection;
-
+    var isOnline = await _networkService.hasConnection;
+    var hiveService = await sl.getAsync<HabitsHiveService>();
     try {
       // add to local
       await hiveService.addHabit(habit: habit);
@@ -22,7 +24,7 @@ class HabitsRepositoryImpl implements HabitsRepository {
       if (isOnline) {
         try {
           var syncedHabit =
-              await firebaseService.addHabit(habit: habit.toNetworkModel());
+              await _firebaseService.addHabit(habit: habit.toNetworkModel());
           //if add to network success
           await hiveService.editHabit(
               edited: syncedHabit.toEntity().copyWith(synced: true));
@@ -31,19 +33,16 @@ class HabitsRepositoryImpl implements HabitsRepository {
               'Failed to add habit: name(${habit.name}) to remote. Error: ${e.toString()}');
         }
       }
+      return Right('Saved successfully');
     } catch (e) {
       return Left('failed to update Db addHabit():  ${e.toString()}');
     }
-
-    return Right('Saved successfully');
   }
 
   @override
   Stream<Either> getAllHabits() async* {
-    final hiveService = sl.get<HabitsHiveService>();
-    final firebaseService = sl.get<HabitsFirebaseService>();
-    var isOnline = await sl.get<NetworkInfoService>().hasConnection;
-
+    var isOnline = await _networkService.hasConnection;
+    var hiveService = await sl.getAsync<HabitsHiveService>();
     try {
       //get all from local db
       List<HabitEntity> allLocalHabits = await hiveService.getAllHabits();
@@ -54,10 +53,11 @@ class HabitsRepositoryImpl implements HabitsRepository {
 
       //check user online
       if (isOnline) {
-        //check if db is empty
+        List<HabitNetworkModel> networkAllHabits =
+            await _firebaseService.getAllHabits();
+        //check if db is empty and add all from network
+
         if (allLocalHabits.isEmpty) {
-          List<HabitNetworkModel> networkAllHabits =
-              await firebaseService.getAllHabits();
           for (var habit in networkAllHabits) {
             await hiveService.addHabit(habit: habit.toEntity());
           }
@@ -68,7 +68,7 @@ class HabitsRepositoryImpl implements HabitsRepository {
             allLocalHabits.where((element) => !element.synced).toList();
         for (var sync in unsyncedHabits) {
           try {
-            await firebaseService.editHabit(edited: sync.toNetworkModel());
+            await _firebaseService.editHabit(edited: sync.toNetworkModel());
             await hiveService.editHabit(edited: sync.copyWith(synced: true));
           } catch (e) {
             print(
@@ -86,39 +86,41 @@ class HabitsRepositoryImpl implements HabitsRepository {
 
   @override
   Future<Either> getHabit({required String id}) async {
-    final hiveService = sl.get<HabitsHiveService>();
-    final firebaseService = sl.get<HabitsFirebaseService>();
-    var isOnline = await sl.get<NetworkInfoService>().hasConnection;
+    var isOnline = await _networkService.hasConnection;
+    var hiveService = await sl.getAsync<HabitsHiveService>();
+    HabitEntity? localHabit;
 
     try {
       //get from local db
-      HabitEntity? localHabit = await hiveService.getHabit(id: id);
+      localHabit = await hiveService.getHabit(id: id);
       //get from network if null
-      if (localHabit == null && isOnline) {
-        try {
-          final HabitNetworkModel networkHabit =
-              await firebaseService.getHabit(id: id);
-          await hiveService.addHabit(
-              habit: networkHabit.toEntity().copyWith(synced: true));
-          localHabit = await hiveService.getHabit(id: id);
-        } catch (e) {
-          print(
-              'Failed to retrieve habit from network id: $id. Error: ${e.toString()}');
+      if (isOnline) {
+        if (localHabit == null) {
+          try {
+            final HabitNetworkModel networkHabit =
+                await _firebaseService.getHabit(id: id);
+            await hiveService.addHabit(
+                habit: networkHabit.toEntity().copyWith(synced: true));
+          } catch (e) {
+            print(
+                'Failed to retrieve habit from network id: $id. Error: ${e.toString()}');
+          }
         }
-      }
-      //check if is synced and try to if not
-      if (localHabit != null && !localHabit.synced && isOnline) {
-        try {
-          final HabitNetworkModel syncedHabit = await firebaseService.editHabit(
-              edited: localHabit.toNetworkModel());
-          await hiveService.editHabit(
-              edited: syncedHabit.toEntity().copyWith(synced: true));
-          //updated habit
-          localHabit = await hiveService.getHabit(id: id);
-        } catch (e) {
-          print('Failed to sync habit getHabit(): ${e.toString()}');
+        //check if is synced and try to if not
+        if (localHabit != null && !localHabit.synced) {
+          try {
+            final HabitNetworkModel syncedHabit = await _firebaseService
+                .editHabit(edited: localHabit.toNetworkModel());
+            await hiveService.editHabit(
+                edited: syncedHabit.toEntity().copyWith(synced: true));
+          } catch (e) {
+            print('Failed to sync habit getHabit(): ${e.toString()}');
+          }
         }
+        //updated habit
+        localHabit = await hiveService.getHabit(id: id);
       }
+
       return Right(localHabit);
     } catch (e) {
       return Left('Failed to retrieve getHabit(): ${e.toString()} ');
@@ -127,9 +129,8 @@ class HabitsRepositoryImpl implements HabitsRepository {
 
   @override
   Future<Either> editHabit({required HabitEntity habit}) async {
-    final hiveService = sl.get<HabitsHiveService>();
-    final firebaseService = sl.get<HabitsFirebaseService>();
-    var isOnline = await sl.get<NetworkInfoService>().hasConnection;
+    var isOnline = await _networkService.hasConnection;
+    var hiveService = await sl.getAsync<HabitsHiveService>();
 
     try {
       // edit local copy
@@ -138,7 +139,7 @@ class HabitsRepositoryImpl implements HabitsRepository {
       if (isOnline) {
         try {
           final HabitNetworkModel syncedHabit =
-              await firebaseService.editHabit(edited: habit.toNetworkModel());
+              await _firebaseService.editHabit(edited: habit.toNetworkModel());
           //if edit to network success
           await hiveService.editHabit(
               edited: syncedHabit.toEntity().copyWith(synced: true));
@@ -156,15 +157,14 @@ class HabitsRepositoryImpl implements HabitsRepository {
 
   @override
   Future<Either> deleteHabit({required HabitEntity habit}) async {
-    final hiveService = sl.get<HabitsHiveService>();
-    final firebaseService = sl.get<HabitsFirebaseService>();
-    var isOnline = await sl.get<NetworkInfoService>().hasConnection;
+    var isOnline = await _networkService.hasConnection;
+    var hiveService = await sl.getAsync<HabitsHiveService>();
 
     try {
       // delete only if online
       if (!isOnline) return Left('You need to be online to delete a habit.');
       //delete remote copy
-      await firebaseService.deleteHabit(habit: habit.toNetworkModel());
+      await _firebaseService.deleteHabit(habit: habit.toNetworkModel());
       //delete local copy
       await hiveService.deleteHabit(habit: habit);
 

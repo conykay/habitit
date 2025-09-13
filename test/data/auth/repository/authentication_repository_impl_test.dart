@@ -25,7 +25,8 @@ void main() {
     mockAuthFirebaseService = MockAuthFirebaseService();
     mockNetworkInfo = MockNetworkInfo();
     authenticationRepositoryImpl = AuthenticationRepositoryImpl(
-        firebaseService: mockAuthFirebaseService, networkInfo: mockNetworkInfo);
+        _firebaseService: mockAuthFirebaseService,
+        networkInfo: mockNetworkInfo);
   });
 
   final tAuthUserReq =
