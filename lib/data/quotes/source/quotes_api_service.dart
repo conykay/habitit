@@ -14,10 +14,15 @@ class QuotesApiServiceImpl extends QuotesApiService {
     try {
       var response =
           await http.get(Uri.parse('https://zenquotes.io/api/quotes'));
+
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        List<QuotesModel> quotes =
-            data.map((e) => QuotesModel.fromJson(e)).toList();
+
+        List<QuotesModel> quotes = data
+            .map<QuotesModel>(
+                (e) => QuotesModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+
         return quotes;
       } else {
         throw Exception('Failed to load quotes');
