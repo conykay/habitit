@@ -2,9 +2,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/usecases/delete_habit_usecase.dart';
 
+import '../../../domain/habits/entities/habit_entity.dart';
 import '../../../service_locator.dart';
 import '../widget/edit_habit_modal.dart';
 

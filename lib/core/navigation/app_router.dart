@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/core/navigation/stream_to_listenable.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 import 'package:habitit/presentation/analytics/pages/analytics_page.dart';
 import 'package:habitit/presentation/auth/pages/signin_page.dart';
 import 'package:habitit/presentation/auth/pages/signup_page.dart';
@@ -41,6 +41,7 @@ enum AppRoute {
   notifications('/notifications');
 
   const AppRoute(this.path);
+
   final String path;
 }
 

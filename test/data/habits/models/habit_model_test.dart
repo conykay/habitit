@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
-import 'package:habitit/data/habits/models/habit_model.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/data/habits/models/habit_network_model.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 
 void main() {
-  final tHabitModel = HabitModel(
+  final tHabitModel = HabitNetworkModel(
     id: 'id',
     name: 'name',
     description: 'description',
@@ -40,7 +40,7 @@ void main() {
       'completedDates': [],
       'synced': false,
     };
-    final result = HabitModel.fromMap(map);
+    final result = HabitNetworkModel.fromMap(map);
     expect(result, tHabitModel);
   });
 
@@ -69,7 +69,7 @@ void main() {
       'completedDates': [],
       'synced': false,
     });
-    final result = HabitModel.fromJson(jsonString);
+    final result = HabitNetworkModel.fromJson(jsonString);
     expect(result, tHabitModel);
   });
 

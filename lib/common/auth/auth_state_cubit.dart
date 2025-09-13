@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/common/auth/auth_state.dart';
 import 'package:habitit/domain/auth/usecases/logout_user.dart';
@@ -11,8 +13,12 @@ class AuthStateCubit extends Cubit<AuthState> {
     isAuthenticated();
   }
 
+  StreamSubscription? _authSubscription;
+
   void isAuthenticated() async {
-    sl.get<UserLoggedInUseCase>().isLoggedIn().listen((isLoggedIn) {
+    _authSubscription =
+        sl.get<UserLoggedInUseCase>().isLoggedIn().listen((isLoggedIn) {
+      reinitializeLocator();
       if (isLoggedIn) {
         emit(Authenticated());
       } else {
@@ -23,5 +29,6 @@ class AuthStateCubit extends Cubit<AuthState> {
 
   void logout() async {
     await sl.get<LogoutUserUseCase>().call();
+    _authSubscription?.cancel();
   }
 }

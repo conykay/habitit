@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 import 'package:habitit/presentation/home/bloc/mark_habit_complete_sate.dart';
 
+import '../../../domain/habits/entities/habit_entity.dart';
 import '../../../service_locator.dart';
 
 class MarkHabitCompleteCubit extends Cubit<MarkHabitCompleteSate> {

@@ -27,7 +27,8 @@ import 'package:habitit/domain/rewards/usecases/add_user_xp_usecase.dart';
 import 'package:habitit/domain/rewards/usecases/get_user_rewards_usecase.dart';
 
 import 'data/auth/repository/authentication_repository_impl.dart';
-import 'data/notifications/source/firebase_messaging_service.dart';
+import 'data/notifications/source/notification_service.dart';
+import 'data/quotes/source/quotes_hive_service.dart';
 import 'data/rewards/repository/rewards_repository.dart';
 import 'domain/auth/repository/authentication_repository.dart';
 import 'domain/quotes/usecases/get_quote_usecase.dart';
@@ -36,6 +37,30 @@ import 'domain/rewards/repository/rewards_repository.dart';
 final sl = GetIt.instance;
 
 Future<void> initializeGetItDependencies() async {
+  //SERVICES
+  //core
+  sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
+  sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
+  //Notifications
+  sl.registerSingleton<NotificationService>(NotificationServiceImpl());
+  //Auth
+  sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
+  //Habit Module
+  sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
+  sl.registerFactoryAsync<HabitsHiveService>(() async {
+    final service = await HabitsHiveServiceImpl.getInstance();
+    return service;
+  });
+  //Rewards Module
+  sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
+  //Async
+  sl.registerFactoryAsync<RewardsHiveService>(() async {
+    final service = await RewardsHiveServiceImpl.getInstance();
+    return service;
+  });
+  //quotes
+  sl.registerSingleton<QuotesApiService>(QuotesApiServiceImpl());
+  sl.registerSingleton<QuotesHiveService>(QuotesHiveServiceImpl());
   // REPOSITORIES
   //core
   sl.registerSingleton<ThemeRepository>(ThemeRepository());
@@ -48,22 +73,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<RewardsRepository>(RewardsRepositoryImpl());
   //quotes
   sl.registerSingleton<QuotesRepository>(QuotesRepositoryImp());
-  //SERVICES
-  //core
-  sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
-  sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
-  //Notifications
-  sl.registerSingleton<NotificationService>(NotificationServiceImpl());
-  //Auth
-  sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
-  //Habit Module
-  sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
-  sl.registerSingleton<HabitsHiveService>(HabitsHiveServiceImpl());
-  //Rewards Module
-  sl.registerSingleton<RewardsHiveService>(RewardsHiveServiceImpl());
-  sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
-  //quotes
-  sl.registerSingleton<QuotesApiService>(QuotesApiServiceImpl());
+
   //USECASES
   //auth
   sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
@@ -86,4 +96,29 @@ Future<void> initializeGetItDependencies() async {
   //quotesModule
   sl.registerSingleton<GetAllQuotesUseCase>(GetAllQuotesUseCase());
   sl.registerSingleton<GetQuoteUseCase>(GetQuoteUseCase());
+}
+
+// re-initialize service
+Future<void> reinitializeLocator() async {
+  if (sl.isRegistered<RewardsHiveService>() &&
+      sl.isRegistered<HabitsHiveService>()) {
+    try {
+      final oldRewardService = await sl.getAsync<RewardsHiveService>();
+      final oldHiveService = await sl.getAsync<HabitsHiveService>();
+      oldHiveService.close();
+      oldRewardService.close();
+    } catch (e) {
+      print('Error closing old services: ${e.toString()}');
+    }
+    sl.unregister<RewardsHiveService>();
+    sl.unregister<HabitsHiveService>();
+  }
+  sl.registerFactoryAsync<RewardsHiveService>(() async {
+    final service = await RewardsHiveServiceImpl.getInstance();
+    return service;
+  });
+  sl.registerFactoryAsync<HabitsHiveService>(() async {
+    final service = await HabitsHiveServiceImpl.getInstance();
+    return service;
+  });
 }

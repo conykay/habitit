@@ -3,47 +3,23 @@
 part of 'user_rewards_model.dart';
 
 // **************************************************************************
-// TypeAdapterGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
-class UserRewardsModelAdapter extends TypeAdapter<UserRewardsModel> {
-  @override
-  final int typeId = 3;
+_$UserRewardsNetworkModelImpl _$$UserRewardsNetworkModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UserRewardsNetworkModelImpl(
+      xp: (json['xp'] as num).toInt(),
+      level: (json['level'] as num).toInt(),
+      earnedBadges: (json['earnedBadges'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+    );
 
-  @override
-  UserRewardsModel read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+Map<String, dynamic> _$$UserRewardsNetworkModelImplToJson(
+        _$UserRewardsNetworkModelImpl instance) =>
+    <String, dynamic>{
+      'xp': instance.xp,
+      'level': instance.level,
+      'earnedBadges': instance.earnedBadges,
     };
-    return UserRewardsModel(
-      xp: fields[0] as int,
-      level: fields[1] as int,
-      earnedBadges: (fields[2] as List).cast<String>(),
-    ).._synced = fields[3] as bool;
-  }
-
-  @override
-  void write(BinaryWriter writer, UserRewardsModel obj) {
-    writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.xp)
-      ..writeByte(1)
-      ..write(obj.level)
-      ..writeByte(2)
-      ..write(obj.earnedBadges)
-      ..writeByte(3)
-      ..write(obj._synced);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UserRewardsModelAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}

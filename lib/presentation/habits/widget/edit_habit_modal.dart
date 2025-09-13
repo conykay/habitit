@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habitit/data/habits/models/habit_frequency.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:habitit/domain/habits/usecases/edit_habit_usecase.dart';
 
 import '../../../common/button/bloc/button_state.dart';
 import '../../../common/button/bloc/button_state_cubit.dart';
 import '../../../common/button/widget/reactive_elevated_button.dart';
+import '../../../domain/habits/entities/habit_entity.dart';
 import '../../../service_locator.dart';
 import '../bloc/selected_frequency_cubit.dart';
 

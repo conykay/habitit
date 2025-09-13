@@ -1,4 +1,4 @@
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
+import 'package:habitit/domain/habits/entities/habit_entity.dart';
 
 int calculateCurrentStreak(List<DateTime> completedDates) {
   if (completedDates.isEmpty) return 0;
@@ -72,8 +72,8 @@ int longestStreakInAllHabits(List<HabitEntity> habits) {
 }
 
 double calculateAdherenceRate(HabitEntity habit) {
-  final normalizedStart = DateTime(habit.startDate.toDate().year,
-      habit.startDate.toDate().month, habit.startDate.toDate().day);
+  final normalizedStart = DateTime(
+      habit.startDate.year, habit.startDate.month, habit.startDate.day);
   final today = DateTime.now();
   final normalizedToday = DateTime(today.year, today.month, today.day);
 
@@ -100,7 +100,7 @@ Map<DateTime, int> getDailyCompletionData(
   if (start == null) {
     if (habits.isEmpty) return {};
     start = habits
-        .map((h) => normalize(h.startDate.toDate()))
+        .map((h) => normalize(h.startDate))
         .reduce((a, b) => a.isBefore(b) ? a : b);
   } else {
     start = normalize(start);

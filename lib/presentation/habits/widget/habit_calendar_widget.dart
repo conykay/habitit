@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../../domain/habits/entities/habit_enity.dart';
+import '../../../domain/habits/entities/habit_entity.dart';
 
 class HabitCalendarWidget extends StatelessWidget {
   const HabitCalendarWidget({

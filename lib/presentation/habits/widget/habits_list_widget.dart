@@ -1,14 +1,14 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habitit/domain/habits/entities/habit_enity.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/navigation/app_router.dart';
+import '../../../domain/habits/entities/habit_entity.dart';
 
 class HabitsListView extends StatelessWidget {
   final List<HabitEntity> habits;
+
   const HabitsListView({
     super.key,
     required this.habits,
@@ -40,9 +40,7 @@ class HabitsListView extends StatelessWidget {
                         text: habit.completedDates!.length.toString(),
                         children: [TextSpan(text: 'd done')])),
                     Text.rich(TextSpan(text: 'Since: ', children: [
-                      TextSpan(
-                          text:
-                              DateFormat.yMd().format(habit.startDate.toDate()))
+                      TextSpan(text: DateFormat.yMd().format(habit.startDate))
                     ])),
                   ],
                 )

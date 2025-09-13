@@ -7,7 +7,7 @@ import '../../../common/button/bloc/button_state.dart';
 import '../../../common/button/bloc/button_state_cubit.dart';
 import '../../../common/button/widget/reactive_elevated_button.dart';
 import '../../../data/habits/models/habit_frequency.dart';
-import '../../../data/habits/models/habit_model.dart';
+import '../../../data/habits/models/habit_network_model.dart';
 import '../../../domain/habits/usecases/add_habit_usecase.dart';
 import '../../../service_locator.dart';
 import '../bloc/selected_frequency_cubit.dart';
@@ -133,7 +133,7 @@ class NewHabitCustomModal extends StatelessWidget {
                                 .read<ButtonStateCubit>()
                                 .call(
                                     usecase: sl.get<AddHabitUseCase>(),
-                                    params: HabitModel(
+                                    params: HabitNetworkModel(
                                         id: Uuid().v4(),
                                         name: _habitNameController.text,
                                         description:

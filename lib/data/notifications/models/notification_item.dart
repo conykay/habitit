@@ -8,6 +8,7 @@ class NotificationItem extends Equatable {
   DateTime? sentAt;
   String? title;
   String? body;
+
   NotificationItem({
     this.category,
     required this.data,
@@ -25,3 +26,5 @@ class NotificationItem extends Equatable {
         body,
       ];
 }
+
+//todo:(Implement isRead bool for already read notifications) (store locally ?)
