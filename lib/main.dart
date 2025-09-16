@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:habitit/common/auth/auth_state_cubit.dart';
 import 'package:habitit/core/theme/app_theme.dart';
 import 'package:habitit/core/theme/bloc/theme_cubit.dart';
+import 'package:habitit/data/notifications/models/notification_item.dart';
 import 'package:habitit/data/notifications/source/local_notification_service.dart';
 import 'package:habitit/data/notifications/source/notification_service.dart';
 import 'package:habitit/domain/habits/entities/habit_entity.dart';
@@ -28,14 +29,30 @@ Future<void> main() async {
   Hive.registerAdapter(HabitFrequencyAdapter());
   Hive.registerAdapter(UserRewardEntityImplAdapter());
   Hive.registerAdapter(QuotesEntityImplAdapter());
+  Hive.registerAdapter(NotificationItemImplAdapter());
 
   runApp(MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   MainApp({super.key});
 
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
   final GoRouter _route = AppRouter.getRouter(AuthStateCubit());
+
+  @override
+  void dispose() {
+    _disposables();
+    super.dispose();
+  }
+
+  void _disposables() {
+    sl.get<NotificationService>().dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

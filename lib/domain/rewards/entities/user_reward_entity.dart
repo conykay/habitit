@@ -8,7 +8,7 @@ part 'user_reward_entity.g.dart';
 class UserRewardEntity extends HiveObject with _$UserRewardEntity {
   UserRewardEntity._();
 
-  @HiveType(typeId: 3)
+  @HiveType(typeId: 2)
   factory UserRewardEntity({
     @HiveField(0) @Default(0) int xp,
     @HiveField(1) @Default(1) int level,

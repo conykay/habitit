@@ -9,16 +9,18 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NotificationCubit(),
+      create: (context) => NotificationCubit()..markAllAsRead(),
       child: Scaffold(
           appBar: AppBar(
             title: Text('Notifications'),
             actions: [
-              TextButton(
-                onPressed: () =>
-                    context.read<NotificationCubit>().clearNotifications(),
-                child: Text('Clear'),
-              )
+              Builder(builder: (context) {
+                return TextButton(
+                  onPressed: () =>
+                      context.read<NotificationCubit>().clearNotifications(),
+                  child: Text('Clear'),
+                );
+              })
             ],
           ),
           body: LayoutBuilder(builder: (context, constrains) {
@@ -42,7 +44,9 @@ class NotificationPage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 15),
                           decoration: BoxDecoration(
-                              color: Colors.blue.withValues(alpha: 0.2),
+                              color: notification.isRead!
+                                  ? Colors.white
+                                  : Colors.blue.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

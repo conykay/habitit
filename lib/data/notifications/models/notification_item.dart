@@ -1,30 +1,20 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive/hive.dart';
 
-// ignore: must_be_immutable
-class NotificationItem extends Equatable {
-  String? category;
-  Map<String, dynamic> data;
-  DateTime? sentAt;
-  String? title;
-  String? body;
+part 'notification_item.freezed.dart';
+part 'notification_item.g.dart';
 
-  NotificationItem({
-    this.category,
-    required this.data,
-    this.sentAt,
-    this.title,
-    this.body,
-  });
+@unfreezed
+class NotificationItem with _$NotificationItem {
+  NotificationItem._();
 
-  @override
-  List<Object?> get props => [
-        category,
-        data,
-        sentAt,
-        title,
-        body,
-      ];
+  @HiveType(typeId: 4)
+  factory NotificationItem({
+    @HiveField(0) String? category,
+    @HiveField(1) required Map<dynamic, dynamic> data,
+    @HiveField(2) DateTime? sentAt,
+    @HiveField(3) String? title,
+    @HiveField(4) String? body,
+    @HiveField(5) @Default(false) bool? isRead,
+  }) = _NotificationItem;
 }
-
-//todo:(Implement isRead bool for already read notifications) (store locally ?)
