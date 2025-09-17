@@ -6,4 +6,7 @@ part 'env.g.dart';
 final class Env {
   @EnviedField(varName: 'QUOTES_KEY', obfuscate: true)
   static final String quotesKey = _Env.quotesKey;
+
+  @EnviedField(varName: 'VAPID_KEY', obfuscate: true)
+  static final String vapidKey = _Env.vapidKey;
 }

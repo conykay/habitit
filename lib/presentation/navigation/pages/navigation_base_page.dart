@@ -31,6 +31,7 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
   @override
   void initState() {
     getPermissions();
+    initialize();
     super.initState();
   }
 
@@ -44,6 +45,10 @@ class _NavigationBasePageState extends State<NavigationBasePage> {
     HabitStateCubit().habitsSubscription.cancel();
     UserRewardsCubit().rewardSubscription.cancel();
     await NotificationCubit().close();
+  }
+
+  void initialize() async {
+    await sl.get<NotificationService>().init();
   }
 
   @override

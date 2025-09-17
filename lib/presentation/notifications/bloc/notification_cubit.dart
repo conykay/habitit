@@ -1,71 +1,55 @@
 import 'dart:async';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habitit/data/notifications/models/notification_item.dart';
+import 'package:habitit/data/notifications/source/notifications_hive_service.dart';
 import 'package:habitit/presentation/notifications/bloc/notification_state.dart';
 
+import '../../../data/notifications/models/notification_item.dart';
+import '../../../service_locator.dart';
+
 class NotificationCubit extends Cubit<NotificationState> {
-  late final StreamSubscription<RemoteMessage> _messageSubscription;
-  late final StreamSubscription<RemoteMessage> _openedAppSubscription;
+  StreamSubscription? _notifications;
 
   NotificationCubit() : super(NotificationState()) {
-    _messageSubscription =
-        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final notification = message.notification;
+    _notificationSubscription();
+  }
 
-      if (notification != null && notification.body != null) {
-        addNotification(
-            notification: NotificationItem(
-                data: message.data,
-                sentAt: message.sentTime,
-                title: notification.title,
-                body: notification.body,
-                category: message.category));
-      }
-    });
-    _openedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      final notification = message.notification;
-      if (notification != null && notification.body != null) {
-        addNotification(
-            notification: NotificationItem(
-                data: message.data,
-                sentAt: message.sentTime,
-                title: notification.title,
-                body: notification.body,
-                category: message.category));
-      }
+  void _notificationSubscription() async {
+    _loadAvailableNotifications();
+    await sl.getAsync<NotificationHiveService>().then((notificationService) {
+      _notifications =
+          notificationService.notificationListener().listen((event) {
+        emit(state.copyWith(notifications: event));
+      }, onError: (e) => emit(state.copyWith(error: e.toString())));
     });
   }
 
-  Future<void> onBackgroundHandler(RemoteMessage? message) async {
-    final notification = message!.notification;
-    if (notification != null && notification.body != null) {
-      addNotification(
-          notification: NotificationItem(
-              data: message.data,
-              sentAt: message.sentTime,
-              title: notification.title,
-              body: notification.body,
-              category: message.category));
+  void _loadAvailableNotifications() async {
+    List<NotificationItem> notifications = await sl
+        .getAsync<NotificationHiveService>()
+        .then((value) => value.notifications);
+    emit(state.copyWith(notifications: notifications));
+  }
+
+  void markAllAsRead() async {
+    List<NotificationItem> notifications = await sl
+        .getAsync<NotificationHiveService>()
+        .then((value) => value.notifications);
+    for (var notification in notifications) {
+      notification.isRead = true;
     }
+    emit(state.copyWith(notifications: notifications));
   }
 
-  void addNotification({required NotificationItem notification}) async {
-    final updateNotifications = List<NotificationItem>.from(state.notifications)
-      ..add(notification);
-    emit(NotificationState(notifications: updateNotifications));
-  }
-
-  void clearNotifications() {
-    emit(NotificationState(notifications: []));
+  void clearNotifications() async {
+    await sl
+        .getAsync<NotificationHiveService>()
+        .then((value) => value.deleteNotifications());
   }
 
   @override
   Future<void> close() {
-    _messageSubscription.cancel();
-    _openedAppSubscription.cancel();
+    _notifications?.cancel();
     return super.close();
   }
 }

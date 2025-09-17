@@ -6,6 +6,7 @@ import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
 import 'package:habitit/data/habits/repository/habits_repository_impl.dart';
 import 'package:habitit/data/habits/source/habits_firebase_service.dart';
 import 'package:habitit/data/habits/source/habits_hive_service.dart';
+import 'package:habitit/data/notifications/source/notifications_hive_service.dart';
 import 'package:habitit/data/quotes/repository/quotes_repository.dart';
 import 'package:habitit/data/quotes/source/quotes_api_service.dart';
 import 'package:habitit/data/rewards/sources/rewards_firebase_service.dart';
@@ -43,6 +44,10 @@ Future<void> initializeGetItDependencies() async {
   sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
   //Notifications
   sl.registerSingleton<NotificationService>(NotificationServiceImpl());
+  sl.registerFactoryAsync<NotificationHiveService>(() async {
+    final service = await NotificationHiveServiceImpl.getInstance();
+    return service;
+  });
   //Auth
   sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
   //Habit Module
@@ -101,17 +106,23 @@ Future<void> initializeGetItDependencies() async {
 // re-initialize service
 Future<void> reinitializeLocator() async {
   if (sl.isRegistered<RewardsHiveService>() &&
-      sl.isRegistered<HabitsHiveService>()) {
+      sl.isRegistered<HabitsHiveService>() &&
+      sl.isRegistered<NotificationHiveService>()) {
     try {
       final oldRewardService = await sl.getAsync<RewardsHiveService>();
-      final oldHiveService = await sl.getAsync<HabitsHiveService>();
-      oldHiveService.close();
+      final oldHabitsService = await sl.getAsync<HabitsHiveService>();
+      final oldNotificationService =
+          await sl.getAsync<NotificationHiveService>();
+
+      oldHabitsService.close();
       oldRewardService.close();
+      oldNotificationService.close();
     } catch (e) {
       print('Error closing old services: ${e.toString()}');
     }
     sl.unregister<RewardsHiveService>();
     sl.unregister<HabitsHiveService>();
+    sl.unregister<NotificationHiveService>();
   }
   sl.registerFactoryAsync<RewardsHiveService>(() async {
     final service = await RewardsHiveServiceImpl.getInstance();
@@ -119,6 +130,10 @@ Future<void> reinitializeLocator() async {
   });
   sl.registerFactoryAsync<HabitsHiveService>(() async {
     final service = await HabitsHiveServiceImpl.getInstance();
+    return service;
+  });
+  sl.registerFactoryAsync<NotificationHiveService>(() async {
+    final service = await NotificationHiveServiceImpl.getInstance();
     return service;
   });
 }
