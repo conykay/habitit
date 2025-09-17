@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:habitit/core/platform_info/platform_info.dart';
 import 'package:habitit/data/notifications/source/notification_service.dart';
 import 'package:habitit/data/rewards/models/user_rewards_model.dart';
 
@@ -26,53 +26,80 @@ abstract class AuthFirebaseService {
 }
 
 class AuthFirebaseServiceImpl extends AuthFirebaseService {
-  final _userCollectionRef = FirebaseFirestore.instance.collection('Users');
-  final _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
-  GoogleSignIn get _googleSignIn => GoogleSignIn.standard();
+  AuthFirebaseServiceImpl({
+    required FirebaseFirestore firestore,
+    required FirebaseAuth auth,
+    required GoogleSignIn googleSignIn,
+  })  : _firestore = firestore,
+        _googleSignIn = googleSignIn,
+        _auth = auth;
+// default rewards for new users
+  final Map<String, dynamic> _defaultRewards =
+      UserRewardsNetworkModel(xp: 0, level: 1, earnedBadges: []).toJson();
 
+  // create user with email and password
   @override
   Future<UserCredential> createUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
+    // Create a reference to the "Users" collection
+    final CollectionReference userCollectionRef =
+        _firestore.collection('Users');
+
     try {
+      // Create a new user with email and password
       var cred = await _auth.createUserWithEmailAndPassword(
           email: authData.email, password: authData.password);
-      await _userCollectionRef.doc(cred.user!.uid).set(UserCreationReq(
+      // Add the user's data to the "Users" collection
+      await userCollectionRef.doc(cred.user!.uid).set(UserCreationReq(
               name: authData.name,
               email: authData.email,
               userId: cred.user!.uid)
           .toMap());
-      await _userCollectionRef
+      // Add the default rewards document to the "Rewards" collection
+      await userCollectionRef
           .doc(cred.user!.uid)
           .collection('Rewards')
           .doc('user_rewards')
-          .set(UserRewardsNetworkModel(xp: 0, level: 1, earnedBadges: [])
-              .toJson());
+          .set(_defaultRewards);
+      //store device token for notifications
       onUserLoggedIn(cred.user!);
       return cred;
     } catch (e) {
-      rethrow;
+      throw Exception(
+          'Failed to create user with email and password error: $e');
     }
   }
 
+  // sign in user with email and password
   @override
   Future<UserCredential> signInUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
     try {
+      // Sign in the user with email and password
       var cred = await _auth.signInWithEmailAndPassword(
           email: authData.email, password: authData.password);
+      //store device token for notifications
       onUserLoggedIn(cred.user!);
       return cred;
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to sign in with email and password error: $e');
     }
   }
 
+  // sign in user with google
   @override
   Future<UserCredential> googleSignIn() async {
+    // Create a reference to the "Users" collection
+    final CollectionReference userCollectionRef =
+        _firestore.collection('Users');
+    // Check if the platform is web
     try {
       late final AuthCredential credential;
-      if (sl.get<PlatformInfoService>().isWeb) {
+      if (kIsWeb) {
         final googleProvider = GoogleAuthProvider();
         final userCredential = await _auth.signInWithPopup(googleProvider);
         credential = userCredential.credential!;
@@ -83,28 +110,31 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
         credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
       }
-
+      // Sign in the user with the credential
       var cred = await _auth.signInWithCredential(credential);
-      var userData = await _userCollectionRef
+      // Check if the user's data already exists in the "Users" collection
+      var userData = await userCollectionRef
           .where('userId', isEqualTo: cred.user!.uid)
           .get();
       if (userData.docs.isEmpty) {
-        await _userCollectionRef.doc(cred.user!.uid).set(UserCreationReq(
+        // Add the user's data to the "Users" collection
+        await userCollectionRef.doc(cred.user!.uid).set(UserCreationReq(
                 name: cred.user!.displayName!,
                 email: cred.user!.email!,
                 userId: cred.user!.uid)
             .toMap());
-        await _userCollectionRef
+        // Add the default rewards document to the "Rewards" collection
+        await userCollectionRef
             .doc(cred.user!.uid)
             .collection('Rewards')
             .doc('user_rewards')
-            .set(UserRewardsNetworkModel(xp: 0, level: 1, earnedBadges: [])
-                .toJson());
+            .set(_defaultRewards);
       }
+      //store device token for notifications
       onUserLoggedIn(cred.user!);
       return cred;
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to sign in with Google error: $e');
     }
   }
 
@@ -113,7 +143,7 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
     try {
       await _auth.signOut();
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to logout error: $e');
     }
   }
 
@@ -132,14 +162,23 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
 
 // store token for notifications
   void onUserLoggedIn(User user) async {
+    // Create a reference to the "Users" collection
+    final CollectionReference userCollectionRef =
+        _firestore.collection('Users');
+    // Get the device token
     final notificationService = sl.get<NotificationService>();
-    final token = await notificationService.getToken();
-    if (token != null) {
-      await _userCollectionRef.doc(user.uid).update({'token': token});
+
+    try {
+      final token = await notificationService.getToken();
+      if (token != null) {
+        await userCollectionRef.doc(user.uid).update({'token': token});
+      }
+      // token refresh
+      notificationService.listenToTokenRefresh((newToken) async {
+        userCollectionRef.doc(user.uid).update({'token': newToken});
+      });
+    } catch (e) {
+      throw Exception('Failed to store user token error: $e');
     }
-    // token refresh
-    notificationService.listenToTokenRefresh((newToken) async {
-      _userCollectionRef.doc(user.uid).update({'token': newToken});
-    });
   }
 }

@@ -12,7 +12,7 @@ abstract class HabitsHiveService extends HiveCore {
 
   Future<void> editHabit({required HabitEntity edited});
 
-  Future<void> deleteHabit({required HabitEntity habit});
+  Future<void> deleteHabit({required String id});
 }
 
 class HabitsHiveServiceImpl implements HabitsHiveService {
@@ -20,84 +20,101 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   HabitsHiveServiceImpl._(this._habitBox);
 
-  static Future<HabitsHiveServiceImpl> getInstance() async {
-    final User? user = FirebaseAuth.instance.currentUser;
+  // Singleton instance
+  static Future<HabitsHiveServiceImpl> getInstance(
+      {required FirebaseAuth auth}) async {
+    //get the current user
+    final User? user = auth.currentUser;
+    //check if the box is already open and return it if it is
     final boxName = 'habits_${user?.uid}'.toLowerCase();
     Box<HabitEntity> box;
-
     if (Hive.isBoxOpen(boxName)) {
       box = Hive.box<HabitEntity>(boxName);
     } else {
       box = await Hive.openBox<HabitEntity>(boxName);
     }
-    print(
-        'instance of habit service complete,${box.name} box is open: ${box.isOpen}');
+    //return the instance
     return HabitsHiveServiceImpl._(box);
   }
 
+//add habit to hive
   @override
   Future<void> addHabit({required HabitEntity habit}) async {
+    //check if the box is open
     if (!_habitBox.isOpen) {
-      throw Exception('Habit box not open when addHabit() called ');
+      throw Exception('Habit box not open attempting to add habit.');
     }
+    //add the habit to the box
     try {
       await _habitBox.put(habit.id, habit);
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to add habit to Hive: $e');
     }
   }
 
+  //get all habits from hive
   @override
   Future<List<HabitEntity>> getAllHabits() async {
+    //check if the box is open
     if (!_habitBox.isOpen) {
-      print('is ${_habitBox.name} open: ${_habitBox.isOpen}');
-      throw Exception('Habit box not open when getAllHabits() called ');
+      throw Exception('Habit box not open when attempting to get all habits.');
     }
+    //get all habits from the box
     try {
       return _habitBox.values.toList();
     } catch (e) {
-      throw ('$e' 'Error in getting all habits');
+      throw Exception('Failed to get all habits from Hive: $e');
     }
   }
 
+  //get a specific habit from hive using the id
   @override
   Future<HabitEntity?> getHabit({required String id}) async {
+    //check if the box is open
     if (!_habitBox.isOpen) {
-      throw Exception('Habit box not open when getHabit() called ');
+      throw Exception('Habit box not open when attempting to get a habit.');
     }
+    //get the habit from the box
     try {
       return _habitBox.get(id);
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to get habit from Hive: $e');
     }
   }
 
+  //edit a specific habit in hive
   @override
   Future<void> editHabit({required HabitEntity edited}) async {
+    //check if the box is open
     if (!_habitBox.isOpen) {
-      throw Exception('Habit box not open when editHabit() called ');
+      throw Exception('Habit box not open when attempting to edit a habit.');
     }
+    //edit the habit in the box
     try {
       _habitBox.put(edited.id, edited);
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to edit habit in Hive: $e');
     }
   }
 
+  //delete a specific habit from hive
   @override
-  Future<void> deleteHabit({required HabitEntity habit}) async {
+  Future<void> deleteHabit({required String id}) async {
+    //check if the box is open
     if (!_habitBox.isOpen) {
-      throw Exception('Habit box not open when deleteHabit() called ');
+      throw Exception('Habit box not open when attempting to delete a habit.');
     }
+    //delete the habit from the box
     try {
-      if (_habitBox.containsKey(habit.id)) {
-        await _habitBox.delete(habit.id);
+      if (_habitBox.containsKey(id)) {
+        await _habitBox.delete(id);
       }
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to delete habit from Hive: $e');
     }
   }
 
+  //close the box
   @override
   Future<void> close() async {
     if (_habitBox.isOpen) {

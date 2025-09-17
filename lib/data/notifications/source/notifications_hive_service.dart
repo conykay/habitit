@@ -19,8 +19,12 @@ class NotificationHiveServiceImpl extends NotificationHiveService {
 
   NotificationHiveServiceImpl._(this._notificationBox);
 
-  static Future<NotificationHiveServiceImpl> getInstance() async {
-    final user = FirebaseAuth.instance.currentUser;
+  // Singleton instance
+  static Future<NotificationHiveServiceImpl> getInstance(
+      {required FirebaseAuth auth}) async {
+    //get the current user
+    final User? user = auth.currentUser;
+    //check if the box is already open and if not, open it
     final boxName = 'notifications_${user?.uid}';
     Box<NotificationItem> notificationBox;
     if (Hive.isBoxOpen(boxName)) {
@@ -28,28 +32,35 @@ class NotificationHiveServiceImpl extends NotificationHiveService {
     } else {
       notificationBox = await Hive.openBox<NotificationItem>(boxName);
     }
+    //return the instance
     return NotificationHiveServiceImpl._(notificationBox);
   }
 
+  //get the notifications from the box and return them as a list of NotificationItem objects
   @override
   List<NotificationItem> get notifications =>
       _notificationBox.isOpen ? _notificationBox.values.toList() : [];
 
+  //listen to the box and return a stream of lists of NotificationItem objects
   @override
   Stream<List<NotificationItem>> notificationListener() {
+    //check if the box is open and if not, open it
     if (!_notificationBox.isOpen) {
-      print('Notification Box was not open');
+      throw Exception('Notification box is not open');
     }
+    //return a stream of lists of NotificationItem objects
     return _notificationBox
         .watch()
         .map((event) => _notificationBox.values.toList());
   }
 
+  //add a notification to the box and print a message if successful
   @override
   Future<void> addNotification(RemoteMessage message) async {
     try {
-      print('A notification was received: $message');
+      //check that notification is not null and body is not null
       if (message.notification != null && message.notification!.body != null) {
+        //create a new NotificationItem object and add it to the box
         NotificationItem notificationItem = NotificationItem(
           data: message.data,
           sentAt: message.sentTime,
@@ -57,14 +68,15 @@ class NotificationHiveServiceImpl extends NotificationHiveService {
           body: message.notification!.body,
           category: message.category,
         );
+        //add the notification to the box
         await _notificationBox.add(notificationItem);
       }
-      print('Notification added successfully');
     } catch (e) {
-      print('Notification Service Error: $e');
+      throw Exception('Failed to add notification to box : $e');
     }
   }
 
+  //close the box if it is open
   @override
   Future<void> close() async {
     if (_notificationBox.isOpen) {
@@ -72,6 +84,7 @@ class NotificationHiveServiceImpl extends NotificationHiveService {
     }
   }
 
+  //delete all notifications from the box
   @override
   Future<void> deleteNotifications() async {
     if (_notificationBox.isOpen) {

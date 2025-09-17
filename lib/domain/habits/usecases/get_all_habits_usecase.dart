@@ -2,10 +2,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-import '../../../service_locator.dart';
-
 class GetAllHabitsUseCase {
+  GetAllHabitsUseCase({required HabitsRepository habitsRepository})
+      : _habitsRepository = habitsRepository;
+  final HabitsRepository _habitsRepository;
   Stream<Either> call() {
-    return sl.get<HabitsRepository>().getAllHabits();
+    return _habitsRepository.getAllHabits();
   }
 }

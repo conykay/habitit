@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import '../models/quotes_model.dart';
 
+const String quotesUrl = 'https://zenquotes.io/api/quotes';
+
 abstract class QuotesApiService {
   Future<List<QuotesModel>> getAllQuotes();
 }
@@ -12,8 +14,7 @@ class QuotesApiServiceImpl extends QuotesApiService {
   @override
   Future<List<QuotesModel>> getAllQuotes() async {
     try {
-      var response =
-          await http.get(Uri.parse('https://zenquotes.io/api/quotes'));
+      var response = await http.get(Uri.parse(quotesUrl));
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -25,10 +26,11 @@ class QuotesApiServiceImpl extends QuotesApiService {
 
         return quotes;
       } else {
-        throw Exception('Failed to load quotes');
+        throw Exception(
+            'Server error ${response.statusCode} Failed to load quotes');
       }
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to load quotes error: $e');
     }
   }
 }

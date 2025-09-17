@@ -1,10 +1,12 @@
 import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-import '../../../service_locator.dart';
-
 class UserLoggedInUseCase extends UseCase<bool, dynamic> {
-  UserLoggedInUseCase();
+  UserLoggedInUseCase(
+      {required AuthenticationRepository authenticationRepository})
+      : _authenticationRepository = authenticationRepository;
+
+  final AuthenticationRepository _authenticationRepository;
 
   @override
   Future<bool> call({params}) async {
@@ -12,6 +14,6 @@ class UserLoggedInUseCase extends UseCase<bool, dynamic> {
   }
 
   Stream<bool> isLoggedIn() {
-    return sl.get<AuthenticationRepository>().isLoggedIn();
+    return _authenticationRepository.isLoggedIn();
   }
 }
