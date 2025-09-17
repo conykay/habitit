@@ -15,10 +15,6 @@ abstract class NotificationService {
 
   Future<void> init();
 
-  StreamSubscription<RemoteMessage> get onMessage;
-
-  StreamSubscription<RemoteMessage> get onMessageOpenedApp;
-
   Future<String?> getToken();
 
   Future<void> sendNewBadgeNotification(
@@ -50,12 +46,16 @@ class NotificationServiceImpl extends NotificationService {
   Future<void> init() async {
     _messageSubscription =
         FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('Remote message received: ${message.notification}');
-      var hiveService = await sl.getAsync<NotificationHiveService>();
-      await hiveService.addNotification(message);
+      await sl
+          .getAsync<NotificationHiveService>()
+          .then((hiveService) => hiveService.addNotification(message));
     });
-    _openedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
+    _openedAppSubscription = FirebaseMessaging.onMessageOpenedApp
+        .listen((RemoteMessage message) async {
+      await sl
+          .getAsync<NotificationHiveService>()
+          .then((hiveService) => hiveService.addNotification(message));
+    });
   }
 
 // permissions
@@ -139,12 +139,6 @@ class NotificationServiceImpl extends NotificationService {
   }
 
   @override
-  StreamSubscription<RemoteMessage> get onMessage => _messageSubscription!;
-
-  @override
-  StreamSubscription<RemoteMessage> get onMessageOpenedApp =>
-      _openedAppSubscription!;
-
   void dispose() {
     _messageSubscription?.cancel();
     _openedAppSubscription?.cancel();
