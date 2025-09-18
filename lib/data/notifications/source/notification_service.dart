@@ -7,7 +7,6 @@ import 'package:habitit/env/env.dart';
 import 'package:habitit/firebase_options.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../service_locator.dart';
 import 'notifications_hive_service.dart';
 
 abstract class NotificationService {
@@ -28,7 +27,14 @@ abstract class NotificationService {
 }
 
 class NotificationServiceImpl extends NotificationService {
-  final FirebaseMessaging _messagingInstance = FirebaseMessaging.instance;
+  final FirebaseMessaging _messagingInstance;
+  final NotificationHiveService _notificationHiveService;
+  NotificationServiceImpl({
+    required FirebaseMessaging messagingInstance,
+    required NotificationHiveService notificationHiveService,
+  })  : _messagingInstance = messagingInstance,
+        _notificationHiveService = notificationHiveService;
+
   static final _vapidKey = Env.vapidKey;
   static final _sendBadgeNotificationUrl =
       Uri.https('habititservice.onrender.com', 'api/sendBadgeNotification');
@@ -46,15 +52,11 @@ class NotificationServiceImpl extends NotificationService {
   Future<void> init() async {
     _messageSubscription =
         FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      await sl
-          .getAsync<NotificationHiveService>()
-          .then((hiveService) => hiveService.addNotification(message));
+      _notificationHiveService.addNotification(message);
     });
     _openedAppSubscription = FirebaseMessaging.onMessageOpenedApp
         .listen((RemoteMessage message) async {
-      await sl
-          .getAsync<NotificationHiveService>()
-          .then((hiveService) => hiveService.addNotification(message));
+      _notificationHiveService.addNotification(message);
     });
   }
 

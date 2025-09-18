@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/core/platform_info/platform_info.dart';
 import 'package:habitit/core/theme/repository/theme_repository.dart';
@@ -39,28 +43,53 @@ final sl = GetIt.instance;
 
 Future<void> initializeGetItDependencies() async {
   //SERVICES
+  //firebase
+  sl.registerSingleton<FirebaseFirestore>(FirebaseFirestore.instance);
+  sl.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
+  sl.registerSingleton<FirebaseMessaging>(FirebaseMessaging.instance);
+  sl.registerSingleton<GoogleSignIn>(GoogleSignIn.standard());
   //core
   sl.registerSingleton<PlatformInfoService>(PlatformInfoImpl());
   sl.registerSingleton<NetworkInfoService>(NetworkInfoServiceImpl());
   //Notifications
-  sl.registerSingleton<NotificationService>(NotificationServiceImpl());
   sl.registerFactoryAsync<NotificationHiveService>(() async {
-    final service = await NotificationHiveServiceImpl.getInstance();
+    final service = await NotificationHiveServiceImpl.getInstance(
+        auth: sl.get<FirebaseAuth>());
     return service;
   });
+  sl.registerLazySingletonAsync<NotificationService>(() async =>
+      NotificationServiceImpl(
+        messagingInstance: sl.get<FirebaseMessaging>(),
+        notificationHiveService: await sl.getAsync<NotificationHiveService>(),
+      ));
   //Auth
-  sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl());
+  sl.registerSingleton<AuthFirebaseService>(AuthFirebaseServiceImpl(
+    auth: sl.get<FirebaseAuth>(),
+    firestore: sl.get<FirebaseFirestore>(),
+    googleSignIn: sl<GoogleSignIn>(),
+  ));
   //Habit Module
-  sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl());
+  sl.registerSingleton<HabitsFirebaseService>(HabitsFirebaseServiceImpl(
+    firestore: sl.get<FirebaseFirestore>(),
+    auth: sl.get<FirebaseAuth>(),
+  ));
+  //Async
   sl.registerFactoryAsync<HabitsHiveService>(() async {
-    final service = await HabitsHiveServiceImpl.getInstance();
+    final service =
+        await HabitsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
     return service;
   });
   //Rewards Module
-  sl.registerSingleton<RewardsFirebaseService>(RewardsFirebaseServiceImpl());
+  sl.registerLazySingletonAsync<RewardsFirebaseService>(
+      () async => RewardsFirebaseServiceImpl(
+            firebaseAuth: sl.get<FirebaseAuth>(),
+            firestore: sl.get<FirebaseFirestore>(),
+            notificationService: await sl.getAsync<NotificationService>(),
+          ));
   //Async
   sl.registerFactoryAsync<RewardsHiveService>(() async {
-    final service = await RewardsHiveServiceImpl.getInstance();
+    final service =
+        await RewardsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
     return service;
   });
   //quotes
@@ -70,34 +99,65 @@ Future<void> initializeGetItDependencies() async {
   //core
   sl.registerSingleton<ThemeRepository>(ThemeRepository());
   //Auth
-  sl.registerSingleton<AuthenticationRepository>(
-      AuthenticationRepositoryImpl());
+  sl.registerSingleton<AuthenticationRepository>(AuthenticationRepositoryImpl(
+    authFirebaseService: sl.get<AuthFirebaseService>(),
+    networkInfoService: sl.get<NetworkInfoService>(),
+  ));
   //Habits
-  sl.registerSingleton<HabitsRepository>(HabitsRepositoryImpl());
+  sl.registerLazySingletonAsync<HabitsRepository>(
+      () async => HabitsRepositoryImpl(
+            networkInfoService: sl.get<NetworkInfoService>(),
+            firebaseService: sl.get<HabitsFirebaseService>(),
+            hiveService: await sl.getAsync<HabitsHiveService>(),
+          ));
   //Rewards
-  sl.registerSingleton<RewardsRepository>(RewardsRepositoryImpl());
+  sl.registerLazySingletonAsync<RewardsRepository>(
+      () async => RewardsRepositoryImpl(
+            rewardsFirebaseService: await sl.getAsync<RewardsFirebaseService>(),
+            rewardsHiveService: await sl.getAsync<RewardsHiveService>(),
+            networkInfoService: sl.get<NetworkInfoService>(),
+          ));
   //quotes
   sl.registerSingleton<QuotesRepository>(QuotesRepositoryImp());
 
   //USECASES
   //auth
-  sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase());
-  sl.registerLazySingleton<CreateUserEmailPasswordUseCase>(
-      () => CreateUserEmailPasswordUseCase());
-  sl.registerLazySingleton<LogoutUserUseCase>(() => LogoutUserUseCase());
-  sl.registerLazySingleton<SignInEmailPasswordUseCase>(
-      () => SignInEmailPasswordUseCase());
-  sl.registerLazySingleton<SignInGoogleUseCase>(() => SignInGoogleUseCase());
+  sl.registerSingleton<UserLoggedInUseCase>(UserLoggedInUseCase(
+      authenticationRepository: sl.get<AuthenticationRepository>()));
+  sl.registerLazySingleton<CreateUserEmailPasswordUseCase>(() =>
+      CreateUserEmailPasswordUseCase(
+          authenticationRepository: sl.get<AuthenticationRepository>()));
+  sl.registerLazySingleton<LogoutUserUseCase>(() => LogoutUserUseCase(
+      authenticationRepository: sl.get<AuthenticationRepository>()));
+  sl.registerLazySingleton<SignInEmailPasswordUseCase>(() =>
+      SignInEmailPasswordUseCase(
+          authenticationRepository: sl.get<AuthenticationRepository>()));
+  sl.registerLazySingleton<SignInGoogleUseCase>(() => SignInGoogleUseCase(
+      authenticationRepository: sl.get<AuthenticationRepository>()));
   //HabitModule
-  sl.registerLazySingleton<GetAllHabitsUseCase>(() => GetAllHabitsUseCase());
-  sl.registerLazySingleton<GetHabitUseCase>(() => GetHabitUseCase());
-  sl.registerLazySingleton<AddHabitUseCase>(() => AddHabitUseCase());
-  sl.registerLazySingleton<EditHabitUseCase>(() => EditHabitUseCase());
-  sl.registerLazySingleton<DeleteHabitUseCase>(() => DeleteHabitUseCase());
+  sl.registerLazySingletonAsync<GetAllHabitsUseCase>(() async =>
+      GetAllHabitsUseCase(
+          habitsRepository: await sl.getAsync<HabitsRepository>()));
+
+  sl.registerLazySingletonAsync<GetHabitUseCase>(() async =>
+      GetHabitUseCase(habitsRepository: await sl.getAsync<HabitsRepository>()));
+
+  sl.registerLazySingletonAsync<AddHabitUseCase>(() async =>
+      AddHabitUseCase(habitsRepository: await sl.getAsync<HabitsRepository>()));
+
+  sl.registerLazySingletonAsync<EditHabitUseCase>(() async => EditHabitUseCase(
+      habitsRepository: await sl.getAsync<HabitsRepository>()));
+
+  sl.registerLazySingletonAsync<DeleteHabitUseCase>(() async =>
+      DeleteHabitUseCase(
+          habitsRepository: await sl.getAsync<HabitsRepository>()));
   //RewardModule
-  sl.registerLazySingleton<GetUserRewardsUseCase>(
-      () => GetUserRewardsUseCase());
-  sl.registerLazySingleton<AddUserXpUseCase>(() => AddUserXpUseCase());
+  sl.registerLazySingletonAsync<GetUserRewardsUseCase>(() async =>
+      GetUserRewardsUseCase(
+          rewardsRepository: await sl.getAsync<RewardsRepository>()));
+
+  sl.registerLazySingletonAsync<AddUserXpUseCase>(() async => AddUserXpUseCase(
+      rewardsRepository: await sl.getAsync<RewardsRepository>()));
   //quotesModule
   sl.registerSingleton<GetAllQuotesUseCase>(GetAllQuotesUseCase());
   sl.registerSingleton<GetQuoteUseCase>(GetQuoteUseCase());
@@ -105,35 +165,48 @@ Future<void> initializeGetItDependencies() async {
 
 // re-initialize service
 Future<void> reinitializeLocator() async {
-  if (sl.isRegistered<RewardsHiveService>() &&
-      sl.isRegistered<HabitsHiveService>() &&
-      sl.isRegistered<NotificationHiveService>()) {
+  if (sl.isRegistered<NotificationHiveService>()) {
     try {
-      final oldRewardService = await sl.getAsync<RewardsHiveService>();
-      final oldHabitsService = await sl.getAsync<HabitsHiveService>();
       final oldNotificationService =
           await sl.getAsync<NotificationHiveService>();
-
-      oldHabitsService.close();
-      oldRewardService.close();
       oldNotificationService.close();
     } catch (e) {
-      print('Error closing old services: ${e.toString()}');
+      print('Error closing old Notification hive service: ${e.toString()}');
     }
-    sl.unregister<RewardsHiveService>();
-    sl.unregister<HabitsHiveService>();
-    sl.unregister<NotificationHiveService>();
+    await sl.unregister<NotificationHiveService>();
+    sl.registerFactoryAsync<NotificationHiveService>(() async {
+      final service = await NotificationHiveServiceImpl.getInstance(
+          auth: sl.get<FirebaseAuth>());
+      return service;
+    });
   }
-  sl.registerFactoryAsync<RewardsHiveService>(() async {
-    final service = await RewardsHiveServiceImpl.getInstance();
-    return service;
-  });
-  sl.registerFactoryAsync<HabitsHiveService>(() async {
-    final service = await HabitsHiveServiceImpl.getInstance();
-    return service;
-  });
-  sl.registerFactoryAsync<NotificationHiveService>(() async {
-    final service = await NotificationHiveServiceImpl.getInstance();
-    return service;
-  });
+  if (sl.isRegistered<HabitsHiveService>()) {
+    try {
+      final oldHabitsService = await sl.getAsync<HabitsHiveService>();
+
+      oldHabitsService.close();
+    } catch (e) {
+      print('Error closing old Habits hive service: ${e.toString()}');
+    }
+    await sl.unregister<HabitsHiveService>();
+    sl.registerFactoryAsync<HabitsHiveService>(() async {
+      final service =
+          await HabitsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
+      return service;
+    });
+  }
+  if (sl.isRegistered<RewardsHiveService>()) {
+    try {
+      final oldRewardService = await sl.getAsync<RewardsHiveService>();
+      oldRewardService.close();
+    } catch (e) {
+      print('Error closing old Rewards Hive services: ${e.toString()}');
+    }
+    await sl.unregister<RewardsHiveService>();
+    sl.registerFactoryAsync<RewardsHiveService>(() async {
+      final service = await RewardsHiveServiceImpl.getInstance(
+          auth: sl.get<FirebaseAuth>());
+      return service;
+    });
+  }
 }

@@ -25,23 +25,21 @@ class AdherenceRatesWidget extends StatelessWidget {
         SizedBox(height: 8),
         SizedBox(
           height: 150,
-          child: Expanded(
-            child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  var habit = habits[index];
-                  var adherenceRate = calculateAdherenceRate(habit);
-                  var color =
-                      Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
+          child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                var habit = habits[index];
+                var adherenceRate = calculateAdherenceRate(habit);
+                var color =
+                    Color((math.Random().nextDouble() * 0xFFFFFF).toInt());
 
-                  return _buildChartData(habit, adherenceRate, color);
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 20);
-                },
-                itemCount: habits.length),
-          ),
+                return _buildChartData(habit, adherenceRate, color);
+              },
+              separatorBuilder: (context, index) {
+                return SizedBox(width: 20);
+              },
+              itemCount: habits.length),
         ),
       ],
     );

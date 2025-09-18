@@ -4,11 +4,13 @@ import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/habits/entities/habit_entity.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-import '../../../service_locator.dart';
-
 class DeleteHabitUseCase extends UseCase<Either, HabitEntity> {
+  DeleteHabitUseCase({required HabitsRepository habitsRepository})
+      : _habitsRepository = habitsRepository;
+  final HabitsRepository _habitsRepository;
+
   @override
   Future<Either> call({HabitEntity? params}) async {
-    return await sl.get<HabitsRepository>().deleteHabit(habit: params!);
+    return await _habitsRepository.deleteHabit(habit: params!);
   }
 }

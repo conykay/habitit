@@ -19,7 +19,9 @@ class HabitStateCubit extends Cubit<HabitState> {
     //loading triggered and old habits are passed if exist
     emit(HabitLoading(oldHabits: _oldHabits));
     //get habits
-    _habitsSubscription = sl.get<GetAllHabitsUseCase>().call().listen((data) {
+    GetAllHabitsUseCase getAllHabitsUseCase =
+        await sl.getAsync<GetAllHabitsUseCase>();
+    _habitsSubscription = getAllHabitsUseCase.call().listen((data) {
       data.fold((l) => emit(HabitError(message: l.toString())), (r) {
         _oldHabits = r;
         emit(HabitLoaded(habits: r));

@@ -1,22 +1,17 @@
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-import '../../../service_locator.dart';
+class SignInEmailPasswordUseCase extends UseCase<Either, AuthUserReqEntity> {
+  SignInEmailPasswordUseCase(
+      {required AuthenticationRepository authenticationRepository})
+      : _authenticationRepository = authenticationRepository;
 
-typedef SignInEmailPasswordData = Either<Failures, UserCredential>;
-
-class SignInEmailPasswordUseCase
-    extends UseCase<SignInEmailPasswordData, AuthUserReqEntity> {
-  SignInEmailPasswordUseCase();
+  final AuthenticationRepository _authenticationRepository;
 
   @override
-  Future<SignInEmailPasswordData> call({AuthUserReqEntity? params}) {
-    return sl
-        .get<AuthenticationRepository>()
-        .signInUserEmailPassword(authData: params!);
+  Future<Either> call({AuthUserReqEntity? params}) {
+    return _authenticationRepository.signInUserEmailPassword(authData: params!);
   }
 }

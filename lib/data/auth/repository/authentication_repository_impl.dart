@@ -1,75 +1,86 @@
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:habitit/core/error/failures.dart';
 import 'package:habitit/core/network/network_info.dart';
 import 'package:habitit/data/auth/sources/auth_firebase_service.dart';
 import 'package:habitit/domain/auth/entities/auth_user_req_entity.dart';
 import 'package:habitit/domain/auth/repository/authentication_repository.dart';
 
-import '../../../service_locator.dart';
-
 class AuthenticationRepositoryImpl extends AuthenticationRepository {
+  final AuthFirebaseService _authFirebaseService;
+  final NetworkInfoService _networkInfoService;
+
+  AuthenticationRepositoryImpl({
+    required AuthFirebaseService authFirebaseService,
+    required NetworkInfoService networkInfoService,
+  })  : _authFirebaseService = authFirebaseService,
+        _networkInfoService = networkInfoService;
+
   @override
-  Future<Either<Failures, UserCredential>> createUserEmailPassword(
+  Future<Either> createUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
-    if (await sl.get<NetworkInfoService>().hasConnection) {
+    // Check if there is a connection
+    final bool hasConnection = await _networkInfoService.hasConnection;
+    if (hasConnection) {
       try {
-        var cred = await sl
-            .get<AuthFirebaseService>()
-            .createUserEmailPassword(authData: authData);
-
+        // Create a new user with email and password
+        var cred =
+            _authFirebaseService.createUserEmailPassword(authData: authData);
         return Right(cred);
       } catch (e) {
-        return Left(OtherFailure(e.toString()));
+        return Left(e.toString());
       }
     } else {
-      return Left(OtherFailure('No connection'));
+      return Left('check network connection');
     }
   }
 
   @override
-  Future<Either<Failures, UserCredential>> signInUserEmailPassword(
+  Future<Either> signInUserEmailPassword(
       {required AuthUserReqEntity authData}) async {
-    if (await sl.get<NetworkInfoService>().hasConnection) {
+    // Check if there is a connection
+    final bool hasConnection = await _networkInfoService.hasConnection;
+    if (hasConnection) {
       try {
-        var cred = await sl
-            .get<AuthFirebaseService>()
-            .signInUserEmailPassword(authData: authData);
+        // Sign in the user with email and password
+        var cred = await _authFirebaseService.signInUserEmailPassword(
+            authData: authData);
         return Right(cred);
       } catch (e) {
-        return Left(OtherFailure(e.toString()));
+        return Left(e.toString());
       }
     } else {
-      return Left(OtherFailure('check network connection'));
+      return Left('check network connection');
     }
   }
 
   @override
-  Future<Either<Failures, UserCredential>> googleSignIn() async {
-    if (await sl.get<NetworkInfoService>().hasConnection) {
+  Future<Either> googleSignIn() async {
+    // Check if there is a connection
+    final bool hasConnection = await _networkInfoService.hasConnection;
+    if (hasConnection) {
       try {
-        var cred = await sl.get<AuthFirebaseService>().googleSignIn();
+        // Sign in the user with google
+        var cred = _authFirebaseService.googleSignIn();
         return Right(cred);
       } catch (e) {
-        return Left(OtherFailure(e.toString()));
+        return Left(e.toString());
       }
     } else {
-      return Left(OtherFailure('check network connection'));
+      return Left('check network connection');
     }
   }
 
   @override
-  Future<Either<Failures, dynamic>> logout() async {
+  Future<Either> logout() async {
     try {
-      await sl.get<AuthFirebaseService>().logout();
-      return Right('done');
+      await _authFirebaseService.logout();
+      return Right('Logged out');
     } catch (e) {
-      return Left(OtherFailure('error'));
+      return Left(e.toString());
     }
   }
 
   @override
   Stream<bool> isLoggedIn() {
-    return sl.get<AuthFirebaseService>().isLoggedIn();
+    return _authFirebaseService.isLoggedIn();
   }
 }

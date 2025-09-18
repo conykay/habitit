@@ -8,32 +8,40 @@ import 'package:habitit/domain/rewards/entities/user_reward_entity.dart';
 import 'package:habitit/domain/rewards/repository/rewards_repository.dart';
 
 import '../../../core/network/network_info.dart';
-import '../../../service_locator.dart';
 
 class RewardsRepositoryImpl implements RewardsRepository {
-  final _firebaseRewardService = sl.get<RewardsFirebaseService>();
-  final _networkInfo = sl.get<NetworkInfoService>();
+  final RewardsFirebaseService _rewardsFirebaseService;
+  final RewardsHiveService _rewardsHiveService;
+  final NetworkInfoService _networkInfoService;
+
+  RewardsRepositoryImpl({
+    required RewardsFirebaseService rewardsFirebaseService,
+    required RewardsHiveService rewardsHiveService,
+    required NetworkInfoService networkInfoService,
+  })  : _rewardsFirebaseService = rewardsFirebaseService,
+        _rewardsHiveService = rewardsHiveService,
+        _networkInfoService = networkInfoService;
 
   @override
   Future<Either> updateUserRewards({required int xpAmount}) async {
-    var isOnline = await _networkInfo.hasConnection;
-    final hiveRewardService = await sl.getAsync<RewardsHiveService>();
+    var isOnline = await _networkInfoService.hasConnection;
+
     try {
       //get rewards from local Db
       UserRewardEntity userRewardUpdate =
-          await hiveRewardService.getUserRewards();
+          await _rewardsHiveService.getUserRewards();
       // update local db with new reward data
       UserRewardEntity updatedReward =
           await _updateReward(reward: userRewardUpdate, xpGained: xpAmount);
-      await hiveRewardService.updateUserRewards(rewardModel: updatedReward);
+      await _rewardsHiveService.updateUserRewards(rewardModel: updatedReward);
       //update remote db with new reward data
       if (isOnline) {
         UserRewardEntity userLocalReward =
-            await hiveRewardService.getUserRewards();
+            await _rewardsHiveService.getUserRewards();
         //Update remote rewards with local rewards
         try {
           if (!userLocalReward.synced) {
-            await _firebaseRewardService.updateUserRewards(
+            await _rewardsFirebaseService.updateUserRewards(
                 rewardModel: userLocalReward.toModel());
           }
         } catch (e) {
@@ -48,33 +56,34 @@ class RewardsRepositoryImpl implements RewardsRepository {
 
   @override
   Stream<Either> getUserRewards() async* {
-    var isOnline = await _networkInfo.hasConnection;
-    final hiveRewardService = await sl.getAsync<RewardsHiveService>();
+    var isOnline = await _networkInfoService.hasConnection;
 
     try {
       //Get User Reward from local Db
-      UserRewardEntity localRewards = await hiveRewardService.getUserRewards();
+      UserRewardEntity localRewards =
+          await _rewardsHiveService.getUserRewards();
+      print('localRewards: $localRewards');
       yield Right(localRewards);
       //Get User Reward from remote Db
       if (isOnline) {
         try {
           //Get User Reward from remote Db
           UserRewardsNetworkModel remoteRewards =
-              await _firebaseRewardService.getUserRewards();
+              await _rewardsFirebaseService.getUserRewards();
           //compare data
           if (localRewards.xp > remoteRewards.xp) {
-            await _firebaseRewardService.updateUserRewards(
+            await _rewardsFirebaseService.updateUserRewards(
                 rewardModel: localRewards.toModel());
             //mark local data as synced
-            await hiveRewardService.updateUserRewards(
+            await _rewardsHiveService.updateUserRewards(
                 rewardModel: localRewards.copyWith(synced: true));
           } else if (localRewards.xp < remoteRewards.xp) {
             //Update local rewards with remote rewards
-            await hiveRewardService.updateUserRewards(
+            await _rewardsHiveService.updateUserRewards(
                 rewardModel: remoteRewards.toEntity().copyWith(synced: true));
           }
           //Get User Reward from local Db
-          localRewards = await hiveRewardService.getUserRewards();
+          localRewards = await _rewardsHiveService.getUserRewards();
 
           yield Right(localRewards);
         } catch (e) {
@@ -138,7 +147,7 @@ class RewardsRepositoryImpl implements RewardsRepository {
           reward.copyWith(earnedBadges: newEarnedBadges);
       //send notification about new badge
       final badgeData = badges.firstWhere((b) => b.id == badgeId);
-      await _firebaseRewardService.sendNewBadgeNotification(badge: badgeData);
+      await _rewardsFirebaseService.sendNewBadgeNotification(badge: badgeData);
       return rewardWithNewBadge;
     }
     return reward;

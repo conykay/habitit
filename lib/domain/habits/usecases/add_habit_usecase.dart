@@ -4,11 +4,13 @@ import 'package:habitit/core/usecase/usecase.dart';
 import 'package:habitit/data/habits/models/habit_network_model.dart';
 import 'package:habitit/domain/habits/repository/habit_repository.dart';
 
-import '../../../service_locator.dart';
-
 class AddHabitUseCase extends UseCase<Either, HabitNetworkModel> {
+  final HabitsRepository _habitsRepository;
+  AddHabitUseCase({required HabitsRepository habitsRepository})
+      : _habitsRepository = habitsRepository;
+
   @override
   Future<Either> call({HabitNetworkModel? params}) async {
-    return await sl.get<HabitsRepository>().addHabit(habit: params!.toEntity());
+    return await _habitsRepository.addHabit(habit: params!.toEntity());
   }
 }

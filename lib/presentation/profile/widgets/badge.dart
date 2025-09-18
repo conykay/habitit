@@ -17,8 +17,8 @@ class AchievementBadge extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: 80,
-          width: 80,
+          height: 50,
+          width: 50,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               gradient: LinearGradient(colors: colors),
@@ -26,13 +26,13 @@ class AchievementBadge extends StatelessWidget {
           child: Center(
               child: FaIcon(
             icon,
-            size: 30,
+            size: 15,
             color: Colors.white70,
           )),
         ),
         Text(
           name,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
         )
       ],
     );

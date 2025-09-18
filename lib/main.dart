@@ -38,7 +38,8 @@ Future<void> main() async {
   //initialize service locator
   await initializeGetItDependencies();
   // retrieve device token
-  await sl.get<NotificationService>().getToken();
+  final notificationService = await sl.getAsync<NotificationService>();
+  await notificationService.getToken();
   //request notification permissions
   await sl.get<NotificationService>().grantAppPermission();
   //handle background messages

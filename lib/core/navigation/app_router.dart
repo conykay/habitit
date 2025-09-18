@@ -130,11 +130,11 @@ class AppRouter {
         final isGoingToAuth =
             state.matchedLocation.contains(AppRoute.signUp.path) ||
                 state.matchedLocation.contains(AppRoute.signIn.path);
-        if (!isAuthenticated && !isGoingToAuth) {
-          return AppRoute.signIn.path;
-        }
+
         if (isAuthenticated && isGoingToAuth) {
           return AppRoute.home.path;
+        } else if (!isAuthenticated && !isGoingToAuth) {
+          return AppRoute.signIn.path;
         }
         return null;
       },
