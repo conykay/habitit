@@ -62,6 +62,7 @@ class RewardsRepositoryImpl implements RewardsRepository {
       //Get User Reward from local Db
       UserRewardEntity localRewards =
           await _rewardsHiveService.getUserRewards();
+      print('localRewards: $localRewards');
       yield Right(localRewards);
       //Get User Reward from remote Db
       if (isOnline) {

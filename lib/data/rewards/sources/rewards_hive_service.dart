@@ -29,6 +29,7 @@ class RewardsHiveServiceImpl implements RewardsHiveService {
     if (Hive.isBoxOpen(boxName)) {
       rewardBox = Hive.box<UserRewardEntity>(boxName);
     } else {
+      print('Attempting to open reward box');
       rewardBox = await Hive.openBox<UserRewardEntity>(boxName);
     }
     //return instance

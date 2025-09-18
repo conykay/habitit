@@ -26,7 +26,9 @@ class UserRewardsCubit extends Cubit<UserRewardsState> {
 
   void getUserRewards() async {
     emit(UserRewardsLoading(_rewardEntity));
-    _rewardSubscription = sl.get<GetUserRewardsUseCase>().call().listen((data) {
+    GetUserRewardsUseCase getUserRewardsUseCase =
+        await sl.getAsync<GetUserRewardsUseCase>();
+    _rewardSubscription = getUserRewardsUseCase.call().listen((data) {
       data.fold(
         (l) => emit(UserRewardsError(error: l)),
         (r) {

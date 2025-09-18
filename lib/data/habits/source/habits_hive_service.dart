@@ -20,14 +20,17 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
 
   HabitsHiveServiceImpl._(this._habitBox);
 
+  static int _getinstancecallcount = 0;
   // Singleton instance
   static Future<HabitsHiveServiceImpl> getInstance(
       {required FirebaseAuth auth}) async {
+    _getinstancecallcount++;
     //get the current user
     final User? user = auth.currentUser;
     //check if the box is already open and return it if it is
     final boxName = 'habits_${user?.uid}'.toLowerCase();
     Box<HabitEntity> box;
+
     if (Hive.isBoxOpen(boxName)) {
       box = Hive.box<HabitEntity>(boxName);
     } else {
@@ -57,6 +60,9 @@ class HabitsHiveServiceImpl implements HabitsHiveService {
   Future<List<HabitEntity>> getAllHabits() async {
     //check if the box is open
     if (!_habitBox.isOpen) {
+      print(
+          'Habit box not open attempting to get all habits habit.${_habitBox.isOpen}');
+
       throw Exception('Habit box not open when attempting to get all habits.');
     }
     //get all habits from the box

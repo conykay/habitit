@@ -138,12 +138,16 @@ Future<void> initializeGetItDependencies() async {
   sl.registerLazySingletonAsync<GetAllHabitsUseCase>(() async =>
       GetAllHabitsUseCase(
           habitsRepository: await sl.getAsync<HabitsRepository>()));
+
   sl.registerLazySingletonAsync<GetHabitUseCase>(() async =>
       GetHabitUseCase(habitsRepository: await sl.getAsync<HabitsRepository>()));
+
   sl.registerLazySingletonAsync<AddHabitUseCase>(() async =>
       AddHabitUseCase(habitsRepository: await sl.getAsync<HabitsRepository>()));
+
   sl.registerLazySingletonAsync<EditHabitUseCase>(() async => EditHabitUseCase(
       habitsRepository: await sl.getAsync<HabitsRepository>()));
+
   sl.registerLazySingletonAsync<DeleteHabitUseCase>(() async =>
       DeleteHabitUseCase(
           habitsRepository: await sl.getAsync<HabitsRepository>()));
@@ -151,6 +155,7 @@ Future<void> initializeGetItDependencies() async {
   sl.registerLazySingletonAsync<GetUserRewardsUseCase>(() async =>
       GetUserRewardsUseCase(
           rewardsRepository: await sl.getAsync<RewardsRepository>()));
+
   sl.registerLazySingletonAsync<AddUserXpUseCase>(() async => AddUserXpUseCase(
       rewardsRepository: await sl.getAsync<RewardsRepository>()));
   //quotesModule
@@ -160,38 +165,48 @@ Future<void> initializeGetItDependencies() async {
 
 // re-initialize service
 Future<void> reinitializeLocator() async {
-  if (sl.isRegistered<RewardsHiveService>() &&
-      sl.isRegistered<HabitsHiveService>() &&
-      sl.isRegistered<NotificationHiveService>()) {
+  if (sl.isRegistered<NotificationHiveService>()) {
     try {
-      final oldRewardService = await sl.getAsync<RewardsHiveService>();
-      final oldHabitsService = await sl.getAsync<HabitsHiveService>();
       final oldNotificationService =
           await sl.getAsync<NotificationHiveService>();
-
-      oldHabitsService.close();
-      oldRewardService.close();
       oldNotificationService.close();
     } catch (e) {
-      print('Error closing old services: ${e.toString()}');
+      print('Error closing old Notification hive service: ${e.toString()}');
     }
-    sl.unregister<RewardsHiveService>();
-    sl.unregister<HabitsHiveService>();
-    sl.unregister<NotificationHiveService>();
+    await sl.unregister<NotificationHiveService>();
+    sl.registerFactoryAsync<NotificationHiveService>(() async {
+      final service = await NotificationHiveServiceImpl.getInstance(
+          auth: sl.get<FirebaseAuth>());
+      return service;
+    });
   }
-  sl.registerFactoryAsync<RewardsHiveService>(() async {
-    final service =
-        await RewardsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
-    return service;
-  });
-  sl.registerFactoryAsync<HabitsHiveService>(() async {
-    final service =
-        await HabitsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
-    return service;
-  });
-  sl.registerFactoryAsync<NotificationHiveService>(() async {
-    final service = await NotificationHiveServiceImpl.getInstance(
-        auth: sl.get<FirebaseAuth>());
-    return service;
-  });
+  if (sl.isRegistered<HabitsHiveService>()) {
+    try {
+      final oldHabitsService = await sl.getAsync<HabitsHiveService>();
+
+      oldHabitsService.close();
+    } catch (e) {
+      print('Error closing old Habits hive service: ${e.toString()}');
+    }
+    await sl.unregister<HabitsHiveService>();
+    sl.registerFactoryAsync<HabitsHiveService>(() async {
+      final service =
+          await HabitsHiveServiceImpl.getInstance(auth: sl.get<FirebaseAuth>());
+      return service;
+    });
+  }
+  if (sl.isRegistered<RewardsHiveService>()) {
+    try {
+      final oldRewardService = await sl.getAsync<RewardsHiveService>();
+      oldRewardService.close();
+    } catch (e) {
+      print('Error closing old Rewards Hive services: ${e.toString()}');
+    }
+    await sl.unregister<RewardsHiveService>();
+    sl.registerFactoryAsync<RewardsHiveService>(() async {
+      final service = await RewardsHiveServiceImpl.getInstance(
+          auth: sl.get<FirebaseAuth>());
+      return service;
+    });
+  }
 }

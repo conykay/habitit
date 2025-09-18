@@ -35,7 +35,7 @@ class DailyDataLineChart extends StatelessWidget {
           ),
           SizedBox(height: 8),
           AspectRatio(
-              aspectRatio: 1.25,
+              aspectRatio: 1.2,
               child: LineChart(
                 duration: Duration(seconds: 2),
                 LineChartData(
